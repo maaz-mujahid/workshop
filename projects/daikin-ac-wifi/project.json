@@ -1,0 +1,17 @@
+{
+  "schema": "project/v2",
+  "id": "daikin-ac-wifi",
+  "name": "Daikin AC WiFi (S403)",
+  "status": "Planned",
+  "room": "Bedroom",
+  "difficulty": "Hard",
+  "summary": "Control the Daikin MTKL50UV16VA AC over WiFi via its S403 service port (S21 protocol), plus an IR blaster for the Orient Zeno fan — one shared ESP32, fully inside the AC, powered from the 14V rail.",
+  "estimatedCost": "~₹1,150-1,475",
+  "safety": [
+    "S403 port is NON-isolated — GND sits at mains potential, pin 10 ~320V. The ADuM1201 (or 6N139 opto) isolation barrier is mandatory.",
+    "Bench-test the harness voltages BEFORE connecting to the AC: pin1<->6 ~14V, pin4<->6 ~5V, pin5<->6 ~5V.",
+    "All work with the AC unplugged."
+  ],
+  "docs": "project.html",
+  "bom": "bom.json"
+}

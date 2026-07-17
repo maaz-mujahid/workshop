@@ -1,0 +1,17 @@
+{
+  "schema": "project/v2",
+  "id": "presence-lighting",
+  "name": "Presence Lighting (bedroom)",
+  "status": "Planned",
+  "room": "Bedroom",
+  "difficulty": "Medium",
+  "summary": "mmWave presence + time-of-day lighting for the bedroom. Ceiling node (ESP32 + LD2410C + 2-ch relay) drives the 6 concealed bulbs; desk node (ESP32-C3 + MOSFET) power-cycles the BT LED strip. Modes: Day->cool, Evening->warm, Sleep (iPhone Focus)->strip only.",
+  "estimatedCost": "~₹900-1,300",
+  "safety": [
+    "Relay board wired in series AFTER the wall switches, which are parked ON as master cut-offs — switch OFF = everything dead for maintenance.",
+    "Relays default OFF at boot so a power blip won't blast lights at 3AM.",
+    "Mains work at the ceiling done with the wall switch OFF."
+  ],
+  "docs": "project.html",
+  "bom": "bom.json"
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "bom/v2",
+  "project": "motion-night-light",
+  "items": [
+    {
+      "partId": "P0020",
+      "qty": 6
+    },
+    {
+      "partId": "P0021",
+      "qty": 6
+    },
+    {
+      "partId": "P0022",
+      "qty": 6
+    },
+    {
+      "partId": "P0023",
+      "qty": 6
+    },
+    {
+      "partId": "P0024",
+      "qty": 6
+    },
+    {
+      "partId": "P0025",
+      "qty": 18
+    },
+    {
+      "partId": "P0026",
+      "qty": 6
+    },
+    {
+      "partId": "P0027",
+      "qty": 6
+    },
+    {
+      "partId": "P0028",
+      "qty": 6
+    },
+    {
+      "partId": "P0029",
+      "qty": 6
+    },
+    {
+      "partId": "P0030",
+      "qty": 36
+    },
+    {
+      "partId": "P0031",
+      "qty": 6
+    }
+  ]
+}

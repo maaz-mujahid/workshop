@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daikin S403 DIY Wi-Fi Module — Build Guide (v2)</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:900px;margin:2rem auto;padding:0 1.2rem;line-height:1.55;color:#1a1a1a;background:#fff}
+h1{font-size:1.7rem} h2{margin-top:2rem;border-bottom:1px solid #ddd;padding-bottom:.3rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0}
+th,td{border:1px solid #ccc;padding:.45rem .6rem;text-align:left;font-size:.93rem}
+th{background:#f3f3f3}
+code{background:#f2f2f2;padding:.1rem .3rem;border-radius:4px;font-size:.9em}
+pre{background:#f7f7f7;border:1px solid #e0e0e0;border-radius:8px;padding:1rem;overflow-x:auto}
+pre code{background:none;padding:0}
+.schematic{margin:1.2rem 0;border:1px solid #ddd;border-radius:8px;overflow:hidden}
+.schematic svg{width:100%;height:auto;display:block}
+</style></head><body>
+<h1>DIY Smart-AC Module for Daikin MTKL50UV16VA (S403 port)</h1>
+<p>ESP32 + ESPHome + galvanic isolation (v2 design). Target cost: <strong>~₹950</strong> all-in, parts sourced in India.</p>
+<hr />
+<h2>1. What we confirmed about your unit</h2>
+<ul>
+<li><strong>S403 is the Wi-Fi port.</strong> Your wiring diagram shows the official Daikin Wi-Fi module (A4P) connects to S403 — so this is exactly where a DIY module belongs.</li>
+<li><strong>Protocol is Daikin "S21"</strong>: serial, <strong>2400 baud, 8 data bits, EVEN parity, 2 stop bits, 5V logic</strong>. This is what Faikin and the ESPHome <code>daikin_s21</code> component speak.</li>
+<li><strong>S403 is a NON-isolated S21 port.</strong> The low-voltage side of your PCB is referenced directly to rectified mains. Even the "GND" pin is at live potential relative to earth. The board's own silkscreen says it: 高電圧注意 / CAUTION HIGH VOLTAGE.</li>
+<li><strong>Pin 10 carries ~320V DC</strong> (the rectified bus). Never connect or touch it.</li>
+</ul>
+<p>This is why we build with galvanic isolation: everything on the ESP32 side becomes electrically separate from the AC, safe to touch, debug, and USB-flash.</p>
+<h2>2. S403 pinout (10-pin, 2.54mm pitch)</h2>
+<p>Count from the <strong>bottom pin, next to the "+14V" silkscreen</strong>. The small <strong>▲ silkscreen marker is pin 1</strong> (standard PCB convention — the triangle always points at pin 1). On your board it sits at the same end as the "+14V" text. Pin 10 is the <strong>opposite</strong> end, up near the "高電圧注意 / CAUTION HIGH VOLTAGE" label — fittingly, that's the 320V pin:</p>
+<table>
+<thead>
+<tr>
+<th>Pin</th>
+<th>Signal</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (bottom)</td>
+<td>+14V</td>
+<td>Powers our module (hot side)</td>
+</tr>
+<tr>
+<td>2, 3</td>
+<td>—</td>
+<td>Unused</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TX (data out of AC)</td>
+<td>5V logic</td>
+</tr>
+<tr>
+<td>5</td>
+<td>RX (data into AC)</td>
+<td>5V logic</td>
+</tr>
+<tr>
+<td>6, 7</td>
+<td>GND (LIVE potential!)</td>
+<td>Hot-side ground only</td>
+</tr>
+<tr>
+<td>8, 9</td>
+<td>—</td>
+<td>Unused</td>
+</tr>
+<tr>
+<td>10 (top)</td>
+<td><strong>~320V DC</strong></td>
+<td><strong>NEVER CONNECT. NEVER TOUCH.</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Verify before wiring — the safe way (don't probe the live connector directly; a slipped probe bridging two pins can kill the PCB instantly):</strong></p>
+<ol>
+<li>Breaker off, wait 10+ minutes. Plug in your 4-wire harness (positions 1, 4, 5, 6 loaded — leave 10 EMPTY, no metal in that position at all). Keep the free wire ends separated and insulated.</li>
+<li>Breaker on. Measure at the free harness ends, one hand behind your back:</li>
+<li>Pin 1 ↔ pin 6: expect <strong>~14V DC</strong></li>
+<li>Pin 4 ↔ pin 6: expect <strong>~5V DC</strong> (UART idles high)</li>
+<li>Pin 5 ↔ pin 6: expect <strong>~5V DC</strong> (internal pullup)</li>
+<li><strong>Abort if any reading is wildly off</strong> (e.g. 14V on pin 4/5, or hundreds of volts anywhere) — the pinout on your board differs from the reference and connecting the module would damage something. Report the readings and we re-map.</li>
+<li>Breaker off, wait 10+ minutes, then connect the harness to your module.</li>
+</ol>
+<p>The reference pinout comes from a user-confirmed Faikin install on a different Daikin model — your own measurements are the final authority, which is why step 3 exists.</p>
+<p><strong>Connector:</strong> standard Dupont pins reportedly don't fit S403 well. A <strong>JST XH 2.54mm housing</strong> with crimped leads works after lightly shaving the housing sides. Confirmed part: <a href="https://robu.in/product/a2508h-10p-cjt-10-pin-2-50mm-female-housing-with-300mm-wire-28-awg-rohs/">A2508H-10P-CJT 10-pin 2.50mm pre-crimped housing (robu)</a> — an XH-compatible clone, exact 10 positions.</p>
+<h2>3. Circuit</h2>
+<p>Two fully separate grounds. Nothing crosses the isolation barrier except the tiny isolation transformers inside the ADuM1201 and the B0505S.</p>
+<p><div class="schematic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 980" font-family="Helvetica, Arial, sans-serif">
+  <style>
+    .wire{stroke:#222;stroke-width:2;fill:none}
+    .hotwire{stroke:#c62828;stroke-width:2;fill:none}
+    .box{fill:#ffffff;stroke:#222;stroke-width:2}
+    .lbl{font-size:13px;fill:#222}
+    .small{font-size:11px;fill:#444}
+    .tiny{font-size:10px;fill:#666}
+    .red{fill:#c62828}
+    .green{fill:#2e7d32}
+    .bold{font-weight:bold}
+    .dot{fill:#222}
+  </style>
+
+  <rect x="0" y="0" width="1100" height="980" fill="#fafafa"/>
+  <text x="550" y="28" text-anchor="middle" class="lbl bold" font-size="17">Daikin S403 → ESP32 isolated interface (v2 — ADuM1201)</text>
+
+  <!-- side headers -->
+  <text x="280" y="52" text-anchor="middle" class="lbl bold red">HOT SIDE — mains-referenced (LIVE)</text>
+  <text x="840" y="52" text-anchor="middle" class="lbl bold green">COLD SIDE — isolated (safe)</text>
+
+  <!-- isolation barrier -->
+  <line x1="560" y1="60" x2="560" y2="680" stroke="#888" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="573" y="120" class="small" transform="rotate(90 573 120)">ISOLATION BARRIER</text>
+
+  <!-- ======== S403 connector ======== -->
+  <rect x="40" y="70" width="70" height="420" class="box"/>
+  <text x="75" y="88" text-anchor="middle" class="lbl bold">S403</text>
+  <g class="small">
+    <circle cx="110" cy="460" r="3" class="dot"/><text x="60" y="464">1  +14V</text>
+    <text x="60" y="424">2  nc</text>
+    <text x="60" y="384">3  nc</text>
+    <circle cx="110" cy="340" r="3" class="dot"/><text x="60" y="344">4  TX</text>
+    <circle cx="110" cy="300" r="3" class="dot"/><text x="60" y="304">5  RX</text>
+    <circle cx="110" cy="260" r="3" class="dot"/><text x="60" y="264">6  GND</text>
+    <text x="60" y="224">7  GND</text>
+    <text x="60" y="184">8  nc</text>
+    <text x="60" y="144">9  nc</text>
+    <text x="60" y="104" class="red bold">10</text>
+  </g>
+  <text x="75" y="510" text-anchor="middle" class="tiny">pin 1 = bottom,</text>
+  <text x="75" y="524" text-anchor="middle" class="tiny">next to “+14V” / ▲ silkscreen</text>
+
+  <!-- pin 10 danger -->
+  <line x1="110" y1="100" x2="140" y2="100" class="hotwire"/>
+  <line x1="132" y1="92" x2="148" y2="108" class="hotwire"/>
+  <line x1="148" y1="92" x2="132" y2="108" class="hotwire"/>
+  <text x="158" y="97" class="small red bold">≈320 V DC — DO NOT CONNECT.</text>
+  <text x="158" y="112" class="small red bold">DO NOT TOUCH.</text>
+
+  <!-- ======== pin 6 GND_hot ======== -->
+  <polyline points="110,260 140,260 140,282" class="wire"/>
+  <g class="hotwire">
+    <line x1="128" y1="284" x2="152" y2="284"/><line x1="132" y1="290" x2="148" y2="290"/><line x1="136" y1="296" x2="144" y2="296"/>
+  </g>
+  <text x="156" y="296" class="tiny red bold">LIVE</text>
+
+  <!-- ======== pin 4 (AC TX) -> 1k -> VIA ======== -->
+  <line x1="110" y1="340" x2="200" y2="340" class="wire"/>
+  <rect x="200" y="333" width="60" height="14" class="box"/>
+  <text x="230" y="328" text-anchor="middle" class="small">1 kΩ</text>
+  <line x1="260" y1="340" x2="480" y2="340" class="wire"/>
+
+  <!-- ======== pin 5 (AC RX) <- 1k <- VOB (crossing at 180,340 = no dot) ======== -->
+  <polyline points="110,300 180,300 180,380 300,380" class="wire"/>
+  <rect x="300" y="373" width="60" height="14" class="box"/>
+  <text x="330" y="368" text-anchor="middle" class="small">1 kΩ</text>
+  <text x="330" y="400" text-anchor="middle" class="tiny">protects AC RX</text>
+  <line x1="360" y1="380" x2="480" y2="380" class="wire"/>
+
+  <!-- ======== ADuM1201 (straddles barrier) ======== -->
+  <rect x="480" y="280" width="160" height="150" class="box"/>
+  <text x="560" y="272" text-anchor="middle" class="small bold">ADuM1201 digital isolator</text>
+  <g class="tiny">
+    <text x="486" y="304">VDD1</text>
+    <text x="486" y="344">VIA</text>
+    <text x="486" y="384">VOB</text>
+    <text x="486" y="414">GND1</text>
+    <text x="634" y="304" text-anchor="end">VDD2</text>
+    <text x="634" y="344" text-anchor="end">VOA</text>
+    <text x="634" y="384" text-anchor="end">VIB</text>
+    <text x="634" y="414" text-anchor="end">GND2</text>
+  </g>
+  <!-- channel arrows -->
+  <line x1="522" y1="340" x2="596" y2="340" stroke="#888" stroke-width="1.5"/>
+  <polygon points="596,336 604,340 596,344" fill="#888"/>
+  <line x1="598" y1="380" x2="524" y2="380" stroke="#888" stroke-width="1.5"/>
+  <polygon points="524,376 516,380 524,384" fill="#888"/>
+  <!-- VDD1 net flag (5V_hot) -->
+  <line x1="480" y1="300" x2="462" y2="300" class="wire"/>
+  <circle cx="457" cy="300" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="448" y="296" text-anchor="end" class="small">5V_hot</text>
+  <!-- GND1 -> hot gnd -->
+  <polyline points="480,410 454,410 454,436" class="wire"/>
+  <g class="hotwire">
+    <line x1="442" y1="438" x2="466" y2="438"/><line x1="446" y1="444" x2="462" y2="444"/><line x1="450" y1="450" x2="458" y2="450"/>
+  </g>
+  <!-- VDD2 -> ESP 3V3 -->
+  <polyline points="640,300 720,300 720,220 880,220" class="wire"/>
+  <text x="730" y="214" class="small">3.3 V</text>
+  <!-- GND2 -> iso gnd -->
+  <polyline points="640,410 680,410 680,436" class="wire"/>
+  <g class="wire">
+    <line x1="668" y1="438" x2="692" y2="438"/><line x1="672" y1="444" x2="688" y2="444"/><line x1="676" y1="450" x2="684" y2="450"/>
+  </g>
+  <!-- data to ESP -->
+  <line x1="640" y1="340" x2="880" y2="340" class="wire"/>
+  <line x1="640" y1="380" x2="880" y2="380" class="wire"/>
+  <text x="560" y="470" text-anchor="middle" class="tiny">100 nF ceramic from VDD1→GND1 and VDD2→GND2, right at the pins</text>
+
+  <!-- ======== power input chain: pin1 -> F1 -> D1 -> TVS node -> buck ======== -->
+  <polyline points="110,460 140,460 140,580 148,580" class="wire"/>
+  <text x="146" y="475" class="small">+14 V</text>
+  <rect x="148" y="573" width="36" height="14" class="box"/>
+  <text x="166" y="566" text-anchor="middle" class="tiny">F1 200 mA</text>
+  <line x1="184" y1="580" x2="196" y2="580" class="wire"/>
+  <!-- D1 schottky -->
+  <polygon points="196,572 196,588 212,580" fill="#222"/>
+  <line x1="212" y1="572" x2="212" y2="588" class="wire"/>
+  <line x1="212" y1="580" x2="244" y2="580" class="wire"/>
+  <text x="206" y="604" text-anchor="middle" class="tiny">D1 1N5819</text>
+  <!-- TVS -->
+  <circle cx="244" cy="580" r="4" class="dot"/>
+  <line x1="244" y1="580" x2="244" y2="592" class="wire"/>
+  <rect x="237" y="592" width="14" height="30" class="box"/>
+  <text x="232" y="636" text-anchor="end" class="tiny">SMBJ18A TVS</text>
+  <line x1="244" y1="622" x2="244" y2="632" class="wire"/>
+  <line x1="244" y1="632" x2="264" y2="632" class="wire"/>
+  <circle cx="264" cy="632" r="4" class="dot"/>
+  <line x1="264" y1="632" x2="264" y2="642" class="wire"/>
+  <g class="hotwire">
+    <line x1="252" y1="644" x2="276" y2="644"/><line x1="256" y1="650" x2="272" y2="650"/><line x1="260" y1="656" x2="268" y2="656"/>
+  </g>
+  <line x1="244" y1="580" x2="280" y2="580" class="wire"/>
+
+  <!-- ======== Mini560 buck ======== -->
+  <rect x="280" y="560" width="140" height="80" class="box"/>
+  <text x="350" y="586" text-anchor="middle" class="lbl bold">Mini560</text>
+  <text x="350" y="603" text-anchor="middle" class="small">5 V fixed buck</text>
+  <text x="286" y="577" class="tiny">IN+</text>
+  <text x="286" y="625" class="tiny">IN−</text>
+  <text x="414" y="577" text-anchor="end" class="tiny">OUT+</text>
+  <text x="414" y="625" text-anchor="end" class="tiny">OUT−</text>
+  <!-- buck IN- to shared hot gnd -->
+  <polyline points="280,620 264,620 264,632" class="wire"/>
+  <!-- 5V_hot rail -->
+  <line x1="420" y1="580" x2="500" y2="580" class="wire"/>
+  <text x="430" y="572" class="small">5V_hot</text>
+  <!-- buck OUT- -> B0505S GND, hot gnd tap -->
+  <line x1="420" y1="620" x2="500" y2="620" class="wire"/>
+  <circle cx="460" cy="620" r="4" class="dot"/>
+  <line x1="460" y1="620" x2="460" y2="644" class="wire"/>
+  <g class="hotwire">
+    <line x1="448" y1="646" x2="472" y2="646"/><line x1="452" y1="652" x2="468" y2="652"/><line x1="456" y1="658" x2="464" y2="658"/>
+  </g>
+
+  <!-- ======== B0505S-2W (straddles barrier) ======== -->
+  <rect x="500" y="560" width="140" height="80" class="box"/>
+  <text x="570" y="586" text-anchor="middle" class="lbl bold">B0505S-2W</text>
+  <text x="570" y="603" text-anchor="middle" class="small">isolated DC-DC</text>
+  <text x="570" y="619" text-anchor="middle" class="tiny">5 V → 5 V, 400 mA</text>
+  <text x="506" y="577" class="tiny">Vin</text>
+  <text x="506" y="625" class="tiny">GND</text>
+  <text x="634" y="577" text-anchor="end" class="tiny">Vout</text>
+  <text x="634" y="625" text-anchor="end" class="tiny">GND0</text>
+
+  <!-- 5V_iso: Vout -> ESP VIN -->
+  <polyline points="640,580 860,580 860,540 880,540" class="wire"/>
+  <text x="690" y="572" class="small">5V_iso</text>
+  <circle cx="740" cy="580" r="4" class="dot"/>
+  <circle cx="800" cy="580" r="4" class="dot"/>
+
+  <!-- bulk cap -->
+  <line x1="740" y1="580" x2="740" y2="596" class="wire"/>
+  <line x1="726" y1="596" x2="754" y2="596" class="wire"/>
+  <line x1="726" y1="604" x2="754" y2="604" class="wire"/>
+  <text x="726" y="596" text-anchor="end" class="tiny">470 µF</text>
+  <text x="726" y="610" text-anchor="end" class="tiny">105 °C, + top</text>
+  <line x1="740" y1="604" x2="740" y2="622" class="wire"/>
+  <g class="wire">
+    <line x1="728" y1="624" x2="752" y2="624"/><line x1="732" y1="630" x2="748" y2="630"/><line x1="736" y1="636" x2="744" y2="636"/>
+  </g>
+
+  <!-- power LED -->
+  <line x1="800" y1="580" x2="800" y2="592" class="wire"/>
+  <rect x="793" y="592" width="14" height="34" class="box"/>
+  <text x="812" y="612" class="tiny">1 kΩ</text>
+  <line x1="800" y1="626" x2="800" y2="634" class="wire"/>
+  <polygon points="792,634 808,634 800,648" fill="#222"/>
+  <line x1="792" y1="650" x2="808" y2="650" class="wire"/>
+  <text x="814" y="646" class="tiny">PWR LED (green)</text>
+  <line x1="800" y1="650" x2="800" y2="658" class="wire"/>
+  <g class="wire">
+    <line x1="788" y1="660" x2="812" y2="660"/><line x1="792" y1="666" x2="808" y2="666"/><line x1="796" y1="672" x2="804" y2="672"/>
+  </g>
+
+  <!-- GND0 -> iso gnd -->
+  <polyline points="640,620 668,620 668,644" class="wire"/>
+  <g class="wire">
+    <line x1="656" y1="646" x2="680" y2="646"/><line x1="660" y1="652" x2="676" y2="652"/><line x1="664" y1="658" x2="672" y2="658"/>
+  </g>
+  <text x="684" y="656" class="small">GND_iso</text>
+
+  <!-- ======== ESP32 ======== -->
+  <rect x="880" y="180" width="180" height="390" class="box"/>
+  <text x="970" y="208" text-anchor="middle" class="lbl bold">ESP32 DevKit V1</text>
+  <text x="970" y="224" text-anchor="middle" class="tiny">(WROOM, not WROVER)</text>
+  <g class="small">
+    <circle cx="880" cy="220" r="3" class="dot"/><text x="890" y="242">3V3</text>
+    <circle cx="880" cy="340" r="3" class="dot"/><text x="890" y="344">GPIO16 (RX2)</text>
+    <circle cx="880" cy="380" r="3" class="dot"/><text x="890" y="384">GPIO17 (TX2)</text>
+    <circle cx="880" cy="500" r="3" class="dot"/><text x="890" y="504">GND</text>
+    <circle cx="880" cy="540" r="3" class="dot"/><text x="890" y="544">VIN (5 V)</text>
+  </g>
+  <text x="970" y="430" text-anchor="middle" class="tiny">onboard LED (GPIO2) = status_led</text>
+  <text x="970" y="446" text-anchor="middle" class="tiny">I2C header for future room sensor:</text>
+  <text x="970" y="460" text-anchor="middle" class="tiny">3V3 · GND · GPIO21 (SDA) · GPIO22 (SCL)</text>
+  <text x="970" y="478" text-anchor="middle" class="tiny">USB only on the bench —</text>
+  <text x="970" y="492" text-anchor="middle" class="tiny">never while connected to the AC</text>
+  <!-- ESP GND -> iso gnd -->
+  <polyline points="880,500 840,500 840,526" class="wire"/>
+  <g class="wire">
+    <line x1="828" y1="528" x2="852" y2="528"/><line x1="832" y1="534" x2="848" y2="534"/><line x1="836" y1="540" x2="844" y2="540"/>
+  </g>
+
+  <!-- notes -->
+  <text x="40" y="700" class="small">• ADuM1201 is non-inverting — no <tspan font-family="monospace">inverted:</tspan> flags needed in ESPHome. It also level-shifts: VDD1 = 5 V (hot), VDD2 = 3.3 V (from ESP32).</text>
+  <text x="40" y="718" class="small">• Wire crossings WITHOUT a dot are not connected. Ground symbols: <tspan class="red">red = GND_hot (live)</tspan>, black = GND_iso (safe).</text>
+  <text x="40" y="736" class="small">• Everything left of the dashed barrier is at mains potential. Insulate it fully; work only with the breaker off and caps discharged.</text>
+
+  <!-- ======== Optional IR add-on panel ======== -->
+  <rect x="40" y="755" width="1020" height="210" rx="10" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="60" y="782" class="lbl bold">Optional IR add-on — Orient Zeno fan blaster (cold side only, no isolation changes)</text>
+
+  <!-- TX chain -->
+  <circle cx="140" cy="806" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="152" y="810" class="small">5V_iso</text>
+  <line x1="140" y1="810" x2="140" y2="818" class="wire"/>
+  <rect x="133" y="818" width="14" height="32" class="box"/>
+  <text x="155" y="838" class="small">33 Ω</text>
+  <line x1="140" y1="850" x2="140" y2="858" class="wire"/>
+  <polygon points="132,858 148,858 140,872" fill="#222"/>
+  <line x1="132" y1="874" x2="148" y2="874" class="wire"/>
+  <line x1="152" y1="860" x2="166" y2="850" stroke="#888" stroke-width="1.5"/>
+  <polygon points="163,848 170,847 166,854" fill="#888"/>
+  <line x1="156" y1="868" x2="170" y2="858" stroke="#888" stroke-width="1.5"/>
+  <polygon points="167,856 174,855 170,862" fill="#888"/>
+  <text x="180" y="864" class="small">IR LED 850/940 nm</text>
+  <text x="180" y="879" class="tiny">on a 20–30 cm pigtail, poking out of the AC front panel, aimed at the fan</text>
+  <line x1="140" y1="874" x2="140" y2="888" class="wire"/>
+  <line x1="140" y1="888" x2="150" y2="900" class="wire"/>
+  <line x1="150" y1="896" x2="150" y2="924" stroke="#222" stroke-width="3"/>
+  <line x1="150" y1="920" x2="140" y2="932" class="wire"/>
+  <polygon points="141,924 138,934 148,930" fill="#222"/>
+  <line x1="140" y1="932" x2="140" y2="944" class="wire"/>
+  <g class="wire">
+    <line x1="128" y1="946" x2="152" y2="946"/><line x1="132" y1="952" x2="148" y2="952"/><line x1="136" y1="958" x2="144" y2="958"/>
+  </g>
+  <text x="162" y="940" class="small">S8050 (NPN)</text>
+  <line x1="150" y1="910" x2="240" y2="910" class="wire"/>
+  <rect x="240" y="903" width="60" height="14" class="box"/>
+  <text x="270" y="898" text-anchor="middle" class="small">1 kΩ</text>
+  <line x1="300" y1="910" x2="360" y2="910" class="wire"/>
+  <circle cx="365" cy="910" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="375" y="914" class="small">GPIO26 (ESP32) — IR TX</text>
+
+  <!-- RX: VS1838B -->
+  <rect x="620" y="810" width="110" height="80" class="box"/>
+  <text x="675" y="842" text-anchor="middle" class="lbl bold">VS1838B</text>
+  <text x="675" y="860" text-anchor="middle" class="small">IR receiver</text>
+  <g class="tiny">
+    <text x="726" y="829" text-anchor="end">OUT</text>
+    <text x="726" y="861" text-anchor="end">VCC</text>
+    <text x="726" y="884" text-anchor="end">GND</text>
+  </g>
+  <line x1="730" y1="825" x2="790" y2="825" class="wire"/>
+  <circle cx="795" cy="825" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="805" y="829" class="small">GPIO27 (ESP32) — IR RX</text>
+  <line x1="730" y1="857" x2="768" y2="857" class="wire"/>
+  <circle cx="773" cy="857" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="783" y="861" class="small">3V3</text>
+  <polyline points="730,880 760,880 760,896" class="wire"/>
+  <g class="wire">
+    <line x1="748" y1="898" x2="772" y2="898"/><line x1="752" y1="904" x2="768" y2="904"/><line x1="756" y1="910" x2="764" y2="910"/>
+  </g>
+  <text x="620" y="932" class="tiny">Leave the receiver installed — presses on the physical Zeno remote become Home Assistant events.</text>
+  <text x="620" y="946" class="tiny">Open circles are net labels: connect to the matching ESP32 pin / rail in the main circuit above.</text>
+</svg>
+</div></p>
+<p>(Also saved standalone as <code>daikin-s403-circuit.svg</code> — vector, zoom freely. Ground symbols: red = GND_hot / live, black = GND_iso / safe. Wire crossings without a dot are not connected.)</p>
+<p>The <strong>ADuM1201</strong> replaces the v1 optocoupler pair: non-inverting (no <code>inverted:</code> flags in software), fast, no LED aging over years of 24/7 duty, and it level-shifts for free — VDD1 runs at 5V (hot side), VDD2 at 3.3V from the ESP32, so each side speaks its native logic level. Put a 100nF ceramic directly at each VDD pin. (We're using the actual <strong>ADuM1201ARZ-RL7</strong>, genuine Analog Devices. If it goes out of stock, ADuM121N1BRZ or ADuM1281ARZ are pin-identical substitutes.)</p>
+<p>Four protection parts guard the AC PCB and the module: <strong>F1 (200mA polyfuse)</strong> — a short anywhere in the module can't drag down the AC's internal supply; <strong>D1 (1N5819 Schottky)</strong> — reverse-polarity protection if the harness is ever miswired; <strong>TVS (SMBJ18A)</strong> — clamps voltage spikes on the 14V feed, which comes from a supply sharing a box with a switching compressor drive; and <strong>1kΩ in series with each data line</strong> — limits fault current into the AC's TX/RX pins.</p>
+<p>Serviceability: a power LED on 5V_iso (shown; duplicate it on 5V_hot to see at a glance that the hot side is up), the ESP32's onboard GPIO2 LED as ESPHome <code>status_led</code>, wire-loop test points for 14V, 5V_hot, 5V_iso and both grounds (free — just solder small wire loops), and a 4-pin I2C header (3V3 / GND / GPIO21 / GPIO22) so a room-temperature sensor can plug in later without touching the build.</p>
+<h2>4. Shopping list — single robu.in order (stock-checked)</h2>
+<p>Every item verified on robu.in (prices incl. GST, checked July 10, 2026). One cart, one shipping charge.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Part</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Link / search</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MINI KIT ESP32 Wi-Fi + BT module, Type-C (WROOM-32, GPIO16/17 available)</td>
+<td>1</td>
+<td>₹534</td>
+<td>search <strong>"MINI KIT ESP32 2104"</strong> — in stock</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Mini560 5V fixed buck</td>
+<td>1</td>
+<td>₹81</td>
+<td><a href="https://robu.in/product/mini560-dc-5v-5a-step-down-stabilized-module/">product page</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Hi-Link HLK-B0505S-2WR3 isolated DC-DC (2W, 400mA, 1500VDC)</td>
+<td>1</td>
+<td>₹142</td>
+<td><a href="https://robu.in/product/5v-to-5v-2w-400ma-dc-to-dc-isolation-voltage-1500vdc-power-module-converter-b0505s-2wr3/">product page</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Genuine ADI</strong> ADuM1201ARZ-RL7 digital isolator (in stock)</td>
+<td>1</td>
+<td>₹214</td>
+<td><a href="https://robu.in/product/adum1201arz-rl7-analog-devices-digital-isolator-2-channels-2-7-v-5-5-v-nsoic-8-pins-1-mbps/">product page</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>SOIC8→DIP8 adapter PCB, <strong>pack of 5</strong></td>
+<td>1</td>
+<td>₹29</td>
+<td>search <strong>"sop8 to dip8 adapter"</strong> (SKU 1121328)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SMBJ18A TVS (Vishay)</td>
+<td>1</td>
+<td>₹18</td>
+<td><a href="https://robu.in/product/smbj18a-e3-52-vishay-smbj18a-e3-52-tvs-diode-transzorb-smbj-series-unidirectional-18-v-29-2-v-do-214aa-smb-2-pins/">product page</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>1N5819 Schottky, DO-41 through-hole (MCC)</td>
+<td>2</td>
+<td>₹12</td>
+<td>search <strong>"1N5819"</strong> (SKU R241509, ₹6 ea)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>RXEF020 200mA polyfuse (Littelfuse, through-hole)</td>
+<td>1</td>
+<td>₹18</td>
+<td><a href="https://robu.in/product/rxef020-littelfuse-72v-40a-200ma-400ma-plugin-resettable-rohs/">product page</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Rubycon ZLH</strong> 470µF/16V <strong>105°C</strong> electrolytic</td>
+<td>2</td>
+<td>₹24</td>
+<td>search <strong>"16ZLH470"</strong> (SKU R185943, ₹12 ea) — genuine Japanese 105°C</td>
+</tr>
+<tr>
+<td>10</td>
+<td>100nF MLCC 1206 (easy to hand-solder)</td>
+<td>4</td>
+<td>₹20</td>
+<td>search <strong>"100nF 1206"</strong> (SKU 596586)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>1kΩ 1/4W metal film resistor</td>
+<td>6</td>
+<td>₹6</td>
+<td>search <strong>"1k Ohm 0.25W metal film"</strong> (SKU 582209)</td>
+</tr>
+<tr>
+<td>12</td>
+<td>3mm DIP LED (1 red + 1 green)</td>
+<td>2</td>
+<td>₹8</td>
+<td>search <strong>"3mm red DIP LED"</strong> / green (₹1.5–4 ea)</td>
+</tr>
+<tr>
+<td>13</td>
+<td>2.54mm 1×40 male header strip</td>
+<td>1</td>
+<td>₹9</td>
+<td>search <strong>"2.54mm 1x40 male short header"</strong> (SKU 1114172)</td>
+</tr>
+<tr>
+<td>14</td>
+<td>A2508H-10P-CJT 10-pin 2.50mm female housing <strong>with pre-crimped 300mm cable (28 AWG)</strong> — XH-compatible, exact 10 positions, no trimming needed</td>
+<td>1</td>
+<td>₹33</td>
+<td><a href="https://robu.in/product/a2508h-10p-cjt-10-pin-2-50mm-female-housing-with-300mm-wire-28-awg-rohs/">product page</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Prototype PCB, FR-4 (MEGA2560 shield size, has mounting holes)</td>
+<td>1</td>
+<td>₹79</td>
+<td>search <strong>"Prototype PCB MEGA2560 FR-4"</strong> (SKU R264342)</td>
+</tr>
+<tr>
+<td>16</td>
+<td>IP65 ABS junction box with mounting holes</td>
+<td>1</td>
+<td>₹245</td>
+<td>search <strong>"IP65 ABS junction box"</strong> (SKU R260511)</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Cart total</strong></td>
+<td></td>
+<td><strong>~₹1,475</strong></td>
+<td>one shipping charge</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Stock notes (as checked):</strong></p>
+<ul>
+<li>The classic ₹373 "ESP32-WROOM-32 38-pin Development Board" is <strong>out of stock</strong> right now, as are most cheap DevKits — the ₹534 MINI KIT is the cheapest in-stock WROOM-32 board with GPIO16/17. If you're not in a hurry, watch for the ₹373 board to restock and save ₹160.</li>
+<li>Trim option: skip the ₹245 IP65 box and use any sturdy plastic box you have (₹0) — it lives inside the AC housing anyway. With that plus a restocked ₹373 ESP32, the cart drops to <strong>~₹1,000</strong>.</li>
+<li>The common 5×7cm perfboards are also out of stock — the ₹79 FR-4 shield board is in stock, bigger, has mounting holes, and FR-4 cuts cleanly for the isolation slot. Genuinely better for this build.</li>
+<li>Item 9 is a nice find: genuine Rubycon ZLH (105°C, low-impedance) at ₹12 — exactly the "quality cap" upgrade, for pocket change.</li>
+<li>Item 14 (A2508H-10P-CJT) is a CJT clone of JST XH at the same 2.50mm pitch — exact 10-position fit, no trimming. Pull out the pre-crimped wires you don't need (lift the small plastic tab, slide the terminal out — keep positions 1, 4, 5, 6 only; keep the removed wires as spares), and shave the housing sides lightly if it sits proud in S403. <strong>Position 10 stays empty as always (~320V cavity).</strong> The 28 AWG wires are fine for this load (~0.2A max) but delicate — strain-relieve the bundle with a zip tie.</li>
+</ul>
+<p><strong>Power notes:</strong></p>
+<ul>
+<li>The <strong>Hi-Link 2W</strong> module's 400mA gives comfortable headroom over ESP32 Wi-Fi bursts, and 2W parts tolerate more output capacitance — the 1W startup-hiccup risk is gone. Still cap the bulk capacitance at ~470µF.</li>
+<li><strong>105°C-rated capacitors</strong> matter here: inside a warm AC head unit, electrolytic lifespan roughly halves per 10°C. The upcharge over generic 85°C parts is ₹10–30 per cap — the cheapest longevity upgrade in the build.</li>
+<li>The <strong>Mini560 is fixed-output</strong> — no trim pot to drift with temperature or get knocked out of adjustment (the reason we dropped the MP1584).</li>
+<li>Use a <strong>WROOM</strong>-based DevKit, not WROVER — on WROVER, GPIO16/17 are taken by PSRAM.</li>
+</ul>
+<h2>5. ESPHome config</h2>
+<pre><code class="language-yaml">esphome:
+  name: daikin-bedroom
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: &quot;YourSSID&quot;
+  password: &quot;YourPass&quot;
+  ap:                       # fallback hotspot
+    ssid: &quot;Daikin Fallback&quot;
+
+api:                        # Home Assistant connection
+ota:
+  platform: esphome
+logger:
+  baud_rate: 0              # free up UART0; we use UART2 anyway
+
+external_components:
+  - source: github://joshbenner/esphome-daikin-s21@main
+    components: [ daikin_s21 ]
+
+status_led:                 # onboard blue LED = connection status
+  pin: GPIO2
+
+web_server:                 # local diagnostics page on http://&lt;ip&gt;/
+  port: 80
+
+# ADuM1201 is non-inverting, so plain pins — no inverted: flags.
+uart:
+  - id: s21_uart
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    baud_rate: 2400
+    data_bits: 8
+    parity: EVEN
+    stop_bits: 2
+
+daikin_s21:
+  tx_uart: s21_uart
+  rx_uart: s21_uart
+
+climate:
+  - name: &quot;Bedroom AC&quot;
+    platform: daikin_s21
+    visual:
+      temperature_step: 0.5
+
+sensor:
+  - platform: daikin_s21
+    inside_temperature:
+      name: &quot;AC Inside Temp&quot;
+    outside_temperature:
+      name: &quot;AC Outside Temp&quot;
+    coil_temperature:
+      name: &quot;AC Coil Temp&quot;
+</code></pre>
+<p>This config is verified against the <a href="https://github.com/joshbenner/esphome-daikin-s21">component README</a> (the <code>daikin_s21:</code> hub takes <code>tx_uart</code>/<code>rx_uart</code>). The README also recommends <a href="https://github.com/asund/esphome-daikin-s21">asund's fork</a> as better maintained — same config shape; try it if the original misbehaves. With the ADuM1201 there's no inversion ambiguity — if the AC doesn't respond, check that TX/RX aren't swapped (AC pin 4 → VIA, VOB → AC pin 5).</p>
+<h2>6. Build &amp; test sequence</h2>
+<ol>
+<li><strong>Verify the buck alone first.</strong> The Mini560 is fixed at 5V, but verify anyway: feed it 12–14V from a DC adapter with nothing on its output and confirm <strong>5.0V</strong> out before wiring anything downstream.</li>
+<li><strong>Bench-build.</strong> Assemble the perfboard. Before plugging in the ESP32: power the hot side from your 12V adapter and verify 5.0V on <code>5V_hot</code> and ~5V on <code>5V_iso</code>. Then confirm <strong>no continuity between GND_hot and GND_iso</strong> (meter in continuity mode, module unpowered).</li>
+<li>Plug in the ESP32, flash ESPHome over USB (module NOT connected to the AC), confirm it joins Wi-Fi and appears in Home Assistant (climate entity shows up, just no data yet).</li>
+<li><strong>Run the harness voltage checks from section 2</strong> (breaker off → harness in → breaker on → measure → breaker off, 10+ min wait). Only proceed if all three readings match.</li>
+<li>Connect the module to the harness: pins 1, 4, 5, 6 only. Position 10 in the housing stays empty. Triple-check you're counting from the +14V / ▲ end.</li>
+<li>Insulate the hot side: heat-shrink over the buck/opto perfboard section, module in the ABS box, box tucked inside the indoor unit housing (there's usually space near the control-box area). No exposed conductors.</li>
+<li>Power on. ESP32 boots from AC power, ESPHome logs (view wirelessly via <code>esphome logs</code>) should show S21 queries getting responses within seconds.</li>
+<li>Test from Home Assistant: mode, setpoint, fan speed. Verify the IR remote still works alongside.</li>
+</ol>
+<h2>7. Safety rules (non-negotiable)</h2>
+<ul>
+<li>The AC side of this circuit is at <strong>mains potential even when the compressor is "off"</strong>. Only the breaker makes it safe, and only after the caps discharge.</li>
+<li>Never plug USB into the ESP32 while the module is connected to the AC — even with isolation, don't tempt fate during debugging; use OTA/wireless logs instead.</li>
+<li>Never work on the connector with power on.</li>
+<li>If anything smells hot or the AC throws an error code after connection, breaker off, disconnect, re-check wiring.</li>
+</ul>
+<h2>8. Compatibility caveat</h2>
+<p>Your exact model (MTKL50UV16VA) isn't on Faikin's confirmed-units list, but a structurally identical setup (S403 direct connection) worked on other units, and your wiring diagram proves S403 is the designated Wi-Fi port. The ESPHome component is read-safe: if the protocol dialect differs, you'll simply see no/garbled responses in logs — nothing harmful. Faikin firmware also has protocol auto-detection if ESPHome's component doesn't match; hardware stays the same.</p>
+<h2>9. Optional add-on: IR blaster for the Orient Zeno fan</h2>
+<p>Your Zeno's remote is <strong>infrared (850nm)</strong> — confirmed from the remote's board: a single IR LED transmitter, no RF hardware. Its faint red glow (eye) / red flash (phone camera) is characteristic of 850nm emitters. Before soldering, run the definitive test once: 2–3 layers of black electrical tape over the LED dome should make the fan go deaf (tape blocks IR, passes radio).</p>
+<p><strong>Extra parts (verified on robu.in, add to the same cart, ~₹100):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Link / search</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS1838B IR receiver, <strong>pack of 5</strong></td>
+<td>1</td>
+<td>₹41 ✓</td>
+<td><a href="https://robu.in/product/ir-receiving-head-vs1838b-remote-control-receiver/">product page</a></td>
+</tr>
+<tr>
+<td>38kHz IR transmitter module (IR LED on a small board)</td>
+<td>1</td>
+<td>₹50 ✓</td>
+<td><a href="https://robu.in/product/38khz-infrared-transmit-sensor-module/">product page</a> — plug-and-play option</td>
+</tr>
+<tr>
+<td>2N2222 NPN transistor (TO-92)</td>
+<td>2</td>
+<td>₹4</td>
+<td><a href="https://robu.in/product/2n2222-npn-transistor-pack-of-20/">product page</a> (₹2 ea) — only for the max-range upgrade</td>
+</tr>
+<tr>
+<td>100pc 1/4W metal film resistor assortment kit</td>
+<td>1</td>
+<td>~₹100</td>
+<td><a href="https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/">product page</a> — covers the 22–47Ω LED resistor + all future values (optional)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two ways to build the transmitter:</strong></p>
+<ol>
+<li><strong>Easy first pass (buy just the two items above the line):</strong> wire the ₹50 module's signal pin straight to GPIO26, VCC to 3V3, GND to GND_iso. No transistor, no extra resistor. Drive is ~20mA — your remote manages the room on far less, so this likely just works.</li>
+<li><strong>Max-range upgrade (only if the module can't reach the fan):</strong> desolder the IR LED from the module and re-drive it through the 2N2222 per the schematic — base via 1kΩ from GPIO26, LED fed from 5V_iso through any 22–47Ω resistor (exact value non-critical; sets 70–150mA pulses). No need to hunt the TSAL6200.</li>
+</ol>
+<p><strong>Circuit — all on the cold (safe) side, no isolation changes:</strong></p>
+<ul>
+<li>IR TX: ESP32 <strong>GPIO26</strong> → 1kΩ → S8050 base; emitter → GND_iso; collector → IR LED cathode; LED anode → 33Ω → <strong>5V_iso</strong>. (~100mA pulsed — 20× your remote's drive, so wall reflections cover the room.)</li>
+<li>IR RX: VS1838B — Vcc → <strong>3V3</strong>, GND → GND_iso, OUT → <strong>GPIO27</strong>.</li>
+<li>Mount the IR LED on a 20–30cm thin twin-wire pigtail poking out at the bottom edge of the AC's front panel, angled toward the fan. The receiver can stay on the board with a small window, or on its own short pigtail next to the LED.</li>
+</ul>
+<p><strong>ESPHome config additions:</strong></p>
+<pre><code class="language-yaml">remote_receiver:
+  id: ir_rx
+  pin:
+    number: GPIO27
+    inverted: true      # VS1838B output is active-low
+  dump: all             # logs every code your remote sends
+
+remote_transmitter:
+  id: ir_tx
+  pin: GPIO26
+  carrier_duty_percent: 50%
+</code></pre>
+<p><strong>Workflow:</strong> flash, open the ESPHome logs, press each button on the Zeno remote and note what <code>dump: all</code> prints (protocol + address/command, often NEC — or raw timings). Then add one template button per function, e.g.:</p>
+<pre><code class="language-yaml">button:
+  - platform: template
+    name: &quot;Zeno Speed 3&quot;
+    on_press:
+      - remote_transmitter.transmit_nec:   # match whatever protocol the dump showed
+          address: 0xEF00
+          command: 0x18F7
+</code></pre>
+<p>If the dump shows <code>raw</code> instead of a named protocol, copy the timing list into <code>remote_transmitter.transmit_raw</code> with <code>carrier_frequency: 38kHz</code>. One-way control as always with IR: HA tracks fan state optimistically, and since the receiver stays installed, presses on the physical remote can update HA's state too.</p>
+<p>Bonus: the same blaster can learn and send codes for any other IR device in that room (TV, soundbar, older ACs).</p>
+<h2>Sources</h2>
+<ul>
+<li><a href="https://github.com/revk/xESP32-Faikout/wiki/Wiring">Faikin wiki — Wiring (S21/X403 pinouts, connector types, warnings)</a></li>
+<li><a href="https://github.com/revk/ESP32-Faikin/issues/208">Faikin issue #208 — working direct S403 connection + pinout</a></li>
+<li><a href="https://github.com/joshbenner/esphome-daikin-s21">esphome-daikin-s21 component</a></li>
+<li><a href="https://github.com/revk/ESP32-Faikout/blob/main/Manuals/S21.md">Faikin S21 protocol manual</a></li>
+<li><a href="https://community.home-assistant.io/t/daikin-esp32-esphome-local-control/699209">HA community — Daikin + ESP32 + ESPHome local control</a></li>
+</ul>
+</body></html>

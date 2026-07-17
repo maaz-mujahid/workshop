@@ -1,0 +1,42 @@
+{
+  "schema": "bom/v2",
+  "project": "presence-lighting",
+  "items": [
+    {
+      "partId": "P0032",
+      "qty": 1
+    },
+    {
+      "partId": "P0033",
+      "qty": 1
+    },
+    {
+      "partId": "P0034",
+      "qty": 1
+    },
+    {
+      "partId": "P0035",
+      "qty": 1
+    },
+    {
+      "partId": "P0036",
+      "qty": 1
+    },
+    {
+      "partId": "P0022",
+      "qty": 1
+    },
+    {
+      "partId": "P0037",
+      "qty": 1
+    },
+    {
+      "partId": "P0038",
+      "qty": 1
+    },
+    {
+      "partId": "P0039",
+      "qty": 1
+    }
+  ]
+}

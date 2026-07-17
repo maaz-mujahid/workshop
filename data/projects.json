@@ -1,0 +1,9 @@
+{
+  "schema": "projects-manifest/v2",
+  "updated": "2026-07-17",
+  "projects": [
+    "daikin-ac-wifi",
+    "motion-night-light",
+    "presence-lighting"
+  ]
+}

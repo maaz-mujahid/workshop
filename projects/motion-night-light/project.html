@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Night Light — Build Guide</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#181b22; --panel2:#1f232d; --text:#e8eaf0; --dim:#9aa3b2;
+    --amber:#ffb454; --green:#7ad48a; --red:#ff6b6b; --blue:#6cb2ff; --line:#2a2f3a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:1.7rem;margin:0 0 4px}
+  h2{font-size:1.15rem;margin:40px 0 12px;color:var(--amber);border-bottom:1px solid var(--line);padding-bottom:6px}
+  h3{font-size:1rem;margin:20px 0 8px;color:var(--blue)}
+  p{margin:8px 0}
+  .sub{color:var(--dim);margin-bottom:20px}
+  .badges span{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:3px 12px;font-size:.78rem;color:var(--dim);margin:2px 4px 2px 0}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+  th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+  td.num{text-align:right;white-space:nowrap}
+  .note{background:var(--panel);border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.9rem}
+  .warn{border-left-color:var(--red)}
+  .ok{border-left-color:var(--green)}
+  code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:.85em}
+  .schematic{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
+  ol li, ul li{margin:6px 0}
+  a{color:var(--blue);text-decoration:none}
+  .total{font-weight:700;color:var(--amber)}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0}
+  .step b{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Motion Night Light</h1>
+<p class="sub">Standalone PIR night light for stairs &amp; kitchen — no Wi-Fi, no HA, no wiring. 5–6 units.</p>
+<div class="badges">
+  <span>Salvaged 18650 + USB-C recharge</span><span>AM312 mini PIR</span><span>Night-only (LDR gate)</span>
+  <span>~₹145 / unit</span><span>3–5 months per charge</span><span>Zero mains — fully safe</span>
+</div>
+
+<h2>1 · How it works</h2>
+<p>An <b>AM312 mini PIR</b> watches for body heat. Its output drives a <b>2N7000 MOSFET</b> that switches 3 warm-white LEDs. A <b>BC547 + LDR</b> "daylight clamp" sits on the MOSFET gate: in daylight the transistor saturates and pins the gate to ground, so the LEDs can never fire. At night the clamp releases and the PIR has full control.</p>
+<p>The AM312 holds its output ~2.3&nbsp;s and retriggers continuously while you're in view — so the light comes on as you approach, stays on while you pass, and dies ~2–3&nbsp;s after you're gone. Exactly the behaviour you asked for, with no code.</p>
+<p>Standby draw is ~50–110&nbsp;µA. A 2000&nbsp;mAh 18650 gives roughly <b>4–6 months</b> per USB-C charge at typical stair/kitchen traffic (~10 min of light per night).</p>
+
+<h2>2 · Parts — live robu.in cart (stock &amp; prices checked 17 Jul 2026)</h2>
+<p>Single source: robu.in — this order merges with the parked <code>daikin-ac-wifi</code> cart to clear free shipping (≥₹1,000). Salvaged 18650 (vetting in §3), scrap enclosure, and wire/heat-shrink from the drawer are the ₹0 lines not in the cart. Every line below was verified in-stock on the day of writing (except as noted). Three substitutions forced by robu's stock: the <b>generic AM312</b> (₹59) instead of SmartElex (₹189 — same sensor, branded PCB); the <b>mini-USB TP4056</b> (Type-C protected version is out of stock — electrically identical, different cable); and <b>AO3400 MOSFETs</b> (robu stocks no TO-92 2N7000 at all — the AO3400 is actually the better part: fully on at 2.5 V, no dim-LED lottery; it's SOT-23 SMD, solder it legs-splayed across two perf pads).</p>
+<table>
+<tr><th>Part</th><th>robu listing</th><th>Qty</th><th class="num">≈ Line</th></tr>
+<tr><td>AM312 mini PIR (generic)</td><td><a href="https://robu.in/product/mini-ir-infrared-pyroelectric-pir-body-motion-human-sensor-detector-module-am312-sensor/">Mini IR Pyroelectric PIR AM312 — ₹59</a></td><td>6</td><td class="num">₹354</td></tr>
+<tr><td>TP4056 1A w/ protection, mini-USB</td><td><a href="https://robu.in/product/tp4056-1a-li-ion-lithium-battery-charging-module-with-current-protection-mini-usb/">TP4056 w/ Current Protection — ₹36</a> <br><span style="color:var(--dim)">(join waitlist on the <a href="https://robu.in/product/tp4056-1a-li-ion-lithium-battery-charging-module-with-current-protection-type-c/">₹13 Type-C version</a> — swap if restocked)</span></td><td>6</td><td class="num">₹216</td></tr>
+<tr><td>AO3400 N-MOSFET SOT-23</td><td><a href="https://robu.in/product/ao3400-ed-hxy-mosfet-20v-3a-900mw-55m%cf%894-5v2-8a-1-2v-1-n-channel-sot-23-mosfets-rohs/">AO3400-ED HXY — ₹2.3</a></td><td>10</td><td class="num">₹23</td></tr>
+<tr><td>BC547 NPN</td><td><a href="https://robu.in/product/bc547-npn-transistor-pack-of-20/">BC547 pack of 20 — ~₹46</a></td><td>1 pack</td><td class="num">₹46</td></tr>
+<tr><td>LDR 5 mm GL5516</td><td><a href="https://robu.in/product/5mm-ldr-sensor-photoresistor-photo-cell-5-10k-gl5516/">GL5516 5–10 kΩ — ₹16</a></td><td>8</td><td class="num">₹128</td></tr>
+<tr><td>LEDs — see note</td><td><a href="https://robu.in/product/3v-5mm-white-led-indicator-light-with-20cmcable-pack-of-5/">3 V 5 mm white pre-wired indicator, pack of 5 — ₹44</a></td><td>4 packs</td><td class="num">₹176</td></tr>
+<tr><td>100 kΩ trimmer RM065</td><td><a href="https://robu.in/product/rm065-100k-ohm-trimpot-trimmer-potentiometer-pack-of-10/">RM065 100k pack of 10 — ~₹43</a></td><td>1 pack</td><td class="num">₹43</td></tr>
+<tr><td>Slide switch</td><td><a href="https://robu.in/product/2-way-slide-switch-2-54mm-pitch-pack-of-5/">2-way slide switch pack of 5 — ₹12</a></td><td>2 packs</td><td class="num">₹24</td></tr>
+<tr><td>Perfboard 2×8 cm</td><td><a href="https://robu.in/product/2-x-8-cm-universal-pcb-prototype-board-double-sided/">Universal PCB double-sided — ₹23</a></td><td>6</td><td class="num">₹138</td></tr>
+<tr><td>JST XH 2-pin w/ cable (modular battery pack)</td><td><a href="https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs/">2-pin JST XH plug+socket, 10 pcs — ₹8</a></td><td>1</td><td class="num">₹8</td></tr>
+<tr><td>Resistors ¼ W: 68 Ω ×20, 1 kΩ, 47 kΩ, 100 kΩ ×10 each</td><td>search each value, e.g. <code>68 ohm 1/4 watt</code> (packs of 10, ~₹4–10)</td><td>—</td><td class="num">₹40</td></tr>
+<tr><td class="total">robu cart total</td><td></td><td></td><td class="num total">≈ ₹1,196 (~₹199/unit)</td></tr>
+</table>
+<div class="note"><b>LED note — robu's one weak spot:</b> plain warm-white 5 mm LEDs are out of stock there (Jul 2026). The linked pre-wired 3 V white indicators work (they come with leads + mounting bezel; add the 68 Ω series resistor anyway since our rail peaks at 4.2 V) but they're cool white and ₹8.8/LED. If you can grab warm-white 5 mm LEDs from any local electronics shop at ₹1–2, do that instead — drops the cart to <b>≈ ₹1,060 (~₹177/unit)</b> and warm light is kinder to night vision.</div>
+<div class="note ok"><b>Prices that looked odd during scraping</b> (robu shows per-piece vs per-pack inconsistently): BC547 pack, RM065 pack, JST set. Line totals above assume pack pricing — verify in cart; if those are per-piece prices the cart lands ~₹80 lower, not higher.</div>
+
+<h2>3 · Salvaging the 18650s</h2>
+<p>Best sources, in order: dead <b>laptop battery pack</b> (6–9 cells; usually only 1–2 are actually bad — the BMS killed the pack, not the cells), old <b>power bank</b>, BT speaker, trimmer. Crack the pack open with a spudger, snip the nickel strips, and keep the strip stubs on the cells — solder to the stub, never long-heat the cell body.</p>
+<div class="step"><b>Vet every cell before use:</b>
+<ol style="margin:6px 0">
+  <li><b>Look:</b> reject anything rusty, dented, punctured, or that leaked.</li>
+  <li><b>Voltage:</b> measure open-circuit. ≥2.8 V → good candidate. 2.0–2.8 V → charge carefully, watch it. <b>&lt;2.0 V → bin it</b> (copper shunts form; unsafe to revive).</li>
+  <li><b>Self-discharge:</b> charge to 4.2 V via TP4056, rest 3 days, re-measure. Dropped &gt;0.1 V → reject.</li>
+  <li><b>Warmth:</b> if any cell gets more than mildly warm while charging → reject.</li>
+</ol>
+You need 5–6 keepers — start with ~10 candidates. Capacity will be 1000–1800 mAh instead of 2000; at ~9.5 mAh/day that's still 3–5 months per charge.</div>
+<div class="note warn"><b>Never run a salvaged cell without the TP4056's protection side.</b> The DW01 over-discharge cutoff (2.4 V) is the only thing standing between a tired cell and a swollen one. Always power the circuit from <code>OUT+/OUT−</code>.</div>
+
+<h2>4 · Circuit</h2>
+<div class="schematic">
+<svg viewBox="0 0 840 480" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="13">
+  <defs>
+    <marker id="dot" markerWidth="6" markerHeight="6" refX="3" refY="3"><circle cx="3" cy="3" r="2.5" fill="#e8eaf0"/></marker>
+  </defs>
+  <!-- rails -->
+  <line x1="40" y1="60" x2="800" y2="60" stroke="#ffb454" stroke-width="2"/>
+  <text x="44" y="50" fill="#ffb454">VBAT (3.0–4.2 V)</text>
+  <line x1="40" y1="440" x2="800" y2="440" stroke="#9aa3b2" stroke-width="2"/>
+  <text x="44" y="432" fill="#9aa3b2">GND</text>
+
+  <!-- battery + tp4056 -->
+  <rect x="55" y="150" width="130" height="90" rx="8" fill="#1f232d" stroke="#6cb2ff"/>
+  <text x="70" y="175" fill="#6cb2ff">TP4056</text>
+  <text x="70" y="193" fill="#e8eaf0">USB-C in</text>
+  <text x="70" y="211" fill="#9aa3b2">B+/B− → 18650</text>
+  <text x="70" y="229" fill="#9aa3b2">OUT+/OUT−</text>
+  <line x1="120" y1="150" x2="120" y2="100" stroke="#e8eaf0" stroke-width="2"/>
+  <!-- switch -->
+  <line x1="120" y1="100" x2="150" y2="78" stroke="#e8eaf0" stroke-width="2"/>
+  <circle cx="120" cy="100" r="3" fill="#e8eaf0"/>
+  <circle cx="120" cy="72" r="3" fill="#e8eaf0"/>
+  <line x1="120" y1="72" x2="120" y2="60" stroke="#e8eaf0" stroke-width="2"/>
+  <text x="140" y="105" fill="#9aa3b2">slide switch</text>
+  <line x1="120" y1="240" x2="120" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+
+  <!-- PIR -->
+  <rect x="260" y="120" width="120" height="80" rx="8" fill="#1f232d" stroke="#7ad48a"/>
+  <text x="278" y="148" fill="#7ad48a">AM312</text>
+  <text x="278" y="168" fill="#9aa3b2">mini PIR</text>
+  <line x1="320" y1="120" x2="320" y2="60" stroke="#e8eaf0" stroke-width="2"/>
+  <text x="326" y="90" fill="#9aa3b2">VCC</text>
+  <line x1="320" y1="200" x2="320" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+  <!-- PIR out -->
+  <line x1="380" y1="160" x2="450" y2="160" stroke="#e8eaf0" stroke-width="2"/>
+  <text x="388" y="152" fill="#9aa3b2">OUT</text>
+  <rect x="450" y="150" width="52" height="20" fill="none" stroke="#e8eaf0"/>
+  <text x="456" y="165" fill="#e8eaf0">1 kΩ</text>
+  <line x1="502" y1="160" x2="560" y2="160" stroke="#e8eaf0" stroke-width="2" marker-end="url(#dot)"/>
+
+  <!-- gate node -->
+  <text x="540" y="140" fill="#ffb454">gate node</text>
+  <!-- pulldown -->
+  <line x1="560" y1="160" x2="560" y2="300" stroke="#e8eaf0" stroke-width="2"/>
+  <rect x="550" y="300" width="20" height="52" fill="none" stroke="#e8eaf0"/>
+  <text x="576" y="330" fill="#e8eaf0">100 kΩ</text>
+  <line x1="560" y1="352" x2="560" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+
+  <!-- mosfet -->
+  <line x1="560" y1="160" x2="640" y2="160" stroke="#e8eaf0" stroke-width="2"/>
+  <circle cx="655" cy="160" r="22" fill="none" stroke="#6cb2ff" stroke-width="2"/>
+  <line x1="640" y1="160" x2="648" y2="160" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="648" y1="148" x2="648" y2="172" stroke="#6cb2ff" stroke-width="2"/>
+  <line x1="655" y1="148" x2="655" y2="172" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="655" y1="148" x2="672" y2="138" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="655" y1="172" x2="672" y2="182" stroke="#e8eaf0" stroke-width="2"/>
+  <text x="686" y="130" fill="#6cb2ff">2N7000</text>
+  <text x="686" y="146" fill="#9aa3b2">G–D–S</text>
+  <!-- drain up to LEDs -->
+  <line x1="672" y1="138" x2="672" y2="122" stroke="#e8eaf0" stroke-width="2"/>
+  <!-- LEDs: 3 parallel branches -->
+  <line x1="620" y1="122" x2="724" y2="122" stroke="#e8eaf0" stroke-width="2"/>
+  <g stroke="#e8eaf0" stroke-width="2">
+    <line x1="620" y1="122" x2="620" y2="60"/><line x1="672" y1="122" x2="672" y2="122"/><line x1="724" y1="122" x2="724" y2="60"/>
+  </g>
+  <!-- draw each branch: resistor + LED symbol (triangle) -->
+  <g>
+    <rect x="612" y="70" width="16" height="20" fill="none" stroke="#e8eaf0"/>
+    <polygon points="612,100 628,100 620,112" fill="none" stroke="#ffb454" stroke-width="2"/>
+    <rect x="716" y="70" width="16" height="20" fill="none" stroke="#e8eaf0"/>
+    <polygon points="716,100 732,100 724,112" fill="none" stroke="#ffb454" stroke-width="2"/>
+    <line x1="672" y1="122" x2="672" y2="112" stroke="#e8eaf0" stroke-width="2"/>
+    <rect x="664" y="70" width="16" height="20" fill="none" stroke="#e8eaf0"/>
+    <polygon points="664,100 680,100 672,112" fill="none" stroke="#ffb454" stroke-width="2"/>
+    <line x1="620" y1="60" x2="620" y2="70" stroke="#e8eaf0" stroke-width="2"/>
+    <line x1="672" y1="60" x2="672" y2="70" stroke="#e8eaf0" stroke-width="2"/>
+    <line x1="724" y1="60" x2="724" y2="70" stroke="#e8eaf0" stroke-width="2"/>
+  </g>
+  <text x="740" y="90" fill="#9aa3b2">3 × 47 Ω +</text>
+  <text x="740" y="106" fill="#ffb454">warm LED</text>
+  <!-- source to gnd -->
+  <line x1="672" y1="182" x2="672" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+
+  <!-- daylight clamp -->
+  <circle cx="470" cy="290" r="22" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+  <line x1="448" y1="290" x2="456" y2="290" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="462" y1="278" x2="462" y2="302" stroke="#ff6b6b" stroke-width="2"/>
+  <line x1="462" y1="284" x2="480" y2="272" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="462" y1="296" x2="480" y2="308" stroke="#e8eaf0" stroke-width="2"/>
+  <text x="440" y="345" fill="#ff6b6b">BC547 daylight clamp</text>
+  <!-- collector to gate node -->
+  <line x1="480" y1="272" x2="480" y2="230" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="480" y1="230" x2="560" y2="230" stroke="#e8eaf0" stroke-width="2"/>
+  <line x1="560" y1="230" x2="560" y2="160" stroke="#e8eaf0" stroke-width="0"/>
+  <circle cx="560" cy="230" r="3" fill="#e8eaf0"/>
+  <!-- emitter to gnd -->
+  <line x1="480" y1="308" x2="480" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+  <!-- base network -->
+  <line x1="448" y1="290" x2="400" y2="290" stroke="#e8eaf0" stroke-width="2"/>
+  <circle cx="400" cy="290" r="3" fill="#e8eaf0"/>
+  <!-- LDR + preset from VBAT -->
+  <line x1="400" y1="290" x2="400" y2="248" stroke="#e8eaf0" stroke-width="2"/>
+  <rect x="390" y="196" width="20" height="52" fill="none" stroke="#e8eaf0"/>
+  <text x="352" y="215" fill="#9aa3b2">100 kΩ</text>
+  <text x="352" y="230" fill="#9aa3b2">preset</text>
+  <line x1="400" y1="196" x2="400" y2="150" stroke="#e8eaf0" stroke-width="2"/>
+  <rect x="390" y="98" width="20" height="52" fill="none" stroke="#7ad48a"/>
+  <text x="416" y="128" fill="#7ad48a">LDR</text>
+  <line x1="400" y1="98" x2="400" y2="60" stroke="#e8eaf0" stroke-width="2"/>
+  <!-- base pulldown -->
+  <line x1="400" y1="290" x2="400" y2="330" stroke="#e8eaf0" stroke-width="2"/>
+  <rect x="390" y="330" width="20" height="52" fill="none" stroke="#e8eaf0"/>
+  <text x="352" y="360" fill="#9aa3b2">47 kΩ</text>
+  <line x1="400" y1="382" x2="400" y2="440" stroke="#e8eaf0" stroke-width="2"/>
+</svg>
+<p class="sub" style="margin-top:8px">Bright: LDR pulls BC547 base high → clamp saturates → gate held at GND → LEDs dead regardless of PIR. Dark: LDR goes high-resistance → clamp off → PIR OUT (3.3 V) drives the 2N7000 through the 1 kΩ.</p>
+</div>
+
+<h3>Optional: soft fade-out</h3>
+<p>A <code>47 µF</code> cap from gate node to GND makes the light fade out over ~2 s instead of snapping off (discharges through the 100 kΩ, MOSFET passes through its linear region). Purely cosmetic — try one unit first.</p>
+
+<h2>5 · Assembly</h2>
+<div class="step"><b>1. Charger + cell.</b> Solder the salvaged cell's nickel-strip stubs to TP4056 <code>B+/B−</code> (flux + quick dab; never heat the cell body itself). From <code>OUT+</code> go through the slide switch to the board's VBAT rail; <code>OUT−</code> is GND. Never bypass OUT± — that's your over-discharge protection.</div>
+<div class="step"><b>2. LED bank.</b> Three straw-hat LEDs, each with its own 47 Ω, in parallel: anodes (via resistors) to VBAT, cathodes to 2N7000 drain. Source to GND. ~75 mA at 4.2 V, ~45 mA at 3.7 V nominal — dims gracefully as the cell drains.</div>
+<div class="step"><b>3. PIR.</b> AM312 VCC→VBAT, GND→GND, OUT→1 kΩ→gate. 100 kΩ gate-to-GND pulldown.</div>
+<div class="step"><b>4. Daylight clamp.</b> LDR + 100 kΩ preset in series from VBAT to BC547 base; 47 kΩ base-to-GND; collector to gate node; emitter to GND. Set preset mid-way to start.</div>
+<div class="step"><b>5. Enclosure.</b> PIR dome through the front face. LDR through the <b>top or rear</b>, LEDs aimed <b>down at the floor</b>. USB-C port and switch accessible on the side.</div>
+
+<div class="note warn"><b>Critical — LDR must not see its own LEDs.</b> If the LDR catches the unit's own light it will read "daytime", cut the light, go dark, retrigger — a flicker loop. Point the LDR the opposite way from the LED throw and sleeve it in a short piece of heat-shrink as a snoot. Same rule at install time: keep it out of the direct pool of light on the floor.</div>
+
+<div class="note ok"><b>Why the AM312 and not HC-SR501:</b> the SR501 wants ≥4.5 V (its regulator drops out on a 3.7 V cell) and is 3× the size. The AM312 runs 2.7–12 V, draws &lt;60 µA, and its fixed ~2.3 s retriggering hold is exactly the "on while I pass, off after" behaviour wanted here.</div>
+
+<div class="note"><b>If the LEDs look dim on a fresh build:</b> you got a high-threshold 2N7000 (Vgs(th) spec runs up to 3 V; the PIR gate drive is only 3.3 V). Swap in an <b>AO3400</b> (SOT-23 on a breakout, ~₹5, robu) — fully on at 2.5 V. Order a strip of them with the cart as insurance.</div>
+
+<h2>6 · Mounting</h2>
+<ul>
+  <li><b>Stairs (3–4 units):</b> skirting height, ~30–60 cm off the treads — top landing, mid-flight, bottom. At ankle height the PIR sees legs the moment a foot enters the flight, and the low warm pool lights treads without blinding night-adapted eyes.</li>
+  <li><b>Kitchen (1–2 units):</b> one at the entry aimed across the doorway, optionally one under a counter overhang aimed at the floor in front of the sink/stove run.</li>
+  <li>PIR is most sensitive to motion <i>across</i> its view, not straight at it — mount angled across the walking path.</li>
+  <li>Keep away from direct AC airflow and hot appliances (PIRs false-trigger on moving warm air).</li>
+</ul>
+
+<h2>7 · Test checklist (per unit, before closing the box)</h2>
+<ol>
+  <li>Switch on in a dark room → wave hand at 2–3 m → LEDs on, off ~2–3 s after you stop.</li>
+  <li>Torch on the LDR → LEDs must refuse to fire even with motion. Adjust preset until room-light kills it but dusk doesn't.</li>
+  <li>Cover the LDR with a finger while LEDs are lit → no flicker loop (confirms shielding).</li>
+  <li>Charge test: plug USB-C (switch OFF) → red LED on TP4056, blue/green when full (~4.2 V across cell).</li>
+  <li>Measure standby: multimeter in series on µA range, no motion, dark → expect ≤120 µA.</li>
+</ol>
+
+<h2>8 · Battery math</h2>
+<p>Per day: PIR ~50 µA × 24 h ≈ 1.2 mAh; LDR divider ≈ 0.8 mAh (mostly daytime); LEDs ~45 mA × 10 min ≈ 7.5 mAh. Total ≈ <b>9.5 mAh/day</b>. Salvaged cells hold ~1000–1800 mAh; at 80% usable → <b>~3–5 months</b> per charge (a strong salvage cell in a quiet stair unit will do 5+; a tired one in the kitchen maybe 10 weeks). Recharge = pop USB-C for 2–3 h. Put the best-tested cells in the highest-traffic spots.</p>
+
+<h2>Sources</h2>
+<ul>
+  <li><a href="https://www.probots.co.in/mini-pir-motion-detection-sensor-am-312.html">AM312 mini PIR — Probots (₹69)</a></li>
+  <li><a href="https://robu.in/product/smartelex-am312-pir-motion-sensor/">SmartElex AM312 — robu.in</a></li>
+  <li><a href="https://quartzcomponents.com/products/tp4056-battery-charging-protection-module-type-c">TP4056 Type-C w/ protection — QuartzComponents (₹15, check stock)</a></li>
+</ul>
+
+</div>
+</body>
+</html>

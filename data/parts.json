@@ -1,0 +1,785 @@
+{
+  "schema": "parts-catalogue/v2",
+  "updated": "2026-07-17",
+  "note": "Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR, approx July 2026.",
+  "parts": {
+    "P0001": {
+      "name": "ESP32 DevKit (WROOM-32, 30-pin)",
+      "category": "board",
+      "categoryLabel": "Dev board",
+      "spec": "GPIO16/17 free for UART2",
+      "icon": "esp32",
+      "expectedPrice": 385,
+      "sources": [
+        {
+          "shop": "quartzcomponents",
+          "price": "385",
+          "url": "https://quartzcomponents.com/products/esp32-30-pin-development-board-with-wi-fi-and-bluetooth"
+        },
+        {
+          "shop": "robu",
+          "price": "534",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any 30-pin ESP32 WROOM DevKit works as long as GPIO16/17 are broken out. ESP32-WROVER also fine.",
+      "notes": "Cheaper on Quartz (₹385) than robu (₹534)."
+    },
+    "P0002": {
+      "name": "Mini560 5V fixed buck",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "14V AC rail -> 5V",
+      "icon": "mini560",
+      "expectedPrice": 81,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "81",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (LM2596)",
+          "price": "45",
+          "url": "https://quartzcomponents.com/products/lm2596-buck-converter-power-supply-module"
+        }
+      ],
+      "alternatives": "LM2596 adjustable (₹45) — but you MUST set the pot to exactly 5.0V with a multimeter and lock it (nail polish) before connecting. Mini560 is fixed 5V so safer.",
+      "notes": "Powers the ESP32 from the AC 14V rail."
+    },
+    "P0003": {
+      "name": "HLK-B0505S-2WR3 isolated DC-DC",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "2W 400mA, 1500VDC iso",
+      "icon": "b0505s",
+      "expectedPrice": 93,
+      "sources": [
+        {
+          "shop": "quartzcomponents",
+          "price": "93",
+          "url": "https://quartzcomponents.com/products/hi-link-5v-2w-400ma-dc-to-dc-isolation-voltage-1500vdc-power-module-converter-hlk-b0505s-2wr3"
+        },
+        {
+          "shop": "robu",
+          "price": "142",
+          "url": ""
+        }
+      ],
+      "alternatives": "B0505S-1WR3 (1W) also fine — the hot side draws little. Any 5V-to-isolated-5V 1-2W brick works.",
+      "notes": "Provides the isolated 5V for the hot side of the S403 interface."
+    },
+    "P0004": {
+      "name": "ADuM1201ARZ digital isolator",
+      "category": "ic",
+      "categoryLabel": "IC / semi",
+      "spec": "2-ch digital isolator, SOIC-8",
+      "icon": "adum",
+      "expectedPrice": 214,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "214",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (2x 6N139)",
+          "price": "84",
+          "url": "https://quartzcomponents.com/products/6n139-optocoupler-ic-dip-8-package"
+        }
+      ],
+      "alternatives": "2x 6N139 optocouplers (₹42 each, ₹84 total) replace it and are DIP-8 so you can DROP the SOIC adapter. But it changes the circuit: add 2 LED resistors (~1k) + 2 pull-ups (~4.7k) and set inverted:true on both UART pins in ESPHome. Cheaper PC817 2-ch module (₹56) works too but slower edges.",
+      "notes": "Heart of the S403 interface — the isolation barrier. Only robu stocks the ADuM. This is the one part you must not skimp quality on."
+    },
+    "P0005": {
+      "name": "SOIC8 to DIP8 adapter PCB",
+      "category": "misc",
+      "categoryLabel": "Misc",
+      "spec": "breakout board",
+      "icon": "sop8",
+      "expectedPrice": 29,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "29 / 5pk",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "13",
+          "url": "https://quartzcomponents.com/products/lead-free-so-msop-tssop-soic-sop8-turn-dip8-wide-body-pcb"
+        }
+      ],
+      "alternatives": "Only needed if you use the SMD ADuM1201. If you go the 6N139 opto route (DIP-8) you do not need this at all.",
+      "notes": "Lets the SMD ADuM sit on the perfboard."
+    },
+    "P0006": {
+      "name": "SMBJ18A TVS diode",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "18V standoff, DO-214",
+      "icon": "tvs",
+      "expectedPrice": 18,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "18",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (SMBJ17A)",
+          "price": "5",
+          "url": "https://quartzcomponents.com/products/smbj17a-esd-and-surge-protection-tvs-diode-rohs-do-214aa-smb-smd-pakage"
+        }
+      ],
+      "alternatives": "SMBJ17A (17V standoff, ₹5) is fine for the 14V rail. Any 16-20V unidirectional TVS in DO-214 works.",
+      "notes": "Clamps surges on the 14V rail."
+    },
+    "P0007": {
+      "name": "1N5819 Schottky diode",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "DO-41 through-hole",
+      "icon": "schottky",
+      "expectedPrice": 6,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "6 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "3",
+          "url": "https://quartzcomponents.com/products/1n5819-shottky-barrier-diode"
+        }
+      ],
+      "alternatives": "1N5817 / 1N5818 / SS14 (SMD) all interchangeable. Any 1A 40V Schottky.",
+      "notes": "Reverse-polarity + ORing protection. Need 2."
+    },
+    "P0008": {
+      "name": "RXEF020 200mA polyfuse (PTC)",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "resettable, through-hole",
+      "icon": "polyfuse",
+      "expectedPrice": 18,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "18",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (glass fuse)",
+          "price": "15",
+          "url": "https://quartzcomponents.com/products/500ma-glass-fuse-5x20mm"
+        }
+      ],
+      "alternatives": "500mA glass fuse + 5x20 holder (~₹15) works but is NOT resettable — replace if it blows, and it trips coarser (500mA vs 200mA). Any 200-250mA PTC is a drop-in.",
+      "notes": "Guards the AC 14V rail against a dead short."
+    },
+    "P0009": {
+      "name": "470uF / 16V electrolytic (105C)",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "8mm radial",
+      "icon": "cap470",
+      "expectedPrice": 12,
+      "sources": [
+        {
+          "shop": "robu (Rubycon ZLH)",
+          "price": "12 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "11",
+          "url": "https://quartzcomponents.com/products/16v-470uf-electrolytic-capacitor"
+        }
+      ],
+      "alternatives": "Any 470uF 16V (or 25V) 105C electrolytic. 330uF-1000uF all acceptable here.",
+      "notes": "Bulk cap on the 5V rails. Need 2."
+    },
+    "P0010": {
+      "name": "100nF MLCC ceramic",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "1206 or 0805",
+      "icon": "mlcc",
+      "expectedPrice": 5,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "5 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (Kemet 0805 x20)",
+          "price": "26",
+          "url": "https://quartzcomponents.com/products/kemet-100nf-50v-0805-smd-pack-x7r-multilayer-ceramic-capacitor-10-tolerence-pack-of-20"
+        }
+      ],
+      "alternatives": "Any 100nF (0.1uF) ceramic, SMD or through-hole. Extremely common — grab a strip.",
+      "notes": "Decoupling. Need ~4."
+    },
+    "P0011": {
+      "name": "1k ohm 1/4W resistor",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "through-hole",
+      "icon": "r1k",
+      "expectedPrice": 1,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "1 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "7 / 10pk",
+          "url": "https://quartzcomponents.com/products/1k-ohm-1-4-watt-resistor"
+        }
+      ],
+      "alternatives": "Carbon or metal film both fine. 1k is the most common value — any pack has it.",
+      "notes": "LED + pull resistors. Need ~6."
+    },
+    "P0012": {
+      "name": "3mm LED (red + green)",
+      "category": "led",
+      "categoryLabel": "LED / opto",
+      "spec": "through-hole",
+      "icon": "led3mm",
+      "expectedPrice": 4,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "2-4 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "2",
+          "url": "https://quartzcomponents.com/products/3mm-led-red-color"
+        }
+      ],
+      "alternatives": "Any 3mm or 5mm indicator LED, any colour. Use with ~1k resistor at 5V.",
+      "notes": "Status indicators. Need 2 (1 red + 1 green)."
+    },
+    "P0013": {
+      "name": "2.54mm 1x40 male header strip",
+      "category": "connector",
+      "categoryLabel": "Connector / wire",
+      "spec": "breakaway",
+      "icon": "header",
+      "expectedPrice": 9,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "9",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "7",
+          "url": "https://quartzcomponents.com/products/40-pin-break-away-headers-straight-male-headers"
+        }
+      ],
+      "alternatives": "Universal — any 2.54mm male berg strip, snap to length.",
+      "notes": "For mounting the ESP32 on the perfboard."
+    },
+    "P0014": {
+      "name": "JST/CJT 10-pin 2.5mm harness (A2508H)",
+      "category": "connector",
+      "categoryLabel": "Connector / wire",
+      "spec": "pre-crimped 300mm",
+      "icon": "jst10",
+      "expectedPrice": 33,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "33",
+          "url": ""
+        }
+      ],
+      "alternatives": "NO good substitute — Quartz only stocks XH up to 5-pin, and two housings side-by-side break the 2.54 pitch. Shaved-down female Dupont is a last-resort hack (less secure). Buy the real robu part.",
+      "notes": "The S403 connector. This is the one part that MUST come from robu — order it even as a separate small shipment."
+    },
+    "P0015": {
+      "name": "Prototype PCB, FR-4",
+      "category": "mech",
+      "categoryLabel": "Mechanical",
+      "spec": "shield/perf size w/ holes",
+      "icon": "protopcb",
+      "expectedPrice": 79,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "79",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (bakelite)",
+          "price": "24",
+          "url": "https://quartzcomponents.com/products/7-9cm-single-side-prototype-pcb-experimental-bakelite-copper-plate-circuit-board"
+        }
+      ],
+      "alternatives": "Quartz bakelite board (₹24) is cheaper but BRITTLE — it can crack when you cut the isolation slot. Any FR-4 perfboard >= 7x9cm is better.",
+      "notes": "Board that hosts the whole interface. FR-4 preferred for the isolation slot."
+    },
+    "P0016": {
+      "name": "IP65 ABS junction box",
+      "category": "mech",
+      "categoryLabel": "Mechanical",
+      "spec": "with mounting holes",
+      "icon": "ipbox",
+      "expectedPrice": 245,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "245",
+          "url": ""
+        },
+        {
+          "shop": "scrap / any plastic box",
+          "price": "0",
+          "url": ""
+        }
+      ],
+      "alternatives": "OPTIONAL — the module lives inside the AC housing anyway, so any sturdy plastic box (or none) works. Do not buy unless you specifically want a sealed enclosure.",
+      "notes": "Enclosure. Skippable."
+    },
+    "P0017": {
+      "name": "VS1838B IR receiver",
+      "category": "led",
+      "categoryLabel": "LED / opto",
+      "spec": "38kHz demod, 5-pack",
+      "icon": "vs1838",
+      "expectedPrice": 41,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "41 / 5pk",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (TSOP1838)",
+          "price": "7",
+          "url": "https://quartzcomponents.com/products/tsop1838-ir-receiving-head"
+        }
+      ],
+      "alternatives": "TSOP1838 / TSOP4838 / any 38kHz IR receiver head is a drop-in.",
+      "notes": "For learning the Orient Zeno fan remote codes."
+    },
+    "P0018": {
+      "name": "38kHz IR transmitter module",
+      "category": "led",
+      "categoryLabel": "LED / opto",
+      "spec": "IR LED on board",
+      "icon": "irtx",
+      "expectedPrice": 50,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "50",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents (discrete)",
+          "price": "7",
+          "url": "https://quartzcomponents.com/products/3mm-940nm-ir-transmitter-led"
+        }
+      ],
+      "alternatives": "Discrete 940nm IR LED (₹4) + 2N2222 driver (₹3) = ₹7 and gives longer range (the guide max-range circuit). Slightly more soldering.",
+      "notes": "Blasts commands to the fan. The discrete version is actually better range."
+    },
+    "P0019": {
+      "name": "2N2222 NPN transistor",
+      "category": "ic",
+      "categoryLabel": "IC / semi",
+      "spec": "TO-92",
+      "icon": "2n2222",
+      "expectedPrice": 2,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "2-3 ea",
+          "url": ""
+        },
+        {
+          "shop": "quartzcomponents",
+          "price": "3",
+          "url": "https://quartzcomponents.com/products/2n2222-npn-switching-transistor"
+        }
+      ],
+      "alternatives": "BC547, S8050, 2N3904 — any small-signal NPN works as the IR LED driver.",
+      "notes": "IR LED driver for the max-range circuit. Need 2."
+    },
+    "P0020": {
+      "name": "AM312 mini PIR sensor",
+      "category": "sensor",
+      "categoryLabel": "Sensor",
+      "spec": "3.3-12V, low power",
+      "icon": "am312",
+      "expectedPrice": 59,
+      "sources": [
+        {
+          "shop": "robu (generic)",
+          "price": "59",
+          "url": "https://robu.in/product/smartelex-am312-pir-motion-sensor/"
+        },
+        {
+          "shop": "Probots",
+          "price": "69",
+          "url": ""
+        }
+      ],
+      "alternatives": "MH-SR602 (~₹50) is a smaller drop-in with adjustable sensitivity. Standard HC-SR501 (~₹60) also works but is bigger and draws more. Avoid branded SmartElex AM312 — same sensor at ₹189.",
+      "notes": "Generic AM312 ₹59. SmartElex jumped to ₹189 for the identical sensor."
+    },
+    "P0021": {
+      "name": "TP4056 charger WITH protection",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "mini-USB or Type-C, 6-pin",
+      "icon": "tp4056",
+      "expectedPrice": 36,
+      "sources": [
+        {
+          "shop": "robu (mini-USB)",
+          "price": "36",
+          "url": "https://robu.in/product/tp4056-1a-li-ion-lithium-battery-charging-module-with-current-protection-type-c/"
+        },
+        {
+          "shop": "robu (Type-C ₹13)",
+          "price": "13",
+          "url": ""
+        }
+      ],
+      "alternatives": "MUST be the 6-pin PROTECTED version (DW01+FS8205 chips) — the 4-pin bare TP4056 has no protection and will over-discharge your salvaged cells. Type-C protected (₹13) is cheaper but often out of stock (join waitlist); mini-USB protected is electrically identical.",
+      "notes": "Non-negotiable: protected version only. Charges + protects the 18650."
+    },
+    "P0022": {
+      "name": "AO3400 N-channel MOSFET",
+      "category": "ic",
+      "categoryLabel": "IC / semi",
+      "spec": "SOT-23",
+      "icon": "ao3400",
+      "expectedPrice": 2.3,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "2.3 ea",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any logic-level N-MOSFET: AO3402, SI2302, or through-hole 2N7000 (if you can find TO-92 stock). Must be fully on at <=2.5V gate.",
+      "notes": "Low-side switch. SHARED between Night Light (6) and Presence (1) — buy a strip of 10."
+    },
+    "P0023": {
+      "name": "BC547 NPN transistor",
+      "category": "ic",
+      "categoryLabel": "IC / semi",
+      "spec": "TO-92",
+      "icon": "bc547",
+      "expectedPrice": 2.3,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "46 / 20pk",
+          "url": "https://robu.in/product/bc547-npn-transistor-pack-of-20/"
+        }
+      ],
+      "alternatives": "BC548, 2N3904, S8050 — any general small-signal NPN.",
+      "notes": "Daylight-clamp transistor with the LDR. Sold in packs of 20; you need ~6 pieces, rest to inventory."
+    },
+    "P0024": {
+      "name": "GL5516 LDR (5-10k)",
+      "category": "sensor",
+      "categoryLabel": "Sensor",
+      "spec": "5mm photoresistor",
+      "icon": "gl5516",
+      "expectedPrice": 16,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "16 ea",
+          "url": ""
+        }
+      ],
+      "alternatives": "GL5528, GL5537 — any 5mm LDR works, just re-tune the trimmer.",
+      "notes": "SHIELD it from the units own LEDs or you get a flicker loop. Need ~6."
+    },
+    "P0025": {
+      "name": "Warm-white 5mm LED",
+      "category": "led",
+      "categoryLabel": "LED / opto",
+      "spec": "straw-hat, 3V",
+      "icon": "wled",
+      "expectedPrice": 2,
+      "sources": [
+        {
+          "shop": "local shop",
+          "price": "1-2",
+          "url": ""
+        },
+        {
+          "shop": "robu (cool 5pk)",
+          "price": "44",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any warm-white 5mm LED. robu is out of warm (only pre-wired cool packs ₹44/5). Buy warm loose at any local shop for ₹1-2 — saves a lot.",
+      "notes": "Buy local. Need ~18 (3 per unit x 6)."
+    },
+    "P0026": {
+      "name": "RM065 100k trimmer preset",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "3-pin, side adjust",
+      "icon": "rm065",
+      "expectedPrice": 4.3,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "43 / 10pk",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any 100k multi-turn or single-turn trimmer. 50k-200k all usable.",
+      "notes": "Hold-time / threshold adjust. Need ~6, sold in packs of 10."
+    },
+    "P0027": {
+      "name": "SPDT slide switch",
+      "category": "mech",
+      "categoryLabel": "Mechanical",
+      "spec": "2-way",
+      "icon": "slide",
+      "expectedPrice": 2.4,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "12 / 5pk",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any small SPDT/SPST slide or toggle switch.",
+      "notes": "Per-unit master off. Need ~6, sold in packs of 5."
+    },
+    "P0028": {
+      "name": "Perfboard 2x8cm",
+      "category": "mech",
+      "categoryLabel": "Mechanical",
+      "spec": "double-sided",
+      "icon": "perf28",
+      "expectedPrice": 23,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "23 ea",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any small perfboard, cut to size. A 10x15cm board cut into 6 is cheaper.",
+      "notes": "One per unit. Need ~6."
+    },
+    "P0029": {
+      "name": "JST XH 2-pin plug+socket",
+      "category": "connector",
+      "categoryLabel": "Connector / wire",
+      "spec": "with cable",
+      "icon": "jst2",
+      "expectedPrice": 0.8,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "8 / 10pc",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any 2-pin polarised connector (JST XH/PH, or even a barrel jack) for the modular battery pack.",
+      "notes": "Makes battery packs swappable (18650 or 3xAA). Need ~6 pairs."
+    },
+    "P0030": {
+      "name": "Assorted 1/4W resistors (68R,1k,47k,100k)",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "through-hole",
+      "icon": "resistors",
+      "expectedPrice": 0.5,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "~40 for the values",
+          "url": ""
+        }
+      ],
+      "alternatives": "Buy per-value packs of 10 for each value you need. Or a 100-piece assortment kit (~₹100) covers these + future builds.",
+      "notes": "68R for dual-voltage LED compatibility, plus bias resistors. Roughly 30-40 pieces across values."
+    },
+    "P0031": {
+      "name": "Salvaged 18650 cell",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "Li-ion 3.7V",
+      "icon": "cell18650",
+      "expectedPrice": 0,
+      "sources": [
+        {
+          "shop": "salvage (laptop pack / power bank)",
+          "price": "0",
+          "url": ""
+        }
+      ],
+      "alternatives": "Buy new 18650 (~₹150) or a 3xAA holder if you have no salvage cells. Never charge alkaline AAs.",
+      "notes": "FREE from old laptop packs / power banks. Vet >=2.8V, bin <2.0V. Need ~6."
+    },
+    "P0032": {
+      "name": "ESP32 DevKit (ceiling node)",
+      "category": "board",
+      "categoryLabel": "Dev board",
+      "spec": "WROOM-32, 30-pin",
+      "icon": "esp32p",
+      "expectedPrice": 385,
+      "sources": [
+        {
+          "shop": "quartzcomponents",
+          "price": "385",
+          "url": ""
+        },
+        {
+          "shop": "robu",
+          "price": "534",
+          "url": ""
+        }
+      ],
+      "alternatives": "Same as the Daikin ESP32 — any 30-pin WROOM DevKit.",
+      "notes": "Second ESP32, runs the LD2410C + relay board in the false ceiling."
+    },
+    "P0033": {
+      "name": "HLK-LD2410C mmWave presence sensor",
+      "category": "sensor",
+      "categoryLabel": "Sensor",
+      "spec": "24GHz, UART",
+      "icon": "ld2410",
+      "expectedPrice": 300,
+      "sources": [
+        {
+          "shop": "robu / amazon",
+          "price": "250-350",
+          "url": ""
+        }
+      ],
+      "alternatives": "LD2410B (bare) is the same sensor. LD2450 (₹600-800) only pays off if you later want zone/position logic — same wiring, swap later.",
+      "notes": "Native ESPHome, all sensitivity gates exposed in HA. Faces down through the false-ceiling tile."
+    },
+    "P0034": {
+      "name": "2-channel 5V relay board",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "opto-isolated, 10A",
+      "icon": "relay2",
+      "expectedPrice": 150,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "~150",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any 2-ch 5V relay board with opto isolation. Or 2x Sonoff Mini R4 (flashed ESPHome, ~₹1200) if you prefer certified modules.",
+      "notes": "Switches both bulb groups, wired in series AFTER the wall switches (parked ON)."
+    },
+    "P0035": {
+      "name": "HLK-PM05 (230VAC to 5V 1A)",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "sealed AC-DC",
+      "icon": "pm05",
+      "expectedPrice": 250,
+      "sources": [
+        {
+          "shop": "robu",
+          "price": "~250",
+          "url": ""
+        },
+        {
+          "shop": "salvage phone charger",
+          "price": "0",
+          "url": ""
+        }
+      ],
+      "alternatives": "Old 5V phone-charger PCB (₹0) is an acceptable salvage fallback, just bulkier. Any small 5V 1A+ AC-DC module works.",
+      "notes": "Powers the whole ceiling node from the light-point switched-live + neutral."
+    },
+    "P0036": {
+      "name": "ESP32-C3 Super Mini (desk node)",
+      "category": "board",
+      "categoryLabel": "Dev board",
+      "spec": "C3, USB-C",
+      "icon": "esp32c3",
+      "expectedPrice": 250,
+      "sources": [
+        {
+          "shop": "robu / amazon",
+          "price": "~250",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any small ESP32-C3 / ESP32-S2 board. Even a full ESP32 works if it fits.",
+      "notes": "Cuts USB power to the BT LED strip (which auto-resumes on power) via the AO3400."
+    },
+    "P0037": {
+      "name": "1A fuse + holder",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "5x20mm mains",
+      "icon": "fuse1a",
+      "expectedPrice": 15,
+      "sources": [
+        {
+          "shop": "robu / local",
+          "price": "~15",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any 1A slow-blow mains fuse + inline holder.",
+      "notes": "Mains-side protection at the ceiling node."
+    },
+    "P0038": {
+      "name": "Junction box (ceiling node)",
+      "category": "mech",
+      "categoryLabel": "Mechanical",
+      "spec": "small enclosure",
+      "icon": "jbox",
+      "expectedPrice": 60,
+      "sources": [
+        {
+          "shop": "local / scrap",
+          "price": "~60",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any sturdy box that fits above the false ceiling. Salvage is fine.",
+      "notes": "Houses the ceiling node safely."
+    },
+    "P0039": {
+      "name": "USB male-female pigtail",
+      "category": "connector",
+      "categoryLabel": "Connector / wire",
+      "spec": "A male to A female",
+      "icon": "usbpig",
+      "expectedPrice": 60,
+      "sources": [
+        {
+          "shop": "local / amazon",
+          "price": "~60",
+          "url": ""
+        }
+      ],
+      "alternatives": "Any short USB extension you can cut — the MOSFET goes inline on the +5V (or GND) wire.",
+      "notes": "The MOSFET switches the strips USB power here."
+    }
+  }
+}

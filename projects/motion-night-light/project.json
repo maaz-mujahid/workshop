@@ -1,0 +1,17 @@
+{
+  "schema": "project/v2",
+  "id": "motion-night-light",
+  "name": "Motion Night Lights (x6)",
+  "status": "In Progress",
+  "room": "Stairs + Kitchen",
+  "difficulty": "Easy",
+  "summary": "6 standalone battery PIR night lights — 3-4 at skirting height on the stairs, 1-2 in the kitchen. Deliberately NOT Home-Assistant connected; each is self-contained on a salvaged 18650.",
+  "estimatedCost": "~₹1,060-1,196",
+  "safety": [
+    "Only use PROTECTED TP4056 modules with salvaged cells.",
+    "Vet salvaged 18650s: >=2.8V good, <2.0V bin. Never charge alkaline AAs.",
+    "Shield the LDR from the units own LEDs to avoid a flicker loop."
+  ],
+  "docs": "project.html",
+  "bom": "bom.json"
+}
