@@ -2,7 +2,7 @@
   "schema": "project/v2",
   "id": "daikin-ac-wifi",
   "name": "Daikin AC WiFi (S403)",
-  "status": "Planned",
+  "status": "Idea",
   "room": "Bedroom",
   "difficulty": "Hard",
   "summary": "Control the Daikin MTKL50UV16VA AC over WiFi via its S403 service port (S21 protocol), plus an IR blaster for the Orient Zeno fan — one shared ESP32, fully inside the AC, powered from the 14V rail.",
