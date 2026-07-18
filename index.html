@@ -176,7 +176,21 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
 .section-p{font-size:15px;line-height:1.5;color:var(--label)}
 .section.warn{background:var(--orange-soft)}.section.warn .section-h{color:var(--orange)}
 .safety-list{margin:0;padding-left:18px}.safety-list li{margin:5px 0;font-size:14px;line-height:1.4;color:var(--label)}
-.diagram{width:100%;height:auto;border-radius:10px;background:#fff;padding:10px;margin-top:2px}
+.diagram{width:100%;height:auto;border-radius:10px;background:#fff;padding:10px;margin-top:2px;cursor:zoom-in}
+/* fullscreen pinch-zoom diagram viewer */
+.zoomer{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.94);display:none;touch-action:none;overflow:hidden;overscroll-behavior:contain}
+.zoomer.open{display:block}
+.zoomer img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;background:#fff;border-radius:6px;
+ user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none}
+.zoomer-close{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:2;width:38px;height:38px;border-radius:50%;
+ border:none;background:rgba(118,118,128,.35);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.zoomer-close svg{width:20px;height:20px}
+.zoomer-hint{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:2;
+ color:rgba(255,255,255,.65);font-size:12px;background:rgba(40,40,42,.7);padding:6px 14px;border-radius:16px;pointer-events:none;white-space:nowrap}
+/* setup tab form */
+.setform label{display:block;font-size:13px;font-weight:600;color:var(--label2);margin:12px 0 4px}
+.setform input{width:100%}
+.setform .note{font-size:12px;color:var(--label2);margin-top:8px;line-height:1.45}
 .actions-sec{display:flex;flex-direction:column;gap:10px;background:none;box-shadow:none;padding:0;margin-top:4px}
 .btn.block{display:flex;width:100%;justify-content:center;padding:13px;font-size:16px;border-radius:13px}
 </style>
@@ -190,7 +204,6 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
   </div>
   <div class="navbtns">
     <button class="iconbtn" id="reloadBtn" title="Reload data" aria-label="Reload data"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></button>
-    <button class="iconbtn" id="cfgBtn" title="Setup" aria-label="Setup"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg></button>
     <button class="iconbtn cta" id="syncBtn" title="Sync to GitHub" aria-label="Sync to GitHub"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="m8 17 4-4 4 4"/></svg></button>
   </div>
 </div>
@@ -221,11 +234,18 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
 </div>
 
 <nav class="tabbar">
-  <button class="tab active" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Shopping</span><span class="cnt" id="cShop"></span></button>
-  <button class="tab" data-tab="inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg><span>Inventory</span><span class="cnt" id="cInv"></span></button>
-  <button class="tab" data-tab="proj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9"/><path d="M17.6 15 22 10.6"/><path d="M20.9 11.7 19.7 10.4a3 3 0 0 1-.9-2.1v-.9L16 4.6A5.56 5.56 0 0 0 12.1 3H9l.9.8A6.18 6.18 0 0 1 12 8.4V10l2 2h1.6a3 3 0 0 1 2.1.9l1.2 1.2"/></svg><span>Projects</span><span class="cnt" id="cProj"></span></button>
-  <button class="tab" data-tab="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg><span>Parts</span><span class="cnt" id="cAll"></span></button>
+  <button class="tab active" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span>Shopping</span><span class="cnt" id="cShop"></span></button>
+  <button class="tab" data-tab="inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg><span>Inventory</span><span class="cnt" id="cInv"></span></button>
+  <button class="tab" data-tab="proj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg><span>Projects</span><span class="cnt" id="cProj"></span></button>
+  <button class="tab" data-tab="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15.536 11.293a1 1 0 0 0 0 1.414l2.376 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z"/><path d="M2.297 11.293a1 1 0 0 0 0 1.414l2.377 2.377a1 1 0 0 0 1.414 0l2.377-2.377a1 1 0 0 0 0-1.414L6.088 8.916a1 1 0 0 0-1.414 0z"/><path d="M8.916 17.912a1 1 0 0 0 0 1.415l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.415l-2.377-2.376a1 1 0 0 0-1.414 0z"/><path d="M8.916 4.674a1 1 0 0 0 0 1.414l2.377 2.376a1 1 0 0 0 1.414 0l2.377-2.376a1 1 0 0 0 0-1.414l-2.377-2.377a1 1 0 0 0-1.414 0z"/></svg><span>Parts</span><span class="cnt" id="cAll"></span></button>
+  <button class="tab" data-tab="setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span>Setup</span></button>
 </nav>
+
+<div class="zoomer" id="zoomer">
+  <img id="zoomImg" alt="Circuit diagram — full screen">
+  <button class="zoomer-close" id="zoomClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  <div class="zoomer-hint">Pinch or scroll to zoom · drag to pan · double-tap to toggle</div>
+</div>
 
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
 <div class="toast" id="toast"></div>
@@ -452,9 +472,14 @@ function partCard(pid,scope){
  </div>`;
 }
 function render(){
- if(!Object.keys(S.parts).length)return;
- stats();
+ if(!Object.keys(S.parts).length&&tab!=='setup')return;
+ const chrome=tab!=='setup';
+ $('.searchwrap').style.display=chrome?'':'none';
+ $('.filterrow').style.display=chrome?'':'none';
+ $('.stats').style.display=chrome?'':'none';
  const v=$('#view');
+ if(tab==='setup'){v.innerHTML=setupView();return}
+ stats();
  if(tab==='shop'){
   const scope=projFilter||'active';
   let buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0&&matchFilter(pid));
@@ -514,11 +539,11 @@ function projectDetail(pr){
    <div class="qtyrow"><span><b>${pct}%</b> parts in hand (${have}/${need})</span><span>≈ <b>${rup(cost)}</b> left to buy</span></div>
   </div>
   ${safety}
+  <div class="section"><div class="section-h">Circuit diagram</div>
+   <img class="diagram" src="projects/${pr.id}/circuit-diagram.svg" alt="Circuit diagram — tap to open full screen" onerror="this.closest('.section').remove()">
+  </div>
   <div class="section"><div class="section-h">Parts</div>
    <table class="ptable"><tr><th>Part</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${rows}</table>
-  </div>
-  <div class="section"><div class="section-h">Circuit diagram</div>
-   <img class="diagram" src="projects/${pr.id}/circuit-diagram.svg" alt="Circuit diagram" onerror="this.closest('.section').remove()">
   </div>
   <div class="actions-sec">
    <button class="btn primary block" data-act="opendoc" data-proj="${pr.id}">${ic('book')}Open full build guide</button>
@@ -532,9 +557,12 @@ document.addEventListener('click',e=>{
  if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;render();window.scrollTo(0,0);return}
  const po=e.target.closest('[data-projopen]');
  if(po){projSel=po.dataset.projopen;render();window.scrollTo(0,0);return}
+ const dg=e.target.closest('img.diagram');
+ if(dg){openZoom(dg.getAttribute('src'));return}
  const b=e.target.closest('[data-act]');if(!b)return;
  const act=b.dataset.act;
  if(act==='back'){projSel=null;render();window.scrollTo(0,0);return}
+ if(act==='cfgsave'){S.cfg={owner:$('#cOwner').value.trim(),repo:$('#cRepo').value.trim(),branch:$('#cBranch').value.trim()||'main',token:$('#cToken').value.trim()};saveLocal();updateSync();toast('Setup saved');return}
  if(act==='shopproj'){projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
  if(act==='opendoc'){window.open('projects/'+b.dataset.proj+'/project.html','_blank');return}
@@ -563,6 +591,64 @@ document.addEventListener('change',e=>{
  }
  markDirty();render();
 });
+
+/* ================= FULLSCREEN DIAGRAM VIEWER (pinch / scroll zoom, pan) ================= */
+const zoomEl=$('#zoomer'),zoomImg=$('#zoomImg');
+const Z={w:0,x:0,y:0,fitW:0,ptrs:new Map(),lastDist:0,down:null,lastTap:0};
+// Zoom by changing layout width (not CSS scale): the browser re-renders the SVG
+// at each size, so vector diagrams stay razor sharp at any zoom level.
+function zApply(){zoomImg.style.width=Z.w+'px';zoomImg.style.transform=`translate(${Z.x}px,${Z.y}px)`}
+function zFit(){
+ const vw=innerWidth,vh=innerHeight,iw=zoomImg.naturalWidth||1,ih=zoomImg.naturalHeight||1;
+ Z.fitW=iw*Math.min((vw-24)/iw,(vh-24)/ih);
+ Z.w=Z.fitW;Z.x=(vw-Z.w)/2;Z.y=(vh-Z.w*ih/iw)/2;zApply();
+}
+function zZoomAt(f,cx,cy){
+ const nw=Math.min(Math.max(Z.w*f,Z.fitW*.5),Z.fitW*14);
+ const r=nw/Z.w;Z.x=cx-(cx-Z.x)*r;Z.y=cy-(cy-Z.y)*r;Z.w=nw;zApply();
+}
+function openZoom(src){
+ zoomImg.removeAttribute('style');zoomImg.src=src;
+ zoomEl.classList.add('open');document.body.style.overflow='hidden';
+ if(zoomImg.complete&&zoomImg.naturalWidth)zFit();else zoomImg.onload=zFit;
+}
+function closeZoom(){zoomEl.classList.remove('open');document.body.style.overflow='';Z.ptrs.clear();Z.lastDist=0}
+$('#zoomClose').addEventListener('click',e=>{e.stopPropagation();closeZoom()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&zoomEl.classList.contains('open'))closeZoom()});
+zoomEl.addEventListener('pointerdown',e=>{
+ if(e.target.closest('.zoomer-close'))return;
+ e.preventDefault();zoomEl.setPointerCapture(e.pointerId);
+ Z.ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(Z.ptrs.size===1)Z.down={x:e.clientX,y:e.clientY,t:Date.now(),moved:false};
+ if(Z.ptrs.size===2){const p=[...Z.ptrs.values()];Z.lastDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)}
+});
+zoomEl.addEventListener('pointermove',e=>{
+ if(!Z.ptrs.has(e.pointerId))return;
+ const prev=Z.ptrs.get(e.pointerId);Z.ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(Z.down&&Math.hypot(e.clientX-Z.down.x,e.clientY-Z.down.y)>10)Z.down.moved=true;
+ if(Z.ptrs.size===1){Z.x+=e.clientX-prev.x;Z.y+=e.clientY-prev.y;zApply()}
+ else if(Z.ptrs.size===2){
+  const p=[...Z.ptrs.values()];
+  const d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+  if(Z.lastDist>0)zZoomAt(d/Z.lastDist,(p[0].x+p[1].x)/2,(p[0].y+p[1].y)/2);
+  Z.lastDist=d;
+ }
+});
+function zEnd(e){
+ Z.ptrs.delete(e.pointerId);Z.lastDist=0;
+ if(e.type==='pointerup'&&Z.ptrs.size===0&&Z.down&&!Z.down.moved&&Date.now()-Z.down.t<300){
+  const now=Date.now();
+  if(now-Z.lastTap<300){ // double-tap: toggle between fit and 3×
+   if(Z.w>Z.fitW*1.15)zFit();else zZoomAt(3,e.clientX,e.clientY);
+   Z.lastTap=0;
+  }else Z.lastTap=now;
+ }
+ if(Z.ptrs.size===0)Z.down=null;
+}
+zoomEl.addEventListener('pointerup',zEnd);
+zoomEl.addEventListener('pointercancel',zEnd);
+zoomEl.addEventListener('wheel',e=>{e.preventDefault();zZoomAt(e.deltaY<0?1.15:1/1.15,e.clientX,e.clientY)},{passive:false});
+zoomEl.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS Safari page-pinch under the overlay
 
 /* ================= ALTERNATIVES (offline, from catalogue) ================= */
 function showAlt(box,pid){
@@ -617,21 +703,18 @@ $('#syncBtn').addEventListener('click',syncGitHub);
 window.addEventListener('online',updateSync);window.addEventListener('offline',updateSync);
 
 /* ================= DIALOGS ================= */
-function cfgDialog(){
+function setupView(){
  const c=S.cfg;
- $('#dlgBody').innerHTML=`<h3>⚙ GitHub Setup</h3>
+ return `<div class="section setform"><div class="section-h">⚙ GitHub setup</div>
   <div class="note">All free. These let the app save your inventory back to your own repo. The token is stored only on this device, never shared.</div>
   <label>GitHub username (owner)</label><input id="cOwner" value="${esc(c.owner)}" placeholder="e.g. maazmujahid">
   <label>Repository name</label><input id="cRepo" value="${esc(c.repo)}" placeholder="e.g. Workshop">
-  <div class="row2"><div><label>Branch</label><input id="cBranch" value="${esc(c.branch||'main')}"></div>
-  <div><label>Personal access token</label><input id="cToken" type="password" value="${esc(c.token)}" placeholder="ghp_…"></div></div>
+  <div class="dlg" style="padding:0"><div class="row2"><div><label>Branch</label><input id="cBranch" value="${esc(c.branch||'main')}"></div>
+  <div><label>Personal access token</label><input id="cToken" type="password" value="${esc(c.token)}" placeholder="ghp_…"></div></div></div>
   <div class="note">Token: GitHub → Settings → Developer settings → <b>Fine-grained tokens</b> → your repo → <b>Contents: Read &amp; write</b>. Free, no expiry needed for personal use.</div>
-  <div class="foot"><button class="btn" id="cCancel">Cancel</button><button class="btn primary" id="cSave">Save</button></div>`;
- const d=$('#dlg');d.showModal();
- $('#cCancel').onclick=()=>d.close();
- $('#cSave').onclick=()=>{S.cfg={owner:$('#cOwner').value.trim(),repo:$('#cRepo').value.trim(),branch:$('#cBranch').value.trim()||'main',token:$('#cToken').value.trim()};saveLocal();d.close();updateSync();toast('Setup saved')};
+ </div>
+ <div class="actions-sec"><button class="btn primary block" data-act="cfgsave">Save setup</button></div>`;
 }
-$('#cfgBtn').addEventListener('click',cfgDialog);
 
 function partDialog(pid){
  const isNew=!pid;
