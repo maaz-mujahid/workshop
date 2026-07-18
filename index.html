@@ -334,8 +334,13 @@ async function loadData(force){
    }catch(e){console.warn('project load fail',slug,e)}
   }
   S.projects=projs;S.boms=boms;S.loadedFrom='github';
-  // seed inventory from repo file only if we have no local inventory yet
-  if(!saved.inv){try{const iv=await fetchJSON('data/inventory.json');S.inv=iv.stock||{}}catch(e){S.inv={}}}
+  // Inventory is app-owned and GitHub is the source of truth, so refresh it from
+  // the repo on every successful load — that's how a sync on one device shows up
+  // on another. The one exception: if this device has unsynced local edits
+  // (dirty), keep them so a reload doesn't silently discard un-pushed stock.
+  if(!S.dirty){
+   try{const iv=await fetchJSON('data/inventory.json');S.inv=iv.stock||{}}catch(e){if(!saved.inv)S.inv={}}
+  }
   // merge in any project-status overrides the user changed locally but hasn't synced
   if(saved.statusOverride){for(const p of S.projects){if(saved.statusOverride[p.id])p.status=saved.statusOverride[p.id]}}
   saveLocal();
@@ -566,11 +571,15 @@ function updateSync(){
 async function ghPut(path,obj,message){
  const base=`https://api.github.com/repos/${S.cfg.owner}/${S.cfg.repo}/contents/${path}`;
  const h={'Authorization':'Bearer '+S.cfg.token,'Accept':'application/vnd.github+json'};
- let sha=null;
- try{const r=await fetch(base+'?ref='+S.cfg.branch,{headers:h});if(r.ok)sha=(await r.json()).sha}catch(e){}
- const body={message,content:b64(JSON.stringify(obj,null,2)),branch:S.cfg.branch};
- if(sha)body.sha=sha;
- const r=await fetch(base,{method:'PUT',headers:h,body:JSON.stringify(body)});
+ const content=b64(JSON.stringify(obj,null,2));
+ // cache:'no-store' — must read the *current* sha, never a stale browser-cached one,
+ // or GitHub rejects the PUT with 409 "does not match".
+ async function getSha(){try{const r=await fetch(base+'?ref='+S.cfg.branch,{headers:h,cache:'no-store'});if(r.ok)return (await r.json()).sha}catch(e){}return null}
+ async function put(sha){const body={message,content,branch:S.cfg.branch};if(sha)body.sha=sha;return fetch(base,{method:'PUT',headers:h,body:JSON.stringify(body)})}
+ let r=await put(await getSha());
+ // If another device pushed between our sha read and this write, the sha is stale.
+ // Re-read it and retry once so a benign cross-device race doesn't surface as an error.
+ if(r.status===409||r.status===422){r=await put(await getSha())}
  if(!r.ok)throw new Error('GitHub '+r.status+' '+(await r.text()).slice(0,120));
 }
 async function syncGitHub(){
