@@ -317,6 +317,23 @@ async function fetchJSON(path){
  if(!r.ok)throw new Error(path+' '+r.status);
  return r.json();
 }
+// Read a repo file preferring the GitHub API over the deployed Pages copy.
+// The Pages copy only refreshes after a rebuild (~10s–2min after a push), so a
+// Sync on one device would lag on another. The API reflects a commit instantly,
+// which matters for the app-written files (inventory + project status). Used only
+// when a token is configured (authenticated: 5000 reads/hr); otherwise, and on any
+// failure, fall back to the Pages copy so anonymous/offline loads still work.
+async function fetchRepoJSON(path){
+ const c=S.cfg;
+ if(c.owner&&c.repo&&c.token){
+  try{
+   const url=`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}?ref=${c.branch}&t=`+Date.now();
+   const r=await fetch(url,{headers:{'Accept':'application/vnd.github.raw+json','Authorization':'Bearer '+c.token},cache:'no-store'});
+   if(r.ok)return JSON.parse(await r.text());
+  }catch(e){/* fall through to the Pages copy */}
+ }
+ return fetchJSON(path);
+}
 async function loadData(force){
  const saved=JSON.parse(localStorage.getItem(LS)||'{}');
  if(saved.cfg)S.cfg=Object.assign(S.cfg,saved.cfg);
@@ -329,7 +346,7 @@ async function loadData(force){
   const projs=[],boms={};
   for(const slug of slugs){
    try{
-    const [pj,bm]=await Promise.all([fetchJSON('projects/'+slug+'/project.json'),fetchJSON('projects/'+slug+'/bom.json')]);
+    const [pj,bm]=await Promise.all([fetchRepoJSON('projects/'+slug+'/project.json'),fetchJSON('projects/'+slug+'/bom.json')]);
     projs.push(pj);boms[slug]=bm.items||[];
    }catch(e){console.warn('project load fail',slug,e)}
   }
@@ -339,7 +356,7 @@ async function loadData(force){
   // on another. The one exception: if this device has unsynced local edits
   // (dirty), keep them so a reload doesn't silently discard un-pushed stock.
   if(!S.dirty){
-   try{const iv=await fetchJSON('data/inventory.json');S.inv=iv.stock||{}}catch(e){if(!saved.inv)S.inv={}}
+   try{const iv=await fetchRepoJSON('data/inventory.json');S.inv=iv.stock||{}}catch(e){if(!saved.inv)S.inv={}}
   }
   // merge in any project-status overrides the user changed locally but hasn't synced
   if(saved.statusOverride){for(const p of S.projects){if(saved.statusOverride[p.id])p.status=saved.statusOverride[p.id]}}
