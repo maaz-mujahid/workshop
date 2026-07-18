@@ -20,8 +20,8 @@
  --label:#1c1c1e;--label2:rgba(60,60,67,.6);--label3:rgba(60,60,67,.32);
  --sep:rgba(60,60,67,.16);--sep-strong:rgba(60,60,67,.28);
  --fill:rgba(118,118,128,.12);--fill2:rgba(118,118,128,.06);
- --tint:#0a7d6b;--tint-ink:#096d5d;--tint-soft:rgba(10,125,107,.12);--on-tint:#fff;
- --red:#d70015;--orange:#c93400;--green:#248a3d;--blue:#006edb;
+ --tint:#007aff;--tint-ink:#0068e0;--tint-soft:rgba(0,122,255,.12);--on-tint:#fff;
+ --red:#d70015;--orange:#c93400;--green:#248a3d;--blue:#0068e0;
  --orange-soft:rgba(201,52,0,.12);--green-soft:rgba(36,138,61,.12);
  --bar:rgba(249,249,251,.72);--shadow:0 1px 2px rgba(0,0,0,.05);
 }
@@ -30,8 +30,8 @@
  --label:#fff;--label2:rgba(235,235,245,.6);--label3:rgba(235,235,245,.3);
  --sep:rgba(84,84,88,.48);--sep-strong:rgba(84,84,88,.65);
  --fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.16);
- --tint:#3fd0b8;--tint-ink:#4fdcc6;--tint-soft:rgba(63,208,184,.18);--on-tint:#04211d;
- --red:#ff453a;--orange:#ff9f0a;--green:#30d158;--blue:#0a84ff;
+ --tint:#0a84ff;--tint-ink:#409cff;--tint-soft:rgba(10,132,255,.20);--on-tint:#fff;
+ --red:#ff453a;--orange:#ff9f0a;--green:#30d158;--blue:#409cff;
  --orange-soft:rgba(255,159,10,.18);--green-soft:rgba(48,209,88,.18);
  --bar:rgba(30,30,32,.72);--shadow:0 1px 2px rgba(0,0,0,.4);
 }}
@@ -73,7 +73,9 @@ input,select,textarea,button{font:inherit}
 input,select,textarea{border:none;background:var(--fill);border-radius:10px;padding:11px 12px;color:var(--label);font-size:17px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 /* buttons */
-.btn{border:none;background:var(--fill);color:var(--tint);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600;font-size:15px;transition:transform .12s,opacity .2s}
+.btn{border:none;background:var(--fill);color:var(--tint);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s,opacity .2s}
+.ic{width:20px;height:20px;flex:none}
+.btn .ic{width:16px;height:16px}
 .btn:active{transform:scale(.96);opacity:.8}
 .btn.primary{background:var(--tint);color:var(--on-tint)}
 .btn.small{padding:6px 12px;font-size:13px;border-radius:9px}
@@ -146,6 +148,37 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
  min-width:17px;height:17px;padding:0 4px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--bar)}
 .tab .cnt:empty{display:none}
 #cInv,#cProj,#cAll{display:none}
+/* thumbnail + category icon color */
+.thumb{color:var(--tint)}.caticon{color:var(--label3)}
+/* projects list cards */
+.pcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:none;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;color:var(--label);font:inherit;transition:transform .12s}
+.pcard:active{transform:scale(.985)}
+.pcard-icon{width:44px;height:44px;border-radius:12px;background:var(--tint-soft);color:var(--tint);display:flex;align-items:center;justify-content:center;flex:none}
+.pcard-icon .ic{width:22px;height:22px}
+.pcard-icon.lg{width:56px;height:56px;border-radius:15px}.pcard-icon.lg .ic{width:28px;height:28px}
+.pcard-body{flex:1;min-width:0}
+.pcard-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.pcard-name{font-weight:600;font-size:16px;letter-spacing:-.015em}
+.pcard-meta{color:var(--label2);font-size:13px;margin:2px 0 8px}
+.pcard-foot{display:flex;justify-content:space-between;font-size:12px;color:var(--label2);margin-top:6px}
+.pcard-chev{color:var(--label3);flex:none;display:flex}.pcard-chev .ic{width:20px;height:20px}
+.stpill{border-radius:20px;padding:3px 11px;font-size:12px;font-weight:600;white-space:nowrap}
+/* project detail page */
+.backbtn{display:inline-flex;align-items:center;gap:1px;background:none;border:none;color:var(--tint);font-size:16px;font-weight:500;cursor:pointer;padding:6px 0;margin-bottom:4px}
+.backbtn .ic{width:22px;height:22px}
+.detail-hero{display:flex;align-items:center;gap:14px;margin:4px 0 8px}
+.detail-title{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.detail-meta{color:var(--label2);font-size:14px;margin-top:4px}
+.detail-status{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);margin:12px 0}
+.detail-status .lbl{font-weight:500}
+.section{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.section-h{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--label2);margin-bottom:8px}
+.section-p{font-size:15px;line-height:1.5;color:var(--label)}
+.section.warn{background:var(--orange-soft)}.section.warn .section-h{color:var(--orange)}
+.safety-list{margin:0;padding-left:18px}.safety-list li{margin:5px 0;font-size:14px;line-height:1.4;color:var(--label)}
+.diagram{width:100%;height:auto;border-radius:10px;background:#fff;padding:10px;margin-top:2px}
+.actions-sec{display:flex;flex-direction:column;gap:10px;background:none;box-shadow:none;padding:0;margin-top:4px}
+.btn.block{display:flex;width:100%;justify-content:center;padding:13px;font-size:16px;border-radius:13px}
 </style>
 </head>
 <body>
@@ -156,9 +189,9 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
     <div class="sub">Parts &amp; inventory · Home Automation</div>
   </div>
   <div class="navbtns">
-    <button class="iconbtn" id="reloadBtn" title="Reload data" aria-label="Reload data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2 5.3"/><path d="M20 4v6h-6"/></svg></button>
-    <button class="iconbtn" id="cfgBtn" title="Setup" aria-label="Setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.1 13.4a1.4 1.4 0 0 0 .3 1.5l.1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.4 1.4 0 0 0-1.5-.3 1.4 1.4 0 0 0-.9 1.3V19a1.7 1.7 0 0 1-3.4 0v-.1a1.4 1.4 0 0 0-.9-1.3 1.4 1.4 0 0 0-1.5.3l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.4 1.4 0 0 0 .3-1.5 1.4 1.4 0 0 0-1.3-.9H5a1.7 1.7 0 0 1 0-3.4h.1a1.4 1.4 0 0 0 1.3-.9 1.4 1.4 0 0 0-.3-1.5l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.4 1.4 0 0 0 1.5.3 1.4 1.4 0 0 0 .9-1.3V5a1.7 1.7 0 0 1 3.4 0v.1a1.4 1.4 0 0 0 .9 1.3 1.4 1.4 0 0 0 1.5-.3l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.4 1.4 0 0 0-.3 1.5 1.4 1.4 0 0 0 1.3.9H19a1.7 1.7 0 0 1 0 3.4h-.1a1.4 1.4 0 0 0-1.3.9Z"/></svg></button>
-    <button class="iconbtn cta" id="syncBtn" title="Sync to GitHub" aria-label="Sync to GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1-.5-8 5.5 5.5 0 0 1 10.6-1.4A3.75 3.75 0 0 1 17.5 18"/><path d="M12 20v-8"/><path d="M9 15l3-3 3 3"/></svg></button>
+    <button class="iconbtn" id="reloadBtn" title="Reload data" aria-label="Reload data"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></button>
+    <button class="iconbtn" id="cfgBtn" title="Setup" aria-label="Setup"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg></button>
+    <button class="iconbtn cta" id="syncBtn" title="Sync to GitHub" aria-label="Sync to GitHub"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="m8 17 4-4 4 4"/></svg></button>
   </div>
 </div>
 
@@ -175,7 +208,7 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
 </div>
 
 <div class="searchwrap">
-  <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>
+  <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
   <input id="filter" placeholder="Search parts">
 </div>
 <div class="filterrow">
@@ -188,10 +221,10 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
 </div>
 
 <nav class="tabbar">
-  <button class="tab active" data-tab="shop"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5h16l-1.1 12.2a2 2 0 0 1-2 1.8H9.1a2 2 0 0 1-2-1.8L6 9.5Z"/><path d="M10 11V8.5a4 4 0 0 1 8 0V11"/></svg><span>Shopping</span><span class="cnt" id="cShop"></span></button>
-  <button class="tab" data-tab="inv"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 24 9v10l-10 5L4 19V9l10-5Z"/><path d="M4 9l10 5 10-5"/><path d="M14 14v10"/></svg><span>Inventory</span><span class="cnt" id="cInv"></span></button>
-  <button class="tab" data-tab="proj"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a2 2 0 0 1 2-2h4l2 2.3h8a2 2 0 0 1 2 2v8.4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9Z"/></svg><span>Projects</span><span class="cnt" id="cProj"></span></button>
-  <button class="tab" data-tab="all"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="8.5" height="8.5" rx="2.2"/><rect x="15.5" y="4" width="8.5" height="8.5" rx="2.2"/><rect x="4" y="15.5" width="8.5" height="8.5" rx="2.2"/><rect x="15.5" y="15.5" width="8.5" height="8.5" rx="2.2"/></svg><span>Parts</span><span class="cnt" id="cAll"></span></button>
+  <button class="tab active" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Shopping</span><span class="cnt" id="cShop"></span></button>
+  <button class="tab" data-tab="inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg><span>Inventory</span><span class="cnt" id="cInv"></span></button>
+  <button class="tab" data-tab="proj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 1 1-3-3L12 9"/><path d="M17.6 15 22 10.6"/><path d="M20.9 11.7 19.7 10.4a3 3 0 0 1-.9-2.1v-.9L16 4.6A5.56 5.56 0 0 0 12.1 3H9l.9.8A6.18 6.18 0 0 1 12 8.4V10l2 2h1.6a3 3 0 0 1 2.1.9l1.2 1.2"/></svg><span>Projects</span><span class="cnt" id="cProj"></span></button>
+  <button class="tab" data-tab="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg><span>Parts</span><span class="cnt" id="cAll"></span></button>
 </nav>
 
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
@@ -201,16 +234,29 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-bac
 const CAT={board:'Dev board',sensor:'Sensor',power:'Power',ic:'IC / semi',passive:'Passive',led:'LED / opto',connector:'Connector / wire',mech:'Mechanical',misc:'Misc'};
 const STATUSES=['Idea','Planned','In Progress','Completed','Cancelled'];
 const ACTIVE=['Planned','In Progress'];
+/* Category icons — Lucide (open, MIT), monochrome via currentColor */
+const _lu=p=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
 const ICONS={
-board:'<svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="36" rx="3" fill="#2b3a4a"/><rect x="14" y="12" width="20" height="12" rx="1" fill="#8fa8bd"/><circle cx="24" cy="33" r="4" fill="#c0c8d0"/><g fill="#d4af37"><rect x="4" y="10" width="4" height="2"/><rect x="4" y="16" width="4" height="2"/><rect x="4" y="22" width="4" height="2"/><rect x="4" y="28" width="4" height="2"/><rect x="4" y="34" width="4" height="2"/><rect x="40" y="10" width="4" height="2"/><rect x="40" y="16" width="4" height="2"/><rect x="40" y="22" width="4" height="2"/><rect x="40" y="28" width="4" height="2"/><rect x="40" y="34" width="4" height="2"/></g></svg>',
-sensor:'<svg viewBox="0 0 48 48"><rect x="10" y="20" width="28" height="18" rx="2" fill="#1f6e43"/><circle cx="24" cy="18" r="10" fill="#e8ecef"/><circle cx="24" cy="18" r="7" fill="#cdd6dd"/><path d="M8 10 q4 -6 8 0 M32 10 q4 -6 8 0" stroke="#888" fill="none" stroke-width="2"/></svg>',
-power:'<svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3" fill="#374151"/><path d="M26 16 l-8 10 h6 l-2 8 8 -10 h-6 z" fill="#fbbf24"/></svg>',
-ic:'<svg viewBox="0 0 48 48"><rect x="12" y="14" width="24" height="20" rx="2" fill="#111827"/><circle cx="17" cy="19" r="1.5" fill="#9ca3af"/><g fill="#9ca3af"><rect x="14" y="8" width="3" height="6"/><rect x="21" y="8" width="3" height="6"/><rect x="28" y="8" width="3" height="6"/><rect x="14" y="34" width="3" height="6"/><rect x="21" y="34" width="3" height="6"/><rect x="28" y="34" width="3" height="6"/></g></svg>',
-passive:'<svg viewBox="0 0 48 48"><rect x="14" y="18" width="20" height="12" rx="5" fill="#c8863c"/><g stroke="#8a5a20" stroke-width="2"><line x1="18" y1="18" x2="18" y2="30"/><line x1="24" y1="18" x2="24" y2="30"/><line x1="30" y1="18" x2="30" y2="30"/></g><line x1="4" y1="24" x2="14" y2="24" stroke="#666" stroke-width="2"/><line x1="34" y1="24" x2="44" y2="24" stroke="#666" stroke-width="2"/></svg>',
-led:'<svg viewBox="0 0 48 48"><path d="M16 22 a8 8 0 0 1 16 0 v8 h-16 z" fill="#f87171"/><rect x="14" y="30" width="20" height="3" fill="#fca5a5"/><line x1="20" y1="33" x2="20" y2="44" stroke="#666" stroke-width="2"/><line x1="28" y1="33" x2="28" y2="40" stroke="#666" stroke-width="2"/><g stroke="#fbbf24" stroke-width="2"><line x1="34" y1="12" x2="38" y2="8"/><line x1="36" y1="18" x2="42" y2="16"/></g></svg>',
-connector:'<svg viewBox="0 0 48 48"><rect x="8" y="16" width="18" height="16" rx="2" fill="#e5e7eb" stroke="#9ca3af"/><g fill="#d4af37"><rect x="12" y="20" width="2" height="8"/><rect x="17" y="20" width="2" height="8"/><rect x="22" y="20" width="2" height="8"/></g><path d="M26 22 h8 M26 26 h8" stroke="#dc2626" stroke-width="2"/><path d="M34 20 q8 4 8 12" stroke="#111" fill="none" stroke-width="2"/></svg>',
-mech:'<svg viewBox="0 0 48 48"><path d="M24 8 l3 6 6 -2 1 7 7 1 -2 6 6 3 -6 3 2 6 -7 1 -1 7 -6 -2 -3 6 -3 -6 -6 2 -1 -7 -7 -1 2 -6 -6 -3 6 -3 -2 -6 7 -1 1 -7 6 2 z" fill="#6b7280"/><circle cx="24" cy="24" r="6" fill="#f7f6f3"/></svg>',
-misc:'<svg viewBox="0 0 48 48"><rect x="10" y="14" width="28" height="22" rx="3" fill="#a78bfa"/><text x="24" y="30" font-size="16" text-anchor="middle" fill="#fff" font-family="sans-serif">?</text></svg>'};
+board:_lu('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M11 9h4a2 2 0 0 0 2-2V3"/><circle cx="9" cy="9" r="1.6"/><path d="M7 21v-4a2 2 0 0 1 2-2h4"/><circle cx="15" cy="15" r="1.6"/>'),
+sensor:_lu('<path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.86a10 10 0 0 1 14 0"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/>'),
+power:_lu('<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'),
+ic:_lu('<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>'),
+passive:_lu('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),
+led:_lu('<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>'),
+connector:_lu('<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M6 8h12v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>'),
+mech:_lu('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+misc:_lu('<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>')};
+/* Interface icons — Lucide */
+const IC={
+plus:'<path d="M5 12h14M12 5v14"/>',minus:'<path d="M5 12h14"/>',
+checks:'<path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>',
+bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+shop:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+copy:'<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
+chevright:'<path d="m9 18 6-6-6-6"/>',chevleft:'<path d="m15 18-6-6 6-6"/>'};
+const ic=n=>'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>';
 const PICS={
 esp32:'<svg viewBox="0 0 64 64"><rect x="12" y="4" width="40" height="56" rx="3" fill="#1a1a2e"/><g fill="#d4af37"><rect x="8" y="8" width="4" height="3"/><rect x="8" y="14" width="4" height="3"/><rect x="8" y="20" width="4" height="3"/><rect x="8" y="26" width="4" height="3"/><rect x="8" y="32" width="4" height="3"/><rect x="8" y="38" width="4" height="3"/><rect x="8" y="44" width="4" height="3"/><rect x="52" y="8" width="4" height="3"/><rect x="52" y="14" width="4" height="3"/><rect x="52" y="20" width="4" height="3"/><rect x="52" y="26" width="4" height="3"/><rect x="52" y="32" width="4" height="3"/><rect x="52" y="38" width="4" height="3"/><rect x="52" y="44" width="4" height="3"/></g><rect x="18" y="6" width="28" height="24" rx="2" fill="#b8bfc6"/><rect x="20" y="8" width="24" height="20" fill="#9aa3ab"/><path d="M22 6 v-3 h20" stroke="#c8a848" fill="none"/><rect x="26" y="52" width="12" height="8" rx="1" fill="#8f969c"/><rect x="16" y="36" width="8" height="6" rx="1" fill="#333"/><rect x="40" y="36" width="8" height="6" rx="1" fill="#333"/><circle cx="32" cy="44" r="2" fill="#e74c3c"/></svg>',
 mini560:'<svg viewBox="0 0 64 64"><rect x="10" y="16" width="44" height="32" rx="3" fill="#14532d"/><circle cx="24" cy="32" r="9" fill="#4b5563"/><circle cx="24" cy="32" r="5" fill="#6b7280"/><rect x="38" y="24" width="12" height="10" rx="1" fill="#111"/><rect x="38" y="38" width="10" height="5" rx="1" fill="#b45309"/><g fill="#d4af37"><circle cx="14" cy="20" r="2"/><circle cx="50" cy="20" r="2"/><circle cx="14" cy="44" r="2"/><circle cx="50" cy="44" r="2"/></g></svg>',
@@ -255,7 +301,7 @@ PICS.esp32p=PICS.esp32; PICS.jbox=PICS.ipbox; PICS.mlcc2=PICS.mlcc;
 /* ================= STATE ================= */
 const LS='ws-state-v1';
 let S={parts:{},projects:[],boms:{},inv:{},cfg:{owner:'',repo:'',branch:'main',token:''},dirty:false,loadedFrom:''};
-let tab='shop',filter='',projFilter='';
+let tab='shop',filter='',projFilter='',projSel=null;
 
 const $=s=>document.querySelector(s);
 const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -373,10 +419,10 @@ function partCard(pid,scope){
    <div class="qtyrow"><span>need <b>${need}</b></span><span>own <b>${owned(pid)}</b></span></div>
    <div class="src">${srcHtml(p)}</div>
    <div class="acts">
-    ${nb>0?`<button class="btn small primary" data-act="buy">＋ Bought 1</button><button class="btn small" data-act="buyall">Bought all ${nb}</button>`:''}
-    ${owned(pid)>0?`<button class="btn small" data-act="minus">−1</button>`:''}
-    <button class="btn small" data-act="alt">🤖 Alternatives</button>
-    <button class="btn small" data-act="edit">✎</button>
+    ${nb>0?`<button class="btn small primary" data-act="buy">${ic('plus')}Bought 1</button><button class="btn small" data-act="buyall">${ic('checks')}All ${nb}</button>`:''}
+    ${owned(pid)>0?`<button class="btn small" data-act="minus">${ic('minus')}1</button>`:''}
+    <button class="btn small" data-act="alt">${ic('bulb')}Alternatives</button>
+    <button class="btn small" data-act="edit">${ic('pencil')}</button>
    </div>
    <div class="ai-inline" data-aibox></div>
   </div>
@@ -393,8 +439,8 @@ function render(){
   buy.sort((a,b)=>toBuy(b,scope)*(S.parts[b].expectedPrice||0)-toBuy(a,scope)*(S.parts[a].expectedPrice||0));
   const total=buy.reduce((a,pid)=>a+toBuy(pid,scope)*(S.parts[pid].expectedPrice||0),0);
   const scopeLbl=projFilter?projName(projFilter):'all active projects';
-  v.innerHTML=(buy.length?`<div class="section-total"><span>🛒 ${buy.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span></div>`:'')+
-   (buy.map(pid=>partCard(pid,scope)).join('')||'<div class="empty">🎉 Nothing to buy for this scope — all covered.</div>');
+  v.innerHTML=(buy.length?`<div class="section-total"><span>${buy.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span></div>`:'')+
+   (buy.map(pid=>partCard(pid,scope)).join('')||'<div class="empty">Nothing to buy for this scope — all covered.</div>');
  }else if(tab==='inv'){
   const inv=Object.keys(S.parts).filter(pid=>owned(pid)>0&&matchFilter(pid));
   v.innerHTML=inv.map(pid=>partCard(pid,'__all__')).join('')||'<div class="empty">📦 Inventory empty. Mark items “Bought” from the Shopping tab.</div>';
@@ -402,43 +448,72 @@ function render(){
   const all=Object.keys(S.parts).filter(matchFilter);
   v.innerHTML=all.map(pid=>partCard(pid,'__all__')).join('')||'<div class="empty">No parts match.</div>';
  }else{
-  v.innerHTML=S.projects.map(projCard).join('')||'<div class="empty">No projects.</div>';
+  if(projSel){const pr=S.projects.find(p=>p.id===projSel);v.innerHTML=pr?projectDetail(pr):'';}
+  else v.innerHTML=S.projects.map(projSummary).join('')||'<div class="empty">No projects.</div>';
  }
 }
-function projCard(pr){
+function projStats(pr){
  const bom=S.boms[pr.id]||[];
  const need=bom.reduce((a,b)=>a+b.qty,0);
  const have=bom.reduce((a,b)=>a+Math.min(b.qty,owned(b.partId)),0);
  const cost=bom.reduce((a,b)=>a+Math.max(0,b.qty-owned(b.partId))*(S.parts[b.partId]?.expectedPrice||0),0);
- const pct=need?Math.round(have/need*100):0;
+ return {bom,need,have,cost,pct:need?Math.round(have/need*100):0};
+}
+function projSummary(pr){
+ const {need,have,cost,pct}=projStats(pr);
+ const stcls='st-'+pr.status.replace(/\s/g,'');
+ return `<button class="pcard" data-projopen="${pr.id}">
+  <div class="pcard-icon">${ic('book')}</div>
+  <div class="pcard-body">
+   <div class="pcard-top"><span class="pcard-name">${esc(pr.name)}</span><span class="stpill ${stcls}">${esc(pr.status)}</span></div>
+   <div class="pcard-meta">${esc(pr.room||'')}${pr.difficulty?' · '+esc(pr.difficulty):''}${pr.estimatedCost?' · '+esc(pr.estimatedCost):''}</div>
+   <div class="bar"><i style="width:${pct}%"></i></div>
+   <div class="pcard-foot"><span>${pct}% in hand (${have}/${need})</span><span>${cost>0?rup(cost)+' to buy':'✓ all in hand'}</span></div>
+  </div>
+  <div class="pcard-chev">${ic('chevright')}</div>
+ </button>`;
+}
+function projectDetail(pr){
+ const {bom,need,have,cost,pct}=projStats(pr);
  const stcls='st-'+pr.status.replace(/\s/g,'');
  const rows=bom.map(b=>{const p=S.parts[b.partId]||{name:b.partId};const short=Math.max(0,b.qty-owned(b.partId));
-   return `<tr><td>${esc(p.name)} <span class="pid">${b.partId}</span></td><td class="n">${b.qty}</td><td class="n">${owned(b.partId)}</td><td class="n">${short>0?'<b style="color:var(--warn)">'+short+'</b>':'<span style="color:var(--ok)">✓</span>'}</td></tr>`}).join('');
- const safety=(pr.safety&&pr.safety.length)?`<div class="safety"><b>⚠ Safety</b><ul>${pr.safety.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>`:'';
- return `<div class="projcard" data-proj="${pr.id}">
-  <h3>${esc(pr.name)}
-    <select class="stsel ${stcls}" data-statusfor="${pr.id}">${STATUSES.map(s=>`<option${s===pr.status?' selected':''}>${s}</option>`).join('')}</select>
-  </h3>
-  <div class="sub">${esc(pr.room||'')}${pr.difficulty?' · '+esc(pr.difficulty):''}${pr.estimatedCost?' · '+esc(pr.estimatedCost):''}</div>
-  <div class="desc" style="margin-top:6px">${esc(pr.summary||'')}</div>
-  <div class="bar"><i style="width:${pct}%"></i></div>
-  <div class="qtyrow"><span><b>${pct}%</b> parts in hand (${have}/${need})</span><span>≈ <b>${rup(cost)}</b> left to buy</span></div>
-  ${safety}
-  <table class="ptable"><tr><th>Part</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${rows}</table>
-  <div class="acts">
-   <button class="btn small" data-act="shopproj" data-proj="${pr.id}">🛒 Shop this project</button>
-   <button class="btn small" data-act="opendoc" data-proj="${pr.id}">📄 Build guide</button>
+   return `<tr><td>${esc(p.name)} <span class="pid">${b.partId}</span></td><td class="n">${b.qty}</td><td class="n">${owned(b.partId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
+ const safety=(pr.safety&&pr.safety.length)?`<div class="section warn"><div class="section-h">⚠ Safety</div><ul class="safety-list">${pr.safety.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>`:'';
+ return `<button class="backbtn" data-act="back">${ic('chevleft')}Projects</button>
+  <div class="detail-hero">
+   <div class="pcard-icon lg">${ic('book')}</div>
+   <div><div class="detail-title">${esc(pr.name)}</div>
+   <div class="detail-meta">${esc(pr.room||'')}${pr.difficulty?' · '+esc(pr.difficulty):''}${pr.estimatedCost?' · '+esc(pr.estimatedCost):''}</div></div>
   </div>
- </div>`;
+  <div class="detail-status"><span class="lbl">Status</span><select class="stsel ${stcls}" data-statusfor="${pr.id}">${STATUSES.map(s=>`<option${s===pr.status?' selected':''}>${s}</option>`).join('')}</select></div>
+  <div class="section"><div class="section-h">Overview</div><p class="section-p">${esc(pr.summary||'')}</p></div>
+  <div class="section"><div class="section-h">Progress</div>
+   <div class="bar"><i style="width:${pct}%"></i></div>
+   <div class="qtyrow"><span><b>${pct}%</b> parts in hand (${have}/${need})</span><span>≈ <b>${rup(cost)}</b> left to buy</span></div>
+  </div>
+  ${safety}
+  <div class="section"><div class="section-h">Parts</div>
+   <table class="ptable"><tr><th>Part</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${rows}</table>
+  </div>
+  <div class="section"><div class="section-h">Circuit diagram</div>
+   <img class="diagram" src="projects/${pr.id}/circuit-diagram.svg" alt="Circuit diagram" onerror="this.closest('.section').remove()">
+  </div>
+  <div class="actions-sec">
+   <button class="btn primary block" data-act="opendoc" data-proj="${pr.id}">${ic('book')}Open full build guide</button>
+   <button class="btn block" data-act="shopproj" data-proj="${pr.id}">${ic('shop')}Shop this project</button>
+  </div>`;
 }
 
 /* ================= EVENTS ================= */
 document.addEventListener('click',e=>{
  const t=e.target.closest('.tab');
- if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;render();return}
+ if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;render();window.scrollTo(0,0);return}
+ const po=e.target.closest('[data-projopen]');
+ if(po){projSel=po.dataset.projopen;render();window.scrollTo(0,0);return}
  const b=e.target.closest('[data-act]');if(!b)return;
  const act=b.dataset.act;
- if(act==='shopproj'){projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';
+ if(act==='back'){projSel=null;render();window.scrollTo(0,0);return}
+ if(act==='shopproj'){projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
  if(act==='opendoc'){window.open('projects/'+b.dataset.proj+'/project.html','_blank');return}
  const card=e.target.closest('[data-pid]');if(!card)return;
