@@ -82,6 +82,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .btn:disabled{opacity:.4}
 /* responsive inventory cards */
 .card{background:var(--card);border-radius:28px;padding:24px;margin-bottom:14px;display:grid;grid-template-columns:96px minmax(0,1fr) 230px;gap:20px;align-items:start;box-shadow:var(--shadow)}
+.qtypop{position:fixed;z-index:80;width:260px;background:var(--card);border-radius:18px;padding:16px;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.qtypop-head{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:15px}
+.qtypop-x{border:none;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--label2)}
+.qtypop-sub{font-size:13px;color:var(--label2);margin:6px 0 12px}.qtypop-sub b{color:var(--label)}
+.qtypop-stepper{display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:12px}
+.qtypop-stepper .qtypop-step{width:38px;height:38px;border-radius:50%;border:none;background:var(--fill);color:var(--tint);font-size:20px;cursor:pointer}
+.qtypop-val{font-size:22px;font-weight:700;min-width:36px;text-align:center}
+.qtypop-quick{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
+.qtypop-quick button{border:none;background:var(--fill);color:var(--label);border-radius:8px;padding:6px 0;font-size:12px;cursor:pointer}
+.qtypop-actions{display:flex;gap:8px}.qtypop-actions .btn{flex:1}
 .thumb{width:96px;height:96px;border-radius:22px;background:var(--card2);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .thumb svg{width:72px;height:72px}.thumb img{width:100%;height:100%;object-fit:cover}
 .caticon{display:inline-block;vertical-align:-2px;margin-left:6px;opacity:.5}.caticon svg{width:16px;height:16px}
@@ -93,10 +103,21 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .qtyrow{display:flex;gap:22px;align-items:center;flex-wrap:wrap;font-size:15px;color:var(--label2)}.qtyrow b{font-size:19px;color:var(--label);font-weight:700}
 .src{color:var(--label2);font-size:14px;margin-top:9px}.src a{color:var(--blue);text-decoration:none;font-weight:600}
 .card-controls{display:flex;flex-direction:column;gap:9px;align-self:stretch}.card-controls .price{display:none}
-.acts{display:grid;grid-template-columns:1fr;gap:9px;margin:0}.acts .btn{width:100%;min-height:46px;justify-content:center;border-radius:13px;font-size:16px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0}.acts .btn{width:100%;min-height:46px;justify-content:center;border-radius:13px;font-size:16px}
+.acts .btn.wide{grid-column:1 / -1}
 .acts .btn.small{padding:10px 13px;font-size:16px}.acts .btn.primary{font-weight:700}
+.edit-ic{border:none;background:none;color:var(--label3);cursor:pointer;display:inline-flex;vertical-align:-3px;margin-left:6px;padding:2px}
+.edit-ic svg{width:16px;height:16px}
 .ai-inline{display:none;margin-top:12px;background:var(--card2);border-radius:12px;padding:11px 13px;font-size:14px;line-height:1.5;color:var(--label)}.ai-inline.show{display:block}.ai-inline b{color:var(--tint-ink)}
-@media (max-width:600px){.card{grid-template-columns:72px minmax(0,1fr);gap:13px;padding:16px;border-radius:22px}.thumb{width:72px;height:72px;border-radius:18px}.thumb svg{width:54px;height:54px}.name{font-size:19px;line-height:1.18}.pid{display:block;margin:2px 0 0;font-size:13px}.desc{font-size:14px;margin:5px 0 10px}.chips{margin-bottom:10px;gap:6px}.chip{font-size:12px;padding:4px 8px}.qtyrow{gap:14px;font-size:14px}.qtyrow b{font-size:17px}.src{font-size:13px;margin-top:7px}.card-controls{grid-column:1 / -1;flex-direction:row;align-items:stretch}.acts{grid-template-columns:minmax(0,1fr) auto auto;flex:1}.acts .btn{min-height:44px;font-size:15px}.acts .btn.small{padding:9px 10px;font-size:15px}.acts .btn[data-act="minus"],.acts .btn[data-act="edit"]{display:none}.price{display:none}}
+@media (max-width:600px){.card{grid-template-columns:72px minmax(0,1fr);gap:13px;padding:16px;border-radius:22px}.thumb{width:72px;height:72px;border-radius:18px}.thumb svg{width:54px;height:54px}.name{font-size:19px;line-height:1.18}.pid{display:block;margin:2px 0 0;font-size:13px}.desc{font-size:14px;margin:5px 0 10px}.chips{margin-bottom:10px;gap:6px}.chip{font-size:12px;padding:4px 8px}.qtyrow{gap:14px;font-size:14px}.qtyrow b{font-size:17px}.src{font-size:13px;margin-top:7px}.card-controls{grid-column:1 / -1;flex-direction:row;align-items:stretch}
+.acts{display:flex;grid-template-columns:none;flex:1;gap:8px}
+.acts .btn{width:auto;flex:none;min-height:44px;font-size:15px}
+.acts .btn.wide{grid-column:auto}
+.acts .btn[data-act="buy"]{flex:1}
+.acts .btn.small{padding:9px 10px;font-size:15px}
+.acts .btn[data-act="alt"]{width:44px;flex:none;padding:0}
+.acts .btn[data-act="alt"] .label{display:none}
+.price{display:none}}
 .section-total{background:var(--tint-soft);color:var(--tint-ink);border-radius:14px;padding:12px 16px;font-weight:600;font-size:15px;display:flex;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px}
 .ai-inline{display:none;margin-top:10px;background:var(--card2);border-radius:12px;padding:11px 13px;font-size:14px;line-height:1.5;color:var(--label)}
 .ai-inline.show{display:block}
@@ -448,19 +469,57 @@ function partCard(pid,scope){
  return `<div class="card" data-pid="${pid}">
   <div class="thumb">${bigPic(p)}</div>
   <div class="body">
-   <div class="name">${esc(p.name)}<span class="pid">${pid}</span><span class="caticon" title="${CAT[p.category]}">${catIcon(p)}</span></div>
+   <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
    <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
    <div class="chips"><span class="chip">${CAT[p.category]}</span>${projChips}${status}</div>
    <div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>
    <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
   </div>
   <div class="card-controls"><div class="acts">
-    ${nb>0?`<button class="btn small primary" data-act="buy">${ic('minus')}Bought${ic('plus')}</button><button class="btn small" data-act="buyall">${ic('checks')}All ${nb}</button>`:''}
+    ${nb>0?`<button class="btn small primary qty-plus" data-act="buy">${ic('plus')}1</button>`:''}
     ${owned(pid)>0?`<button class="btn small" data-act="minus">${ic('minus')}1</button>`:''}
-    <button class="btn small" data-act="alt">${ic('bulb')}Alternatives</button><button class="btn small" data-act="edit">${ic('pencil')}Edit</button>
+    ${nb>0?`<button class="btn small wide" data-act="buyall">${ic('checks')}All ${nb}</button>`:''}
+    <button class="btn small wide" data-act="alt">${ic('bulb')}<span class="label">Alternatives</span></button>
   </div></div>
  </div>`;
 }
+/* ============= QUANTITY POPOVER (tap-and-hold on +1) ============= */
+const QP={pid:null,val:0,el:null};
+function qtyPopHtml(pid){
+ const need=needFor(pid,projFilter||'active');
+ return `<div class="qtypop-head">Add how many?<button class="qtypop-x" data-qpx>&times;</button></div>
+  <div class="qtypop-sub">Need <b>${need}</b> &middot; In stock <b>${owned(pid)}</b></div>
+  <div class="qtypop-stepper">
+   <button class="qtypop-step" data-qpdelta="-1">&minus;</button>
+   <span class="qtypop-val" data-qpval>0</span>
+   <button class="qtypop-step" data-qpdelta="1">+</button>
+  </div>
+  <div class="qtypop-quick">
+   <button data-qpdelta="-10">&minus;10</button><button data-qpdelta="-5">&minus;5</button><button data-qpdelta="-1">&minus;1</button>
+   <button data-qpdelta="1">+1</button><button data-qpdelta="5">+5</button><button data-qpdelta="10">+10</button>
+  </div>
+  <div class="qtypop-actions">
+   <button class="btn small" data-qpcancel>Cancel</button>
+   <button class="btn small primary" data-qpadd>Add <span data-qpval2>0</span></button>
+  </div>`;
+}
+function positionQtyPop(anchor){
+ const r=anchor.getBoundingClientRect(),el=QP.el,w=260,h=250;
+ el.style.top=Math.max(8,Math.min(r.bottom+8,window.innerHeight-h-8))+'px';
+ el.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+'px';
+}
+function updateQtyPopVal(){
+ if(!QP.el)return;
+ QP.el.querySelector('[data-qpval]').textContent=QP.val;
+ QP.el.querySelector('[data-qpval2]').textContent=QP.val;
+}
+function openQtyPop(pid,anchor){
+ closeQtyPop();
+ QP.pid=pid;QP.val=Math.max(0,needFor(pid,projFilter||'active')-owned(pid));
+ const div=document.createElement('div');div.className='qtypop';div.innerHTML=qtyPopHtml(pid);
+ document.body.appendChild(div);QP.el=div;positionQtyPop(anchor);updateQtyPopVal();
+}
+function closeQtyPop(){if(QP.el){QP.el.remove();QP.el=null;QP.pid=null}}
 
 function render(){
  if(!Object.keys(S.parts).length&&tab!=='setup')return;
@@ -543,7 +602,24 @@ function projectDetail(pr){
 }
 
 /* ================= EVENTS ================= */
+let lpTimer=null,lpFired=false;
+document.addEventListener('pointerdown',e=>{
+ const b=e.target.closest('.qty-plus');if(!b)return;
+ lpFired=false;
+ lpTimer=setTimeout(()=>{lpFired=true;openQtyPop(b.closest('[data-pid]').dataset.pid,b)},450);
+});
+document.addEventListener('pointerup',()=>clearTimeout(lpTimer));
+document.addEventListener('pointercancel',()=>clearTimeout(lpTimer));
+document.addEventListener('pointermove',e=>{if(e.pressure===0)return;clearTimeout(lpTimer)});
 document.addEventListener('click',e=>{
+ if(lpFired){lpFired=false;e.preventDefault();e.stopPropagation();return}
+ if(QP.el&&!e.target.closest('.qtypop')&&!e.target.closest('.qty-plus')){closeQtyPop()}
+ const qd=e.target.closest('[data-qpdelta]');
+ if(qd){QP.val=Math.max(0,QP.val+parseInt(qd.dataset.qpdelta,10));updateQtyPopVal();return}
+ if(e.target.closest('[data-qpcancel],[data-qpx]')){closeQtyPop();return}
+ if(e.target.closest('[data-qpadd]')){
+  const pid=QP.pid;if(pid){S.inv[pid]=Math.max(0,owned(pid)+QP.val);if(S.inv[pid]===0)delete S.inv[pid];markDirty()}
+  closeQtyPop();render();return}
  const t=e.target.closest('.tab');
  if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;render();window.scrollTo(0,0);return}
  const po=e.target.closest('[data-projopen]');
