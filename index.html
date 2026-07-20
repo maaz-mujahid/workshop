@@ -98,7 +98,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .qtystep{display:flex;align-items:stretch;background:var(--fill);border-radius:13px;overflow:hidden;height:46px}
 .qs-btn{border:none;background:none;color:var(--tint);width:44px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qs-btn svg{width:18px;height:18px}
-.qs-input{border:none;background:none;text-align:center;width:100%;min-width:44px;font-size:16px;font-weight:700;color:var(--label);-moz-appearance:textfield}
+.qs-input{border:none;background:none;text-align:center;flex:1 1 0;min-width:0;font-size:16px;font-weight:700;color:var(--label);-moz-appearance:textfield}
 .qs-input::-webkit-outer-spin-button,.qs-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .edit-ic{border:none;background:none;color:var(--label3);cursor:pointer;display:inline-flex;vertical-align:-3px;margin-left:6px;padding:2px}
 .edit-ic svg{width:16px;height:16px}
@@ -765,7 +765,7 @@ function partDialog(pid){
   <label>Buy link (URL)</label><input id="fUrl" value="${esc(src0.url)}">
   <label>Alternatives (plain text — shown offline)</label><textarea id="fAlt" rows="3">${esc(p.alternatives||'')}</textarea>
   <label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">
-  <div class="note">${isNew?'New parts get the next P-code. To attach it to a project BOM, mention it in that project’s chat so I add it to the repo.':'Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.'}</div>
+  <div class="note">${isNew?'New parts get the next P-code. To attach it to a project BOM, mention it in that project's chat so I add it to the repo.':'Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.'}</div>
   <div class="foot">${isNew?'<span></span>':'<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>'}
    <span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fSave">Save</button></span></div>`;
  const d=$('#dlg');d.showModal();
@@ -799,7 +799,7 @@ $('#reloadBtn').addEventListener('click',async()=>{const rb=$('#reloadBtn');cons
 /* ================= INIT ================= */
 function fillProjFilter(){$('#projFilter').innerHTML='<option value="">All projects</option>'+S.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
 (async()=>{
- try{await loadData()}catch(e){$('#view').innerHTML='<div class="empty">Couldn’t load data files.<br><small>'+esc(e.message)+'</small><br><br>If you opened index.html directly (file://), some browsers block loading the JSON. Use it via GitHub Pages, or a local server.</div>';updateSync();return}
+ try{await loadData()}catch(e){$('#view').innerHTML='<div class="empty">Couldn't load data files.<br><small>'+esc(e.message)+'</small><br><br>If you opened index.html directly (file://), some browsers block loading the JSON. Use it via GitHub Pages, or a local server.</div>';updateSync();return}
  fillProjFilter();render();updateSync();
  if(S.loadedFrom==='cache')toast('Offline — showing saved data');
 })();
