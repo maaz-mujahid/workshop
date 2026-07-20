@@ -799,7 +799,7 @@ $('#reloadBtn').addEventListener('click',async()=>{const rb=$('#reloadBtn');cons
 /* ================= INIT ================= */
 function fillProjFilter(){$('#projFilter').innerHTML='<option value="">All projects</option>'+S.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
 (async()=>{
- try{await loadData()}catch(e){$('#view').innerHTML='<div class="empty">Couldn't load data files.<br><small>'+esc(e.message)+'</small><br><br>If you opened index.html directly (file://), some browsers block loading the JSON. Use it via GitHub Pages, or a local server.</div>';updateSync();return}
+ try{await loadData()}catch(e){$('#view').innerHTML='<div class="empty">Couldn\'t load data files.<br><small>'+esc(e.message)+'</small><br><br>If you opened index.html directly (file://), some browsers block loading the JSON. Use it via GitHub Pages, or a local server.</div>';updateSync();return}
  fillProjFilter();render();updateSync();
  if(S.loadedFrom==='cache')toast('Offline — showing saved data');
 })();
