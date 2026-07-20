@@ -765,7 +765,7 @@ function partDialog(pid){
   <label>Buy link (URL)</label><input id="fUrl" value="${esc(src0.url)}">
   <label>Alternatives (plain text — shown offline)</label><textarea id="fAlt" rows="3">${esc(p.alternatives||'')}</textarea>
   <label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">
-  <div class="note">${isNew?'New parts get the next P-code. To attach it to a project BOM, mention it in that project's chat so I add it to the repo.':'Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.'}</div>
+  <div class="note">${isNew? `New parts get the next P-code. To attach it to a project BOM, mention it in that project's chat so I add it to the repo.` : `Edits are saved on this device; press Sync to push name/price/alt changes… Note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.`}</div>
   <div class="foot">${isNew?'<span></span>':'<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>'}
    <span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fSave">Save</button></span></div>`;
  const d=$('#dlg');d.showModal();
