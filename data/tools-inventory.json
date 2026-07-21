@@ -1,6 +1,9 @@
 {
   "schema": "tools-inventory/v1",
-  "updated": "2026-07-22",
+  "updated": "2026-07-21",
   "note": "Tool ownership only (boolean — a tool is either owned or not, no quantities). App-owned file.",
-  "stock": {}
+  "stock": {
+    "T0013": 1,
+    "T0002": 1
+  }
 }
