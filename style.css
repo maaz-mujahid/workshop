@@ -82,7 +82,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .card-controls{display:flex;flex-direction:column;gap:9px}.card-controls .price{display:none}
 .acts{display:flex;flex-direction:column;gap:9px;margin:0;width:max-content}.acts .btn{min-height:46px;justify-content:center;border-radius:13px;font-size:16px;white-space:nowrap}
 .acts .btn.small{padding:10px 13px;font-size:16px}.acts .btn.primary{font-weight:700}
-.qtystep{display:flex;align-items:stretch;background:var(--fill);border-radius:13px;overflow:hidden;height:46px}
+.qtystep{display:flex;align-items:stretch;background:var(--fill);border-radius:13px;overflow:hidden;height:46px;width:0;min-width:100%;box-sizing:border-box}
 .qs-btn{border:none;background:none;color:var(--tint);width:44px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qs-btn svg{width:18px;height:18px}
 .qs-input{border:none;background:none;text-align:center;flex:1 1 0;min-width:0;font-size:16px;font-weight:700;color:var(--label);-moz-appearance:textfield}
@@ -94,7 +94,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .acts{display:flex;flex-direction:row;flex:1;gap:8px;width:auto}
 .acts .btn{width:auto;flex:none;min-height:44px;font-size:15px}
 .acts .btn[data-act="add"]{flex:1}
-.qtystep{flex:1;height:44px}
+.qtystep{flex:1;height:44px;width:auto;min-width:0}
 .acts .btn.small{padding:9px 10px;font-size:15px}
 .acts .btn[data-act="alt"]{width:44px;flex:none;padding:0}
 .acts .btn[data-act="alt"] .label{display:none}
