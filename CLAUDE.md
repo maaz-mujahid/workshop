@@ -37,20 +37,24 @@ workshop/
 └── projects/<slug>/
     ├── project.json        { id, name, status, room, difficulty, summary, estimatedCost, safety[], docs, bom, tools }
     ├── bom.json            { items: [ { partId, qty } ] }   qty = individual pieces
-    ├── tools.json           { items: [ { toolId, qty } ] }  tools needed for the build (not consumed)
+    ├── tools.json           { items: [ { toolId } ] }  tools needed for the build (boolean, not consumed)
     ├── project.html        human build guide (overview, wiring, schematic, safety, legend)
     └── circuit-diagram.svg (where present)
 ```
 
 ## Tools (parallel system to parts)
-- **Tools are equipment, not consumables** — a soldering iron needed by 3 projects is "need 1", not "need 3".
-  toBuy math still works the same way (need vs. owned) but tools are never subtracted from inventory when
-  a project is marked Completed (parts are; tools aren't — they get reused on the next build).
+- **Tools are shared equipment, not consumables — boolean ownership, no quantities.** A soldering
+  iron needed by 3 projects is just "own one or not"; there is no qty on `toolId` items in
+  `projects/<slug>/tools.json` and no qty in `data/tools-inventory.json` (stock values are just `1`
+  for "have it", absent = don't). Tools are never subtracted from inventory when a project is marked
+  Completed (parts are; tools aren't — they get reused on the next build).
 - **Tool IDs are T-codes** (`T0001`…), completely separate ID space from P-codes. Same rules: reuse an
   existing ID for an equivalent tool, never rename/recycle.
-- The app has a Parts/Tools segmented toggle above the search bar. It switches the Shop/Inventory/All tabs
-  between the two catalogues. The Projects tab always shows both a Parts table and a Tools-needed table
-  for a given project, regardless of the toggle.
+- The app has a Parts/Tools segmented toggle above the search bar. It switches the Shop/Inventory/All
+  tabs between the two catalogues. Tool cards are simpler than part cards — no project-usage chips, no
+  qty stepper, just a single "Mark owned / Have it" toggle.
+- The Projects tab shows a Parts table (need/own/buy) plus a horizontally scrollable strip of tool
+  chips ("Tools needed") — tap a chip to toggle owned/missing directly from the project view.
 - `data/tools-inventory.json` is APP-OWNED (same rule as `data/inventory.json` — never clobber it, GitHub
   Sync pushes it alongside the parts inventory).
 

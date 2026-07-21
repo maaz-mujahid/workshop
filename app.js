@@ -163,7 +163,16 @@ async function loadData(force){
 
 /* ================= CALC ================= */
 function needFor(pid,scope){ // scope: 'active' | slug
- let n=0;const boms=BOMS(),key=IKEY();
+ const boms=BOMS(),key=IKEY();
+ if(kind==='tools'){ // tools are shared equipment — needed is boolean, not summed
+  for(const p of S.projects){
+   if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
+   else{if(p.id!==scope)continue}
+   if((boms[p.id]||[]).some(b=>b[key]===pid))return 1;
+  }
+  return 0;
+ }
+ let n=0;
  for(const p of S.projects){
   if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
   else{if(p.id!==scope)continue}
@@ -172,7 +181,7 @@ function needFor(pid,scope){ // scope: 'active' | slug
  }
  return n;
 }
-const owned=pid=>INV()[pid]||0;
+const owned=pid=>kind==='tools'?(INV()[pid]?1:0):(INV()[pid]||0);
 function toBuy(pid,scope){return Math.max(0,needFor(pid,scope)-owned(pid))}
 function partsInScope(scope){
  const set=new Set();const boms=BOMS(),key=IKEY();
@@ -215,6 +224,7 @@ function matchFilter(pid){
 }
 function partCard(pid,scope){
  const p=CATALOG()[pid];if(!p)return '';
+ if(kind==='tools')return toolCard(pid);
  const need=needFor(pid,scope==='active'?'active':scope), nb=Math.max(0,need-owned(pid));
  const boms=BOMS(),key=IKEY();
  const projChips=S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
@@ -232,6 +242,24 @@ function partCard(pid,scope){
      `<div class="qtystep"><button class="qs-btn" data-act="stepminus">${ic('minus')}</button><input class="qs-input" type="number" min="0" step="1" value="${owned(pid)}" data-act="stepinput"><button class="qs-btn" data-act="stepplus">${ic('plus')}</button></div>`
      :`<button class="btn small primary" data-act="add">${ic('plus')}Add</button>`}
     ${nb>0?`<button class="btn small" data-act="buyall">${ic('checks')}All ${nb}</button>`:''}
+    <button class="btn small" data-act="alt">${ic('bulb')}<span class="label">Alternatives</span></button>
+  </div></div>
+ </div>`;
+}
+// Tools are shared equipment — no quantities, just "do I have this or not".
+function toolCard(pid){
+ const p=S.tools[pid];if(!p)return '';
+ const has=owned(pid)>0;
+ return `<div class="card" data-pid="${pid}">
+  <div class="thumb">${bigPic(p)}</div>
+  <div class="body">
+   <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
+   <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
+   <div class="chips"><span class="chip">${TCAT[p.category]}</span></div>
+   <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
+  </div>
+  <div class="card-controls"><div class="acts">
+    <button class="btn small ${has?'':'primary'}" data-act="toolhave">${has?ic('checks')+'Have it':ic('plus')+'Mark owned'}</button>
     <button class="btn small" data-act="alt">${ic('bulb')}<span class="label">Alternatives</span></button>
   </div></div>
  </div>`;
@@ -295,11 +323,10 @@ function projStats(pr){
 }
 function projToolStats(pr){
  const tbom=S.toolBoms[pr.id]||[];
- const ownedT=tid=>S.toolInv[tid]||0;
- const need=tbom.reduce((a,b)=>a+b.qty,0);
- const have=tbom.reduce((a,b)=>a+Math.min(b.qty,ownedT(b.toolId)),0);
- const missing=tbom.filter(b=>ownedT(b.toolId)<b.qty).length;
- return {tbom,need,have,missing};
+ const ownedT=tid=>S.toolInv[tid]?1:0;
+ const have=tbom.filter(b=>ownedT(b.toolId)).length;
+ const missing=tbom.length-have;
+ return {tbom,have,missing};
 }
 function projSummary(pr){
  const {need,have,cost,pct}=projStats(pr);
@@ -321,12 +348,18 @@ function projectDetail(pr){
  const stcls='st-'+pr.status.replace(/\s/g,'');
  const rows=bom.map(b=>{const p=S.parts[b.partId]||{name:b.partId};const short=Math.max(0,b.qty-ownedP(b.partId));
    return `<tr><td>${esc(p.name)} <span class="pid">${b.partId}</span></td><td class="n">${b.qty}</td><td class="n">${ownedP(b.partId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
- const {tbom}=projToolStats(pr);
- const ownedT=tid=>S.toolInv[tid]||0;
- const toolRows=tbom.map(b=>{const t=S.tools[b.toolId]||{name:b.toolId};const short=Math.max(0,b.qty-ownedT(b.toolId));
-   return `<tr><td>${esc(t.name)} <span class="pid">${b.toolId}</span></td><td class="n">${b.qty}</td><td class="n">${ownedT(b.toolId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
- const toolsSection=tbom.length?`<div class="section"><div class="section-h">Tools needed</div>
-   <table class="ptable"><tr><th>Tool</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${toolRows}</table>
+ const {tbom,have:toolsHave,missing:toolsMissing}=projToolStats(pr);
+ const ownedT=tid=>S.toolInv[tid]?1:0;
+ const toolCardsHtml=tbom.map(b=>{
+   const t=S.tools[b.toolId]||{name:b.toolId};
+   const has=ownedT(b.toolId);
+   return `<div class="toolchip ${has?'have':'need'}" data-toolopen="${b.toolId}">
+    <div class="toolchip-ic">${bigPic(t)}</div>
+    <div class="toolchip-name">${esc(t.name)}</div>
+    <div class="toolchip-status">${has?'✓ Have':'Need'}</div>
+   </div>`}).join('');
+ const toolsSection=tbom.length?`<div class="section"><div class="section-h">Tools needed${toolsMissing>0?` <span class="hdr-note">(${toolsMissing} missing)</span>`:''}</div>
+   <div class="toolscroll">${toolCardsHtml}</div>
   </div>`:'';
  const safety=(pr.safety&&pr.safety.length)?`<div class="section warn"><div class="section-h">⚠ Safety</div><ul class="safety-list">${pr.safety.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>`:'';
  return `<button class="backbtn" data-act="back">${ic('chevleft')}Projects</button>
@@ -362,6 +395,8 @@ document.addEventListener('click',e=>{
  if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;filter='';$('#filter').value='';render();window.scrollTo(0,0);return}
  const kt=e.target.closest('.kbtn');
  if(kt){kind=kt.dataset.kind;document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x===kt));filter='';$('#filter').value='';render();return}
+ const tc=e.target.closest('[data-toolopen]');
+ if(tc){const tid=tc.dataset.toolopen;if(S.toolInv[tid])delete S.toolInv[tid];else S.toolInv[tid]=1;markDirty();render();return}
  const po=e.target.closest('[data-projopen]');
  if(po){projSel=po.dataset.projopen;render();window.scrollTo(0,0);return}
  const dg=e.target.closest('img.diagram');
@@ -382,6 +417,7 @@ document.addEventListener('click',e=>{
  const scope=projFilter||'active';
  const inv=INV();
  if(act==='add'){inv[pid]=1;markDirty();refreshCard(pid);return}
+ else if(act==='toolhave'){if(owned(pid)>0)delete inv[pid];else inv[pid]=1;markDirty();refreshCard(pid);return}
  else if(act==='stepplus'){inv[pid]=owned(pid)+1;markDirty();refreshCard(pid);return}
  else if(act==='stepminus'){if(owned(pid)>0){inv[pid]=owned(pid)-1;if(inv[pid]===0)delete inv[pid];markDirty();refreshCard(pid)}return}
  else if(act==='buyall'){inv[pid]=owned(pid)+toBuy(pid,tab==='shop'?scope:'__all__');markDirty();refreshCard(pid);return}
@@ -513,7 +549,7 @@ async function syncGitHub(){
  const btn=$('#syncBtn');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="spin"></span>';
  try{
   await ghPut('data/inventory.json',{schema:'inventory/v2',updated:new Date().toISOString().slice(0,10),note:'Physical stock only. App-owned file.',stock:S.inv},'Update inventory');
-  await ghPut('data/tools-inventory.json',{schema:'tools-inventory/v1',updated:new Date().toISOString().slice(0,10),note:'Physical tool stock only. App-owned file.',stock:S.toolInv},'Update tools inventory');
+  await ghPut('data/tools-inventory.json',{schema:'tools-inventory/v1',updated:new Date().toISOString().slice(0,10),note:'Tool ownership only (boolean — a tool is either owned or not, no quantities). App-owned file.',stock:S.toolInv},'Update tools inventory');
   // push any changed statuses
   for(const pr of S.projects){
    await ghPut('projects/'+pr.id+'/project.json',pr,'Update '+pr.id+' status → '+pr.status);
@@ -557,7 +593,9 @@ function partDialog(pid){
   <div class="row2"><div><label>Shop</label><input id="fShop" value="${esc(src0.shop)}"></div><div><label>Price</label><input id="fSprice" value="${esc(src0.price)}"></div></div>
   <label>Buy link (URL)</label><input id="fUrl" value="${esc(src0.url)}">
   <label>Alternatives (plain text — shown offline)</label><textarea id="fAlt" rows="3">${esc(p.alternatives||'')}</textarea>
-  <label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">
+  ${isTool?
+   `<label class="checkrow"><input id="fHave" type="checkbox" ${pid&&owned(pid)>0?'checked':''}> I have this tool</label>`
+   :`<label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">`}
   <div class="note">${isNew?`New ${noun}s get the next ${PFX()}-code. To attach it to a project's needed-${noun}s list, mention it in that project's chat so I add it to the repo.`:`Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.`}</div>
   <div class="foot">${isNew?'<span></span>':`<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>`}
    <span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fSave">Save</button></span></div>`;
@@ -570,7 +608,8 @@ function partDialog(pid){
   CATALOG()[npid]={name:$('#fName').value.trim()||'Unnamed',category:$('#fCat').value,categoryLabel:cat[$('#fCat').value],
    spec:$('#fSpec').value.trim(),icon:p.icon||'',expectedPrice:parseFloat($('#fPrice').value)||0,
    sources:src,alternatives:$('#fAlt').value.trim(),notes:$('#fNotes').value.trim()};
-  const o=parseInt($('#fOwn').value)||0;if(o>0)INV()[npid]=o;else delete INV()[npid];
+  if(isTool){if($('#fHave').checked)INV()[npid]=1;else delete INV()[npid]}
+  else{const o=parseInt($('#fOwn').value)||0;if(o>0)INV()[npid]=o;else delete INV()[npid]}
   markDirty();d.close();render();
  };
 }
@@ -584,7 +623,9 @@ $('#copyList').addEventListener('click',()=>{
  const noun=kind==='tools'?'TOOLS':'PARTS';
  let txt='🛒 '+noun+' SHOPPING LIST — '+new Date().toLocaleDateString('en-IN')+(projFilter?' ('+projName(projFilter)+')':'')+'\n';
  buy.forEach(pid=>{const p=CATALOG()[pid];const q=toBuy(pid,scope);
-  txt+=`• ${p.name} — buy ${q}${p.expectedPrice?' @ ~₹'+p.expectedPrice+' = ₹'+Math.round(q*p.expectedPrice):' (salvage)'}${p.sources&&p.sources[0]?'  ['+p.sources[0].shop+']':''}\n`});
+  txt+=kind==='tools'
+   ?`• ${p.name}${p.expectedPrice?' — ~₹'+p.expectedPrice:''}${p.sources&&p.sources[0]?'  ['+p.sources[0].shop+']':''}\n`
+   :`• ${p.name} — buy ${q}${p.expectedPrice?' @ ~₹'+p.expectedPrice+' = ₹'+Math.round(q*p.expectedPrice):' (salvage)'}${p.sources&&p.sources[0]?'  ['+p.sources[0].shop+']':''}\n`});
  txt+='\nTOTAL ≈ ₹'+Math.round(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0)).toLocaleString('en-IN');
  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Copied shopping list')).catch(()=>{prompt('Copy your list:',txt)});
 });

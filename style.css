@@ -120,6 +120,19 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .ptable tr:last-child td{border-bottom:none}
 .ptable th{color:var(--label2);font-weight:600;font-size:12px}
 .ptable td.n{text-align:right;white-space:nowrap}
+.hdr-note{color:var(--orange);text-transform:none;letter-spacing:0;font-weight:600}
+.toolscroll{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;margin:10px -2px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.toolscroll::-webkit-scrollbar{display:none}
+.toolchip{flex:0 0 auto;width:104px;background:var(--card2);border-radius:16px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;cursor:pointer;transition:transform .12s}
+.toolchip:active{transform:scale(.96)}
+.toolchip-ic{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.toolchip-ic svg{width:100%;height:100%}
+.toolchip-name{font-size:12px;font-weight:600;line-height:1.25;color:var(--label)}
+.toolchip-status{font-size:11px;font-weight:600;color:var(--label2)}
+.toolchip.have .toolchip-status{color:var(--green)}
+.toolchip.need .toolchip-status{color:var(--orange)}
+.checkrow{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--label);cursor:pointer}
+.checkrow input{width:18px;height:18px;padding:0}
 .safety{background:var(--orange-soft);border-radius:12px;padding:11px 14px;font-size:13px;margin-top:12px;color:var(--label)}
 .safety li{margin-left:18px;margin-top:3px}
 /* dialog = iOS sheet */

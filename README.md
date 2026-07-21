@@ -10,11 +10,12 @@ calculations locally in your browser.
   Parts/Tools toggle switches the whole app between the two catalogues.
 - **Inventory** — one shared stock across every project, for parts and for tools. Mark
   items bought; extras just sit in stock for future builds. No manual reservations.
-  Tools are equipment, not consumables — owning one soldering iron covers every project
-  that needs one, and finishing a build never removes tools from stock (unlike parts).
+  Tools are shared equipment, not consumables — owning one soldering iron covers every
+  project that needs one (no quantities, just "do I have this or not"), and finishing a
+  build never removes tools from stock (unlike parts).
 - **Projects** — each with a status (Idea / Planned / In Progress / Completed / Cancelled),
-  summary, safety notes, a live parts table (need vs own vs buy), a tools-needed table,
-  and a full build guide.
+  summary, safety notes, a live parts table (need vs own vs buy), a scrollable row of
+  tool cards (tap to mark owned), and a full build guide.
 - **Alternatives** — tap 🤖 on any part or tool for substitute options in plain language,
   works offline (curated in the catalogue).
 - **Offline first** — works with no internet at the shop; syncs to GitHub when back online.
@@ -49,13 +50,13 @@ Workshop/
 
 **BOM** (`projects/<slug>/bom.json`): `{ items: [ { partId, qty } ] }` — quantities are individual pieces.
 
-**Tools needed** (`projects/<slug>/tools.json`): `{ items: [ { toolId, qty } ] }` — qty is almost always 1; tools aren't consumed.
+**Tools needed** (`projects/<slug>/tools.json`): `{ items: [ { toolId } ] }` — no quantities; tools are shared equipment, not consumed per-build.
 
 **Project** (`projects/<slug>/project.json`): `{ id, name, status, room, difficulty, summary, estimatedCost, safety[], docs, bom, tools }`
 
 **Inventory** (`data/inventory.json`): `{ stock: { "P0001": 10 } }` — owned counts only.
 
-**Tools inventory** (`data/tools-inventory.json`): `{ stock: { "T0001": 1 } }` — owned counts only.
+**Tools inventory** (`data/tools-inventory.json`): `{ stock: { "T0001": 1 } }` — boolean ownership only (1 = have it, absent = don't; no quantities).
 
 ## Setup
 See **SETUP.md** — free, ~10 minutes.

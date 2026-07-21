@@ -2,17 +2,41 @@
   "schema": "project-tools/v1",
   "project": "daikin-ac-wifi",
   "items": [
-    { "toolId": "T0001", "qty": 1 },
-    { "toolId": "T0002", "qty": 1 },
-    { "toolId": "T0003", "qty": 1 },
-    { "toolId": "T0004", "qty": 1 },
-    { "toolId": "T0005", "qty": 1 },
-    { "toolId": "T0006", "qty": 1 },
-    { "toolId": "T0007", "qty": 1 },
-    { "toolId": "T0009", "qty": 1 },
-    { "toolId": "T0010", "qty": 1 },
-    { "toolId": "T0011", "qty": 1 },
-    { "toolId": "T0012", "qty": 1 },
-    { "toolId": "T0013", "qty": 1 }
+    {
+      "toolId": "T0001"
+    },
+    {
+      "toolId": "T0002"
+    },
+    {
+      "toolId": "T0003"
+    },
+    {
+      "toolId": "T0004"
+    },
+    {
+      "toolId": "T0005"
+    },
+    {
+      "toolId": "T0006"
+    },
+    {
+      "toolId": "T0007"
+    },
+    {
+      "toolId": "T0009"
+    },
+    {
+      "toolId": "T0010"
+    },
+    {
+      "toolId": "T0011"
+    },
+    {
+      "toolId": "T0012"
+    },
+    {
+      "toolId": "T0013"
+    }
   ]
 }
