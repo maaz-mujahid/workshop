@@ -13,5 +13,6 @@
     "Shield the LDR from the units own LEDs to avoid a flicker loop."
   ],
   "docs": "project.html",
-  "bom": "bom.json"
+  "bom": "bom.json",
+  "tools": "tools.json"
 }

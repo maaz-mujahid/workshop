@@ -1,0 +1,163 @@
+{
+  "schema": "tools-catalogue/v1",
+  "updated": "2026-07-21",
+  "note": "Master tool catalogue (equipment, not consumed by a build — reused across projects). Every tool exists once. Projects reference these by toolId. Prices in INR, approx July 2026.",
+  "tools": {
+    "T0001": {
+      "name": "Temperature-controlled soldering iron",
+      "category": "power",
+      "categoryLabel": "Power tool",
+      "spec": "60W, adjustable tip temp",
+      "icon": "",
+      "expectedPrice": 1200,
+      "sources": [
+        { "shop": "robu", "price": "1200", "url": "" }
+      ],
+      "alternatives": "Any temp-controlled iron 40-80W works. A fixed-temp basic iron is usable but riskier near the ADuM isolator's small pins.",
+      "notes": "Core tool for every build in this repo."
+    },
+    "T0002": {
+      "name": "Lead-free solder wire",
+      "category": "consumable",
+      "categoryLabel": "Shop consumable",
+      "spec": "0.8mm, small spool",
+      "icon": "",
+      "expectedPrice": 150,
+      "sources": [],
+      "alternatives": "60/40 leaded solder is easier to work with if ventilation is good — wash hands after.",
+      "notes": ""
+    },
+    "T0003": {
+      "name": "Digital multimeter",
+      "category": "measure",
+      "categoryLabel": "Measuring",
+      "spec": "DC/AC volts, continuity, diode test",
+      "icon": "",
+      "expectedPrice": 600,
+      "sources": [],
+      "alternatives": "Any auto-ranging DMM with a continuity beeper works.",
+      "notes": "Used for harness voltage checks and continuity before every AC/mains connection."
+    },
+    "T0004": {
+      "name": "Wire stripper / cutter",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "26-16 AWG",
+      "icon": "",
+      "expectedPrice": 250,
+      "sources": [],
+      "alternatives": "",
+      "notes": ""
+    },
+    "T0005": {
+      "name": "Flush cutters",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "Small, for trimming leads",
+      "icon": "",
+      "expectedPrice": 180,
+      "sources": [],
+      "alternatives": "",
+      "notes": ""
+    },
+    "T0006": {
+      "name": "Crimping tool (JST/Dupont)",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "2.54mm / JST-XH",
+      "icon": "",
+      "expectedPrice": 450,
+      "sources": [],
+      "alternatives": "Pre-crimped jumper wires avoid needing this, but a spare header/connector repair always needs it eventually.",
+      "notes": ""
+    },
+    "T0007": {
+      "name": "Helping hands / PCB holder",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "With magnifier",
+      "icon": "",
+      "expectedPrice": 350,
+      "sources": [],
+      "alternatives": "",
+      "notes": ""
+    },
+    "T0008": {
+      "name": "Hot glue gun",
+      "category": "power",
+      "categoryLabel": "Power tool",
+      "spec": "Mini, 20-40W",
+      "icon": "",
+      "expectedPrice": 200,
+      "sources": [],
+      "alternatives": "",
+      "notes": "Strain relief / securing loose harnesses inside enclosures."
+    },
+    "T0009": {
+      "name": "Heat shrink tubing (assorted)",
+      "category": "consumable",
+      "categoryLabel": "Shop consumable",
+      "spec": "Assorted 2-10mm pack",
+      "icon": "",
+      "expectedPrice": 150,
+      "sources": [],
+      "alternatives": "Electrical tape in a pinch — not recommended near the non-isolated S403 side.",
+      "notes": ""
+    },
+    "T0010": {
+      "name": "Heat gun (mini)",
+      "category": "power",
+      "categoryLabel": "Power tool",
+      "spec": "For heat-shrink, not desoldering",
+      "icon": "",
+      "expectedPrice": 700,
+      "sources": [],
+      "alternatives": "A lighter works in a pinch but scorches easily — go slow and keep distance.",
+      "notes": ""
+    },
+    "T0011": {
+      "name": "Precision screwdriver set",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "Phillips/flathead, electronics sizes",
+      "icon": "",
+      "expectedPrice": 300,
+      "sources": [],
+      "alternatives": "",
+      "notes": "For AC casing, ceiling fixtures, enclosure lids."
+    },
+    "T0012": {
+      "name": "ESD wrist strap",
+      "category": "safety",
+      "categoryLabel": "Safety",
+      "spec": "Grounding cord + strap",
+      "icon": "",
+      "expectedPrice": 150,
+      "sources": [],
+      "alternatives": "Touch a grounded metal object periodically if unavailable — not as reliable.",
+      "notes": "Recommended before handling the ADuM1201 / bare ESP32 boards."
+    },
+    "T0013": {
+      "name": "Desoldering wick / pump",
+      "category": "hand",
+      "categoryLabel": "Hand tool",
+      "spec": "2.5mm wick + basic pump",
+      "icon": "",
+      "expectedPrice": 150,
+      "sources": [],
+      "alternatives": "",
+      "notes": ""
+    },
+    "T0014": {
+      "name": "Safety glasses",
+      "category": "safety",
+      "categoryLabel": "Safety",
+      "spec": "Clear, wraparound",
+      "icon": "",
+      "expectedPrice": 150,
+      "sources": [],
+      "alternatives": "",
+      "notes": "For mains-side wiring (ceiling bulbs, AC casing) and cutting/drilling."
+    }
+  }
+}

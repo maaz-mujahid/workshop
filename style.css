@@ -51,6 +51,10 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.022em;line-height:1.04}
 .stat span{font-size:11px;color:var(--label2);margin-top:1px;display:block;font-weight:500}
 /* search + filter row */
 .searchwrap{position:relative;margin:14px 0 10px}
+.kindtoggle{display:flex;gap:2px;background:var(--fill);border-radius:11px;padding:3px;margin-top:12px}
+.kbtn{flex:1;border:none;background:none;color:var(--label2);border-radius:8px;padding:8px 0;font-weight:600;font-size:14px;cursor:pointer;transition:background .15s,color .15s}
+.kbtn.active{background:var(--card);color:var(--label);box-shadow:var(--shadow)}
+.kbtn:active{opacity:.7}
 .searchwrap .mag{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--label2);pointer-events:none}
 #filter{width:100%;border:none;background:var(--fill);border-radius:11px;padding:10px 12px 10px 35px;font-size:17px;color:var(--label)}
 #filter::placeholder{color:var(--label2)}#filter:focus{outline:none}

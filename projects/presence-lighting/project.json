@@ -13,5 +13,6 @@
     "Mains work at the ceiling done with the wall switch OFF."
   ],
   "docs": "project.html",
-  "bom": "bom.json"
+  "bom": "bom.json",
+  "tools": "tools.json"
 }

@@ -1,0 +1,6 @@
+{
+  "schema": "tools-inventory/v1",
+  "updated": "2026-07-21",
+  "note": "Physical tool stock only. App-owned file.",
+  "stock": {}
+}

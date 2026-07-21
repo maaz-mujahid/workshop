@@ -1,0 +1,13 @@
+{
+  "schema": "project-tools/v1",
+  "project": "motion-night-light",
+  "items": [
+    { "toolId": "T0001", "qty": 1 },
+    { "toolId": "T0002", "qty": 1 },
+    { "toolId": "T0003", "qty": 1 },
+    { "toolId": "T0004", "qty": 1 },
+    { "toolId": "T0009", "qty": 1 },
+    { "toolId": "T0010", "qty": 1 },
+    { "toolId": "T0011", "qty": 1 }
+  ]
+}

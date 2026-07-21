@@ -29,15 +29,30 @@ workshop/
 ├── index.html              the app (single self-contained file; CSS+JS inline)
 ├── robots.txt              Disallow: / (keeps it out of search engines)
 ├── data/
-│   ├── parts.json          master catalogue — { "P0001": {...} }
-│   ├── inventory.json      APP-OWNED physical stock — { stock: { "P0001": 10 } }
+│   ├── parts.json          master parts catalogue — { "P0001": {...} }
+│   ├── inventory.json      APP-OWNED physical parts stock — { stock: { "P0001": 10 } }
+│   ├── tools.json           master tools catalogue — { "T0001": {...} } (T-codes, not P-codes)
+│   ├── tools-inventory.json APP-OWNED physical tool stock — { stock: { "T0001": 1 } }
 │   └── projects.json       manifest — { projects: ["daikin-ac-wifi", ...] }
 └── projects/<slug>/
-    ├── project.json        { id, name, status, room, difficulty, summary, estimatedCost, safety[], docs }
+    ├── project.json        { id, name, status, room, difficulty, summary, estimatedCost, safety[], docs, bom, tools }
     ├── bom.json            { items: [ { partId, qty } ] }   qty = individual pieces
+    ├── tools.json           { items: [ { toolId, qty } ] }  tools needed for the build (not consumed)
     ├── project.html        human build guide (overview, wiring, schematic, safety, legend)
     └── circuit-diagram.svg (where present)
 ```
+
+## Tools (parallel system to parts)
+- **Tools are equipment, not consumables** — a soldering iron needed by 3 projects is "need 1", not "need 3".
+  toBuy math still works the same way (need vs. owned) but tools are never subtracted from inventory when
+  a project is marked Completed (parts are; tools aren't — they get reused on the next build).
+- **Tool IDs are T-codes** (`T0001`…), completely separate ID space from P-codes. Same rules: reuse an
+  existing ID for an equivalent tool, never rename/recycle.
+- The app has a Parts/Tools segmented toggle above the search bar. It switches the Shop/Inventory/All tabs
+  between the two catalogues. The Projects tab always shows both a Parts table and a Tools-needed table
+  for a given project, regardless of the toggle.
+- `data/tools-inventory.json` is APP-OWNED (same rule as `data/inventory.json` — never clobber it, GitHub
+  Sync pushes it alongside the parts inventory).
 
 ## Data formats
 - **Part** (`data/parts.json`): `{ name, category, categoryLabel, spec, icon, expectedPrice, sources:[{shop,price,url}], alternatives, notes }`.
@@ -73,10 +88,12 @@ Sourcing: robu.in and quartzcomponents.com (India). Prices in ₹, ~July 2026, i
   the repo — Maaz's GitHub token lives only in his browser's localStorage, never committed.
 
 ## When adding or editing a build
-1. Update/create `projects/<slug>/project.json`, `bom.json`, `project.html` (+ SVG).
-2. Add any genuinely new parts to `data/parts.json` (reuse P-codes where equivalent).
+1. Update/create `projects/<slug>/project.json`, `bom.json`, `tools.json`, `project.html` (+ SVG).
+2. Add any genuinely new parts to `data/parts.json` and new tools to `data/tools.json` (reuse
+   P-/T-codes where equivalent).
 3. Add the slug to `data/projects.json`.
-4. Leave `data/inventory.json` and existing `status` values alone unless Maaz asks.
+4. Leave `data/inventory.json`, `data/tools-inventory.json`, and existing `status` values alone
+   unless Maaz asks.
 5. Commit + push to `main`. The live app picks it up on next load / Reload.
 
 ## Related

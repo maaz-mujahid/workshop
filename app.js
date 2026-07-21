@@ -1,4 +1,5 @@
 const CAT={board:'Dev board',sensor:'Sensor',power:'Power',ic:'IC / semi',passive:'Passive',led:'LED / opto',connector:'Connector / wire',mech:'Mechanical',misc:'Misc'};
+const TCAT={hand:'Hand tool',power:'Power tool',measure:'Measuring',safety:'Safety',consumable:'Shop consumable',misc:'Misc'};
 const STATUSES=['Idea','Planned','In Progress','Completed','Cancelled'];
 const ACTIVE=['Planned','In Progress'];
 /* Category icons — Lucide (open, MIT), monochrome via currentColor */
@@ -12,6 +13,14 @@ passive:_lu('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),
 led:_lu('<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>'),
 connector:_lu('<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M6 8h12v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>'),
 mech:_lu('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+misc:_lu('<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>')};
+/* Tool category icons — Lucide */
+const TICONS={
+hand:_lu('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+power:_lu('<path d="M12 2v6"/><path d="m4.93 4.93 4.24 4.24"/><circle cx="12" cy="15" r="7"/><path d="M12 12v3l2 2"/>'),
+measure:_lu('<path d="M14 3 3 14a1 1 0 0 0 0 1.41l5.59 5.59a1 1 0 0 0 1.41 0L21 10"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/><path d="m4.5 13.5 2 2"/>'),
+safety:_lu('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>'),
+consumable:_lu('<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'),
 misc:_lu('<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>')};
 /* Interface icons — Lucide */
 const IC={
@@ -67,15 +76,23 @@ PICS.esp32p=PICS.esp32; PICS.jbox=PICS.ipbox; PICS.mlcc2=PICS.mlcc;
 
 /* ================= STATE ================= */
 const LS='ws-state-v1';
-let S={parts:{},projects:[],boms:{},inv:{},cfg:{owner:'',repo:'',branch:'main',token:''},dirty:false,loadedFrom:''};
-let tab='shop',filter='',projFilter='',projSel=null;
+let S={parts:{},tools:{},projects:[],boms:{},toolBoms:{},inv:{},toolInv:{},cfg:{owner:'',repo:'',branch:'main',token:''},dirty:false,loadedFrom:''};
+let tab='shop',filter='',projFilter='',projSel=null,kind='parts';
+/* ---- generic accessors so shop/inv/all views work for both parts (P-codes) and tools (T-codes) ---- */
+const CATALOG=()=>kind==='tools'?S.tools:S.parts;
+const INV=()=>kind==='tools'?S.toolInv:S.inv;
+const BOMS=()=>kind==='tools'?S.toolBoms:S.boms;
+const IKEY=()=>kind==='tools'?'toolId':'partId';
+const CATS=()=>kind==='tools'?TCAT:CAT;
+const CICONS=()=>kind==='tools'?TICONS:ICONS;
+const PFX=()=>kind==='tools'?'T':'P';
 
 const $=s=>document.querySelector(s);
 const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const rup=n=>'₹'+(Math.round(n*10)/10).toLocaleString('en-IN');
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200)}
 
-function saveLocal(){localStorage.setItem(LS,JSON.stringify({inv:S.inv,cfg:S.cfg,dirty:S.dirty,cache:{parts:S.parts,projects:S.projects,boms:S.boms}}))}
+function saveLocal(){localStorage.setItem(LS,JSON.stringify({inv:S.inv,toolInv:S.toolInv,cfg:S.cfg,dirty:S.dirty,cache:{parts:S.parts,tools:S.tools,projects:S.projects,boms:S.boms,toolBoms:S.toolBoms}}))}
 function markDirty(){S.dirty=true;saveLocal();updateSync()}
 
 /* ================= DATA LOADING ================= */
@@ -105,25 +122,30 @@ async function loadData(force){
  const saved=JSON.parse(localStorage.getItem(LS)||'{}');
  if(saved.cfg)S.cfg=Object.assign(S.cfg,saved.cfg);
  if(saved.inv)S.inv=saved.inv;
+ if(saved.toolInv)S.toolInv=saved.toolInv;
  if(saved.dirty)S.dirty=saved.dirty;
  try{
-  const [parts,projList]=await Promise.all([fetchJSON('data/parts.json'),fetchJSON('data/projects.json')]);
+  const [parts,tools,projList]=await Promise.all([fetchJSON('data/parts.json'),fetchJSON('data/tools.json'),fetchJSON('data/projects.json')]);
   S.parts=parts.parts||{};
+  S.tools=tools.tools||{};
   const slugs=projList.projects||[];
-  const projs=[],boms={};
+  const projs=[],boms={},toolBoms={};
   for(const slug of slugs){
    try{
     const [pj,bm]=await Promise.all([fetchRepoJSON('projects/'+slug+'/project.json'),fetchJSON('projects/'+slug+'/bom.json')]);
     projs.push(pj);boms[slug]=bm.items||[];
+    if(pj.tools){try{const tm=await fetchJSON('projects/'+slug+'/'+pj.tools);toolBoms[slug]=tm.items||[]}catch(e){toolBoms[slug]=[]}}
+    else toolBoms[slug]=[];
    }catch(e){console.warn('project load fail',slug,e)}
   }
-  S.projects=projs;S.boms=boms;S.loadedFrom='github';
+  S.projects=projs;S.boms=boms;S.toolBoms=toolBoms;S.loadedFrom='github';
   // Inventory is app-owned and GitHub is the source of truth, so refresh it from
   // the repo on every successful load — that's how a sync on one device shows up
   // on another. The one exception: if this device has unsynced local edits
   // (dirty), keep them so a reload doesn't silently discard un-pushed stock.
   if(!S.dirty){
    try{const iv=await fetchRepoJSON('data/inventory.json');S.inv=iv.stock||{}}catch(e){if(!saved.inv)S.inv={}}
+   try{const tiv=await fetchRepoJSON('data/tools-inventory.json');S.toolInv=tiv.stock||{}}catch(e){if(!saved.toolInv)S.toolInv={}}
   }
   // merge in any project-status overrides the user changed locally but hasn't synced
   if(saved.statusOverride){for(const p of S.projects){if(saved.statusOverride[p.id])p.status=saved.statusOverride[p.id]}}
@@ -132,7 +154,7 @@ async function loadData(force){
  }catch(e){
   // offline / file:// — fall back to cache
   if(saved.cache&&saved.cache.parts){
-   S.parts=saved.cache.parts;S.projects=saved.cache.projects||[];S.boms=saved.cache.boms||{};
+   S.parts=saved.cache.parts;S.tools=saved.cache.tools||{};S.projects=saved.cache.projects||[];S.boms=saved.cache.boms||{};S.toolBoms=saved.cache.toolBoms||{};
    S.loadedFrom='cache';return true;
   }
   throw e;
@@ -141,23 +163,23 @@ async function loadData(force){
 
 /* ================= CALC ================= */
 function needFor(pid,scope){ // scope: 'active' | slug
- let n=0;
+ let n=0;const boms=BOMS(),key=IKEY();
  for(const p of S.projects){
   if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
   else{if(p.id!==scope)continue}
-  const item=(S.boms[p.id]||[]).find(b=>b.partId===pid);
+  const item=(boms[p.id]||[]).find(b=>b[key]===pid);
   if(item)n+=item.qty;
  }
  return n;
 }
-const owned=pid=>S.inv[pid]||0;
+const owned=pid=>INV()[pid]||0;
 function toBuy(pid,scope){return Math.max(0,needFor(pid,scope)-owned(pid))}
 function partsInScope(scope){
- const set=new Set();
+ const set=new Set();const boms=BOMS(),key=IKEY();
  for(const p of S.projects){
   if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
   else if(scope!=='__all__'){if(p.id!==scope)continue}
-  (S.boms[p.id]||[]).forEach(b=>set.add(b.partId));
+  (boms[p.id]||[]).forEach(b=>set.add(b[key]));
  }
  return [...set];
 }
@@ -168,16 +190,16 @@ function stats(){
  const scope=projFilter||'active';
  const buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0);
  $('#stBuy').textContent=buy.length;
- $('#stCost').textContent=rup(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(S.parts[pid]?.expectedPrice||0),0));
- $('#stOwn').textContent=Object.values(S.inv).reduce((a,b)=>a+b,0);
+ $('#stCost').textContent=rup(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid]?.expectedPrice||0),0));
+ $('#stOwn').textContent=Object.values(INV()).reduce((a,b)=>a+b,0);
  $('#stProj').textContent=S.projects.length;
  $('#cShop').textContent=buy.length||'';
- $('#cInv').textContent=Object.keys(S.inv).filter(k=>S.inv[k]>0).length;
- $('#cAll').textContent=Object.keys(S.parts).length;
+ $('#cInv').textContent=Object.keys(INV()).filter(k=>INV()[k]>0).length;
+ $('#cAll').textContent=Object.keys(CATALOG()).length;
  $('#cProj').textContent=S.projects.length;
 }
-function bigPic(part){return PICS[part.icon]||ICONS[part.category]||ICONS.misc}
-function catIcon(part){return ICONS[part.category]||ICONS.misc}
+function bigPic(part){return PICS[part.icon]||CICONS()[part.category]||CICONS().misc}
+function catIcon(part){return CICONS()[part.category]||CICONS().misc}
 function srcHtml(part){
  if(!part.sources||!part.sources.length)return '';
  return part.sources.map(s=>{
@@ -186,21 +208,22 @@ function srcHtml(part){
  }).join(' · ');
 }
 function matchFilter(pid){
- const p=S.parts[pid];if(!p)return false;
+ const p=CATALOG()[pid];if(!p)return false;
  if(!filter)return true;
  const f=filter.toLowerCase();
- return (pid+' '+p.name+' '+(p.spec||'')+' '+CAT[p.category]+' '+(p.alternatives||'')).toLowerCase().includes(f);
+ return (pid+' '+p.name+' '+(p.spec||'')+' '+CATS()[p.category]+' '+(p.alternatives||'')).toLowerCase().includes(f);
 }
 function partCard(pid,scope){
- const p=S.parts[pid];if(!p)return '';
+ const p=CATALOG()[pid];if(!p)return '';
  const need=needFor(pid,scope==='active'?'active':scope), nb=Math.max(0,need-owned(pid));
- const projChips=S.projects.filter(pr=>(S.boms[pr.id]||[]).some(b=>b.partId===pid)).map(pr=>{const q=(S.boms[pr.id]||[]).find(b=>b.partId===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
+ const boms=BOMS(),key=IKEY();
+ const projChips=S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
  return `<div class="card" data-pid="${pid}">
   <div class="thumb">${bigPic(p)}</div>
   <div class="body">
    <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
    <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
-   <div class="chips"><span class="chip">${CAT[p.category]}</span>${projChips}</div>
+   <div class="chips"><span class="chip">${CATS()[p.category]}</span>${projChips}</div>
    <div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>
    <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
   </div>
@@ -217,7 +240,7 @@ function partCard(pid,scope){
 function updateSectionTotal(scope){
  const el=document.querySelector('.section-total');if(!el)return;
  const pids=[...document.querySelectorAll('.card[data-pid]')].map(c=>c.dataset.pid);
- const total=pids.reduce((a,pid)=>a+toBuy(pid,scope)*(S.parts[pid].expectedPrice||0),0);
+ const total=pids.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0);
  const scopeLbl=projFilter?projName(projFilter):'all active projects';
  el.innerHTML=`<span>${pids.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span>`;
 }
@@ -233,27 +256,30 @@ function refreshCard(pid){
 }
 function render(){
  if(!Object.keys(S.parts).length&&tab!=='setup')return;
- const chrome=tab!=='setup';
+ const chrome=tab!=='setup'&&tab!=='proj';
  $('.searchwrap').style.display=chrome?'':'none';
  $('.filterrow').style.display=chrome?'':'none';
- $('.stats').style.display=chrome?'':'none';
+ $('.stats').style.display=tab!=='setup'?'':'none';
+ $('.kindtoggle').style.display=chrome?'':'none';
  const v=$('#view');
  if(tab==='setup'){v.innerHTML=setupView();return}
+ $('#addPart').textContent=kind==='tools'?'+ Tool':'+ Part';
+ $('#filter').placeholder=kind==='tools'?'Search tools':'Search parts';
  stats();
  if(tab==='shop'){
   const scope=projFilter||'active';
   let buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0&&matchFilter(pid));
-  buy.sort((a,b)=>toBuy(b,scope)*(S.parts[b].expectedPrice||0)-toBuy(a,scope)*(S.parts[a].expectedPrice||0));
-  const total=buy.reduce((a,pid)=>a+toBuy(pid,scope)*(S.parts[pid].expectedPrice||0),0);
+  buy.sort((a,b)=>toBuy(b,scope)*(CATALOG()[b].expectedPrice||0)-toBuy(a,scope)*(CATALOG()[a].expectedPrice||0));
+  const total=buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0);
   const scopeLbl=projFilter?projName(projFilter):'all active projects';
   v.innerHTML=(buy.length?`<div class="section-total"><span>${buy.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span></div>`:'')+
-   (buy.map(pid=>partCard(pid,scope)).join('')||'<div class="empty">Nothing to buy for this scope — all covered.</div>');
+   (buy.map(pid=>partCard(pid,scope)).join('')||`<div class="empty">Nothing to buy for this scope — all ${kind} covered.</div>`);
  }else if(tab==='inv'){
-  const inv=Object.keys(S.parts).filter(pid=>owned(pid)>0&&matchFilter(pid));
-  v.innerHTML=inv.map(pid=>partCard(pid,'__all__')).join('')||'<div class="empty">📦 Inventory empty. Mark items “Bought” from the Shopping tab.</div>';
+  const inv=Object.keys(CATALOG()).filter(pid=>owned(pid)>0&&matchFilter(pid));
+  v.innerHTML=inv.map(pid=>partCard(pid,'__all__')).join('')||`<div class="empty">📦 ${kind==='tools'?'Tool shelf':'Inventory'} empty. Mark items “Bought” from the Shopping tab.</div>`;
  }else if(tab==='all'){
-  const all=Object.keys(S.parts).filter(matchFilter);
-  v.innerHTML=all.map(pid=>partCard(pid,'__all__')).join('')||'<div class="empty">No parts match.</div>';
+  const all=Object.keys(CATALOG()).filter(matchFilter);
+  v.innerHTML=all.map(pid=>partCard(pid,'__all__')).join('')||`<div class="empty">No ${kind} match.</div>`;
  }else{
   if(projSel){const pr=S.projects.find(p=>p.id===projSel);v.innerHTML=pr?projectDetail(pr):'';}
   else v.innerHTML=S.projects.map(projSummary).join('')||'<div class="empty">No projects.</div>';
@@ -261,10 +287,19 @@ function render(){
 }
 function projStats(pr){
  const bom=S.boms[pr.id]||[];
+ const ownedP=pid=>S.inv[pid]||0;
  const need=bom.reduce((a,b)=>a+b.qty,0);
- const have=bom.reduce((a,b)=>a+Math.min(b.qty,owned(b.partId)),0);
- const cost=bom.reduce((a,b)=>a+Math.max(0,b.qty-owned(b.partId))*(S.parts[b.partId]?.expectedPrice||0),0);
+ const have=bom.reduce((a,b)=>a+Math.min(b.qty,ownedP(b.partId)),0);
+ const cost=bom.reduce((a,b)=>a+Math.max(0,b.qty-ownedP(b.partId))*(S.parts[b.partId]?.expectedPrice||0),0);
  return {bom,need,have,cost,pct:need?Math.round(have/need*100):0};
+}
+function projToolStats(pr){
+ const tbom=S.toolBoms[pr.id]||[];
+ const ownedT=tid=>S.toolInv[tid]||0;
+ const need=tbom.reduce((a,b)=>a+b.qty,0);
+ const have=tbom.reduce((a,b)=>a+Math.min(b.qty,ownedT(b.toolId)),0);
+ const missing=tbom.filter(b=>ownedT(b.toolId)<b.qty).length;
+ return {tbom,need,have,missing};
 }
 function projSummary(pr){
  const {need,have,cost,pct}=projStats(pr);
@@ -282,9 +317,17 @@ function projSummary(pr){
 }
 function projectDetail(pr){
  const {bom,need,have,cost,pct}=projStats(pr);
+ const ownedP=pid=>S.inv[pid]||0;
  const stcls='st-'+pr.status.replace(/\s/g,'');
- const rows=bom.map(b=>{const p=S.parts[b.partId]||{name:b.partId};const short=Math.max(0,b.qty-owned(b.partId));
-   return `<tr><td>${esc(p.name)} <span class="pid">${b.partId}</span></td><td class="n">${b.qty}</td><td class="n">${owned(b.partId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
+ const rows=bom.map(b=>{const p=S.parts[b.partId]||{name:b.partId};const short=Math.max(0,b.qty-ownedP(b.partId));
+   return `<tr><td>${esc(p.name)} <span class="pid">${b.partId}</span></td><td class="n">${b.qty}</td><td class="n">${ownedP(b.partId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
+ const {tbom}=projToolStats(pr);
+ const ownedT=tid=>S.toolInv[tid]||0;
+ const toolRows=tbom.map(b=>{const t=S.tools[b.toolId]||{name:b.toolId};const short=Math.max(0,b.qty-ownedT(b.toolId));
+   return `<tr><td>${esc(t.name)} <span class="pid">${b.toolId}</span></td><td class="n">${b.qty}</td><td class="n">${ownedT(b.toolId)}</td><td class="n">${short>0?'<b style="color:var(--orange)">'+short+'</b>':'<span style="color:var(--green)">✓</span>'}</td></tr>`}).join('');
+ const toolsSection=tbom.length?`<div class="section"><div class="section-h">Tools needed</div>
+   <table class="ptable"><tr><th>Tool</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${toolRows}</table>
+  </div>`:'';
  const safety=(pr.safety&&pr.safety.length)?`<div class="section warn"><div class="section-h">⚠ Safety</div><ul class="safety-list">${pr.safety.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></div>`:'';
  return `<button class="backbtn" data-act="back">${ic('chevleft')}Projects</button>
   <div class="detail-hero">
@@ -305,16 +348,20 @@ function projectDetail(pr){
   <div class="section"><div class="section-h">Parts</div>
    <table class="ptable"><tr><th>Part</th><th class="n">Need</th><th class="n">Own</th><th class="n">Buy</th></tr>${rows}</table>
   </div>
+  ${toolsSection}
   <div class="actions-sec">
    <button class="btn primary block" data-act="opendoc" data-proj="${pr.id}">${ic('book')}Open full build guide</button>
    <button class="btn block" data-act="shopproj" data-proj="${pr.id}">${ic('shop')}Shop this project</button>
+   ${tbom.length?`<button class="btn block" data-act="shoptoolsproj" data-proj="${pr.id}">${ic('shop')}Shop tools for this project</button>`:''}
   </div>`;
 }
 
 /* ================= EVENTS ================= */
 document.addEventListener('click',e=>{
  const t=e.target.closest('.tab');
- if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;render();window.scrollTo(0,0);return}
+ if(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');tab=t.dataset.tab;projSel=null;filter='';$('#filter').value='';render();window.scrollTo(0,0);return}
+ const kt=e.target.closest('.kbtn');
+ if(kt){kind=kt.dataset.kind;document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x===kt));filter='';$('#filter').value='';render();return}
  const po=e.target.closest('[data-projopen]');
  if(po){projSel=po.dataset.projopen;render();window.scrollTo(0,0);return}
  const dg=e.target.closest('img.diagram');
@@ -323,16 +370,21 @@ document.addEventListener('click',e=>{
  const act=b.dataset.act;
  if(act==='back'){projSel=null;render();window.scrollTo(0,0);return}
  if(act==='cfgsave'){S.cfg={owner:$('#cOwner').value.trim(),repo:$('#cRepo').value.trim(),branch:$('#cBranch').value.trim()||'main',token:$('#cToken').value.trim()};saveLocal();updateSync();toast('Setup saved');return}
- if(act==='shopproj'){projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
+ if(act==='shopproj'){kind='parts';document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x.dataset.kind==='parts'));
+   projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
+   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
+ if(act==='shoptoolsproj'){kind='tools';document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x.dataset.kind==='tools'));
+   projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
  if(act==='opendoc'){window.open('projects/'+b.dataset.proj+'/project.html','_blank');return}
  const card=e.target.closest('[data-pid]');if(!card)return;
- const pid=card.dataset.pid;const p=S.parts[pid];
+ const pid=card.dataset.pid;
  const scope=projFilter||'active';
- if(act==='add'){S.inv[pid]=1;markDirty();refreshCard(pid);return}
- else if(act==='stepplus'){S.inv[pid]=owned(pid)+1;markDirty();refreshCard(pid);return}
- else if(act==='stepminus'){if(owned(pid)>0){S.inv[pid]=owned(pid)-1;if(S.inv[pid]===0)delete S.inv[pid];markDirty();refreshCard(pid)}return}
- else if(act==='buyall'){S.inv[pid]=owned(pid)+toBuy(pid,tab==='shop'?scope:'__all__');markDirty();refreshCard(pid);return}
+ const inv=INV();
+ if(act==='add'){inv[pid]=1;markDirty();refreshCard(pid);return}
+ else if(act==='stepplus'){inv[pid]=owned(pid)+1;markDirty();refreshCard(pid);return}
+ else if(act==='stepminus'){if(owned(pid)>0){inv[pid]=owned(pid)-1;if(inv[pid]===0)delete inv[pid];markDirty();refreshCard(pid)}return}
+ else if(act==='buyall'){inv[pid]=owned(pid)+toBuy(pid,tab==='shop'?scope:'__all__');markDirty();refreshCard(pid);return}
  else if(act==='alt'){showAlt(card.querySelector('[data-aibox]'),pid);return}
  else if(act==='edit'){partDialog(pid);return}
  render();
@@ -342,8 +394,9 @@ document.addEventListener('change',e=>{
  if(qi){
   const card=qi.closest('[data-pid]');if(!card)return;
   const pid=card.dataset.pid;
+  const inv=INV();
   const v=Math.max(0,parseInt(qi.value,10)||0);
-  if(v===0)delete S.inv[pid];else S.inv[pid]=v;
+  if(v===0)delete inv[pid];else inv[pid]=v;
   markDirty();refreshCard(pid);return;
  }
 });
@@ -356,7 +409,7 @@ document.addEventListener('change',e=>{
  const st=JSON.parse(localStorage.getItem(LS)||'{}');st.statusOverride=st.statusOverride||{};st.statusOverride[pr.id]=pr.status;localStorage.setItem(LS,JSON.stringify(st));
  if(pr.status==='Completed'&&old!=='Completed'){
   if(confirm('Mark "'+pr.name+'" complete and subtract its parts from your inventory? (Cancel = keep inventory as-is)')){
-   (S.boms[pr.id]||[]).forEach(bm=>{const left=owned(bm.partId)-bm.qty;if(left>0)S.inv[bm.partId]=left;else delete S.inv[bm.partId]});
+   (S.boms[pr.id]||[]).forEach(bm=>{const left=(S.inv[bm.partId]||0)-bm.qty;if(left>0)S.inv[bm.partId]=left;else delete S.inv[bm.partId]});
    toast('Inventory consumed for '+pr.name);
   }
  }
@@ -423,7 +476,7 @@ zoomEl.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS Safar
 
 /* ================= ALTERNATIVES (offline, from catalogue) ================= */
 function showAlt(box,pid){
- const p=S.parts[pid];
+ const p=CATALOG()[pid];
  box.classList.toggle('show');
  if(!box.classList.contains('show'))return;
  let html=`<b>Alternatives for ${esc(p.name)}:</b><br>${esc(p.alternatives||'No alternatives noted yet — add some via ✎ edit, or ask in the project chat.')}`;
@@ -460,6 +513,7 @@ async function syncGitHub(){
  const btn=$('#syncBtn');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="spin"></span>';
  try{
   await ghPut('data/inventory.json',{schema:'inventory/v2',updated:new Date().toISOString().slice(0,10),note:'Physical stock only. App-owned file.',stock:S.inv},'Update inventory');
+  await ghPut('data/tools-inventory.json',{schema:'tools-inventory/v1',updated:new Date().toISOString().slice(0,10),note:'Physical tool stock only. App-owned file.',stock:S.toolInv},'Update tools inventory');
   // push any changed statuses
   for(const pr of S.projects){
    await ghPut('projects/'+pr.id+'/project.json',pr,'Update '+pr.id+' status → '+pr.status);
@@ -489,11 +543,14 @@ function setupView(){
 
 function partDialog(pid){
  const isNew=!pid;
- const p=pid?JSON.parse(JSON.stringify(S.parts[pid])):{name:'',category:'misc',spec:'',expectedPrice:0,sources:[],alternatives:'',notes:'',icon:''};
+ const isTool=kind==='tools';
+ const cat=CATS();
+ const p=pid?JSON.parse(JSON.stringify(CATALOG()[pid])):{name:'',category:'misc',spec:'',expectedPrice:0,sources:[],alternatives:'',notes:'',icon:''};
  const src0=(p.sources&&p.sources[0])||{shop:'',price:'',url:''};
- $('#dlgBody').innerHTML=`<h3>${isNew?'Add part':'Edit part'} ${isNew?'':'<span class="pid">'+pid+'</span>'}</h3>
+ const noun=isTool?'tool':'part';
+ $('#dlgBody').innerHTML=`<h3>${isNew?'Add '+noun:'Edit '+noun} ${isNew?'':'<span class="pid">'+pid+'</span>'}</h3>
   <label>Name</label><input id="fName" value="${esc(p.name)}">
-  <div class="row2"><div><label>Category</label><select id="fCat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}"${k===p.category?' selected':''}>${v}</option>`).join('')}</select></div>
+  <div class="row2"><div><label>Category</label><select id="fCat">${Object.entries(cat).map(([k,v])=>`<option value="${k}"${k===p.category?' selected':''}>${v}</option>`).join('')}</select></div>
   <div><label>Expected price ₹ (each)</label><input id="fPrice" type="number" step="0.1" min="0" value="${p.expectedPrice||0}"></div></div>
   <label>Spec / package</label><input id="fSpec" value="${esc(p.spec||'')}">
   <label>Notes</label><input id="fNotes" value="${esc(p.notes||'')}">
@@ -501,33 +558,34 @@ function partDialog(pid){
   <label>Buy link (URL)</label><input id="fUrl" value="${esc(src0.url)}">
   <label>Alternatives (plain text — shown offline)</label><textarea id="fAlt" rows="3">${esc(p.alternatives||'')}</textarea>
   <label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">
-  <div class="note">${isNew?'New parts get the next P-code. To attach it to a project BOM, mention it in that project’s chat so I add it to the repo.':'Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.'}</div>
-  <div class="foot">${isNew?'<span></span>':'<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>'}
+  <div class="note">${isNew?`New ${noun}s get the next ${PFX()}-code. To attach it to a project's needed-${noun}s list, mention it in that project's chat so I add it to the repo.`:`Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.`}</div>
+  <div class="foot">${isNew?'<span></span>':`<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>`}
    <span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fSave">Save</button></span></div>`;
  const d=$('#dlg');d.showModal();
  $('#fCancel').onclick=()=>d.close();
- const del=$('#fDel');if(del)del.onclick=()=>{if(confirm('Remove this part from the local catalogue?')){delete S.parts[pid];delete S.inv[pid];markDirty();d.close();render()}};
+ const del=$('#fDel');if(del)del.onclick=()=>{if(confirm(`Remove this ${noun} from the local catalogue?`)){delete CATALOG()[pid];delete INV()[pid];markDirty();d.close();render()}};
  $('#fSave').onclick=()=>{
   const npid=pid||nextPid();
   const src=[];const sh=$('#fShop').value.trim();if(sh)src.push({shop:sh,price:$('#fSprice').value.trim(),url:$('#fUrl').value.trim()});
-  S.parts[npid]={name:$('#fName').value.trim()||'Unnamed',category:$('#fCat').value,categoryLabel:CAT[$('#fCat').value],
+  CATALOG()[npid]={name:$('#fName').value.trim()||'Unnamed',category:$('#fCat').value,categoryLabel:cat[$('#fCat').value],
    spec:$('#fSpec').value.trim(),icon:p.icon||'',expectedPrice:parseFloat($('#fPrice').value)||0,
    sources:src,alternatives:$('#fAlt').value.trim(),notes:$('#fNotes').value.trim()};
-  const o=parseInt($('#fOwn').value)||0;if(o>0)S.inv[npid]=o;else delete S.inv[npid];
+  const o=parseInt($('#fOwn').value)||0;if(o>0)INV()[npid]=o;else delete INV()[npid];
   markDirty();d.close();render();
  };
 }
-function nextPid(){let m=0;Object.keys(S.parts).forEach(k=>{const n=parseInt(k.replace(/\D/g,''));if(n>m)m=n});return 'P'+String(m+1).padStart(4,'0')}
+function nextPid(){let m=0;Object.keys(CATALOG()).forEach(k=>{const n=parseInt(k.replace(/\D/g,''));if(n>m)m=n});return PFX()+String(m+1).padStart(4,'0')}
 $('#addPart').addEventListener('click',()=>partDialog(null));
 
 /* ================= EXPORT ================= */
 $('#copyList').addEventListener('click',()=>{
  const scope=projFilter||'active';
  const buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0);
- let txt='🛒 SHOPPING LIST — '+new Date().toLocaleDateString('en-IN')+(projFilter?' ('+projName(projFilter)+')':'')+'\n';
- buy.forEach(pid=>{const p=S.parts[pid];const q=toBuy(pid,scope);
+ const noun=kind==='tools'?'TOOLS':'PARTS';
+ let txt='🛒 '+noun+' SHOPPING LIST — '+new Date().toLocaleDateString('en-IN')+(projFilter?' ('+projName(projFilter)+')':'')+'\n';
+ buy.forEach(pid=>{const p=CATALOG()[pid];const q=toBuy(pid,scope);
   txt+=`• ${p.name} — buy ${q}${p.expectedPrice?' @ ~₹'+p.expectedPrice+' = ₹'+Math.round(q*p.expectedPrice):' (salvage)'}${p.sources&&p.sources[0]?'  ['+p.sources[0].shop+']':''}\n`});
- txt+='\nTOTAL ≈ ₹'+Math.round(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(S.parts[pid].expectedPrice||0),0)).toLocaleString('en-IN');
+ txt+='\nTOTAL ≈ ₹'+Math.round(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0)).toLocaleString('en-IN');
  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Copied shopping list')).catch(()=>{prompt('Copy your list:',txt)});
 });
 $('#reloadBtn').addEventListener('click',async()=>{const rb=$('#reloadBtn');const ro=rb.innerHTML;rb.innerHTML='<span class="spin"></span>';try{await loadData(true);toast('Data reloaded'+(S.loadedFrom==='cache'?' (cache)':''))}catch(e){toast('Reload failed: '+e.message)}rb.innerHTML=ro;fillProjFilter();render();updateSync()});

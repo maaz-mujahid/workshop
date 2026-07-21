@@ -13,5 +13,6 @@
     "All work with the AC unplugged."
   ],
   "docs": "project.html",
-  "bom": "bom.json"
+  "bom": "bom.json",
+  "tools": "tools.json"
 }
