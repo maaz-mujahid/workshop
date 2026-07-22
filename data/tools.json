@@ -1,7 +1,7 @@
 {
   "schema": "tools-catalogue/v1",
-  "updated": "2026-07-21",
-  "note": "Master tool catalogue (equipment, not consumed by a build — reused across projects). Every tool exists once. Projects reference these by toolId. Prices in INR, approx July 2026.",
+  "updated": "2026-07-22",
+  "note": "Master tool catalogue (equipment, not consumed by a build — reused across projects). Every tool exists once. Projects reference these by toolId. Prices in INR.",
   "tools": {
     "T0001": {
       "name": "Temperature-controlled soldering iron",
