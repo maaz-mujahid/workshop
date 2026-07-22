@@ -3,7 +3,6 @@
   "updated": "2026-07-22",
   "note": "Tool ownership only (boolean — a tool is either owned or not, no quantities). App-owned file.",
   "stock": {
-    "T0013": 1,
     "T0002": 1,
     "T0003": 1,
     "T0011": 1,
