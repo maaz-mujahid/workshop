@@ -606,7 +606,7 @@
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "through-hole",
-      "icon": "resistors",
+      "icon": "P0030",
       "expectedPrice": 0.5,
       "sources": [
         {
