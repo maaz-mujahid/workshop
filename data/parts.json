@@ -619,7 +619,7 @@
       "notes": "68R for dual-voltage LED compatibility, plus bias resistors. Roughly 30-40 pieces across values."
     },
     "P0031": {
-      "name": "Salvaged 18650 cell",
+      "name": "18650 cell",
       "category": "power",
       "categoryLabel": "Power",
       "spec": "Li-ion 3.7V",
