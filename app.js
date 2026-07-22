@@ -31,13 +31,16 @@ pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4
 book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
 shop:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
 copy:'<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
-chevright:'<path d="m9 18 6-6-6-6"/>',chevleft:'<path d="m15 18-6-6 6-6"/>'};
+chevright:'<path d="m9 18 6-6-6-6"/>',chevleft:'<path d="m15 18-6-6 6-6"/>',
+upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+sparkles:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>'};
 const ic=n=>'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>';
 /* Part/tool portrait icons now live in icons/parts/*.svg and icons/tools/*.svg,
    guided by icons/ICON_GUIDELINES.md. PICS is populated at load time from
    icons/manifest.json (see loadIconLibrary below) instead of being hardcoded here. */
 const PICS={};
 let ICON_MANIFEST=null;
+let ICON_GUIDELINES_TEXT=''; // fed to the AI as the icon-gen system prompt — fetched live so it always matches whatever's currently in the repo
 async function loadIconLibrary(){
  try{
   const manifest=await fetchJSON('icons/manifest.json');
@@ -49,12 +52,28 @@ async function loadIconLibrary(){
    try{const r=await fetch(path+'?t='+Date.now(),{cache:'no-store'});if(r.ok)svgByPath[path]=await r.text()}catch(e){/* icon missing — falls back to category icon */}
   }));
   for(const [key,path] of entries){if(path&&svgByPath[path])PICS[key]=svgByPath[path]}
+  try{const r=await fetch('icons/ICON_GUIDELINES.md?t='+Date.now(),{cache:'no-store'});if(r.ok)ICON_GUIDELINES_TEXT=await r.text()}catch(e){/* guidelines missing — AI icon-gen falls back to a generic system prompt */}
  }catch(e){console.warn('icon library load failed, falling back to category icons',e)}
+ // Reapply any AI-generated/uploaded icons not yet pushed to GitHub, so unsynced work survives a reload.
+ if(!ICON_MANIFEST)ICON_MANIFEST={parts:{},tools:{}};
+ for(const [key,edit] of Object.entries(S.iconEdits)){
+  PICS[key]=edit.svg;
+  (edit.kind==='tools'?ICON_MANIFEST.tools:ICON_MANIFEST.parts)[key]=edit.path;
+ }
+}
+// Pull the raw SVG out of an AI response, tolerating stray prose or ```svg fences around it.
+function extractSVG(text){
+ if(!text)return null;
+ const m=text.match(/<svg[\s\S]*?<\/svg>/i);
+ return m?m[0]:null;
 }
 
 /* ================= STATE ================= */
 const LS='ws-state-v1';
-let S={parts:{},tools:{},projects:[],boms:{},toolBoms:{},inv:{},toolInv:{},cfg:{owner:'',repo:'',branch:'main',token:''},dirty:false,loadedFrom:''};
+let S={parts:{},tools:{},projects:[],boms:{},toolBoms:{},inv:{},toolInv:{},cfg:{owner:'',repo:'',branch:'main',token:''},dirty:false,loadedFrom:'',iconEdits:{}};
+// Read iconEdits synchronously up front — loadData() and loadIconLibrary() run in parallel via Promise.all,
+// so iconEdits needs to be in place before loadIconLibrary's reapply step runs, not after loadData resolves.
+try{const saved0=JSON.parse(localStorage.getItem(LS)||'{}');if(saved0.iconEdits)S.iconEdits=saved0.iconEdits}catch(e){}
 let tab='shop',filter='',projFilter='',projSel=null,kind='parts';
 /* ---- generic accessors so shop/inv/all views work for both parts (P-codes) and tools (T-codes) ---- */
 const CATALOG=()=>kind==='tools'?S.tools:S.parts;
@@ -70,7 +89,7 @@ const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 const rup=n=>'₹'+(Math.round(n*10)/10).toLocaleString('en-IN');
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200)}
 
-function saveLocal(){localStorage.setItem(LS,JSON.stringify({inv:S.inv,toolInv:S.toolInv,cfg:S.cfg,dirty:S.dirty,cache:{parts:S.parts,tools:S.tools,projects:S.projects,boms:S.boms,toolBoms:S.toolBoms}}))}
+function saveLocal(){localStorage.setItem(LS,JSON.stringify({inv:S.inv,toolInv:S.toolInv,cfg:S.cfg,dirty:S.dirty,iconEdits:S.iconEdits,cache:{parts:S.parts,tools:S.tools,projects:S.projects,boms:S.boms,toolBoms:S.toolBoms}}))}
 function markDirty(){S.dirty=true;saveLocal();updateSync()}
 
 /* ================= DATA LOADING ================= */
@@ -491,6 +510,7 @@ zoomEl.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS Safar
 /* ================= ALTERNATIVES (offline catalogue text + live AI suggestions) ================= */
 const AI_ENDPOINT='/api/ai';
 const AI_ALT_MODEL='cohere/north-mini-code:free'; // lightest/fastest free model — this task is a short suggestion, not deep reasoning
+const AI_ICON_MODEL='poolside/laguna-m.1:free'; // coding-flavored model — better at producing well-formed, structured SVG markup
 const aiAltCache={}; // pid -> resolved AI text (or a pending Promise), so re-opening/prefetching a box doesn't re-hit the API
 // Pull in the project(s) this part/tool is actually used in, so the AI reasons about the real build, not the part in isolation.
 // Built entirely from state already in memory (S.projects + BOMS()) — no extra network round-trips, so it doesn't add latency.
@@ -562,10 +582,10 @@ function updateSync(){
  $('#syncBtn').disabled=!ready;
  $('#syncBtn').title=ready?'Push inventory, catalogue + statuses to GitHub':(!on?'Offline':'Add repo + token in Setup first');
 }
-async function ghPut(path,obj,message){
+async function ghPutRaw(path,contentStr,message){
  const base=`https://api.github.com/repos/${S.cfg.owner}/${S.cfg.repo}/contents/${path}`;
  const h={'Authorization':'Bearer '+S.cfg.token,'Accept':'application/vnd.github+json'};
- const content=b64(JSON.stringify(obj,null,2));
+ const content=b64(contentStr);
  // cache:'no-store' — must read the *current* sha, never a stale browser-cached one,
  // or GitHub rejects the PUT with 409 "does not match".
  async function getSha(){try{const r=await fetch(base+'?ref='+S.cfg.branch,{headers:h,cache:'no-store'});if(r.ok)return (await r.json()).sha}catch(e){}return null}
@@ -576,6 +596,7 @@ async function ghPut(path,obj,message){
  if(r.status===409||r.status===422){r=await put(await getSha())}
  if(!r.ok)throw new Error('GitHub '+r.status+' '+(await r.text()).slice(0,120));
 }
+async function ghPut(path,obj,message){return ghPutRaw(path,JSON.stringify(obj,null,2),message)}
 async function syncGitHub(){
  const btn=$('#syncBtn');btn.disabled=true;const old=btn.innerHTML;btn.innerHTML='<span class="spin"></span>';
  try{
@@ -586,6 +607,13 @@ async function syncGitHub(){
   // push any changed statuses
   for(const pr of S.projects){
    await ghPut('projects/'+pr.id+'/project.json',pr,'Update '+pr.id+' status → '+pr.status);
+  }
+  // push any new AI-generated/uploaded icon SVGs, then update the shared manifest once
+  const iconKeys=Object.keys(S.iconEdits);
+  if(iconKeys.length){
+   for(const key of iconKeys){const e=S.iconEdits[key];await ghPutRaw(e.path,e.svg,'Add icon for '+key)}
+   await ghPut('icons/manifest.json',ICON_MANIFEST,'Update icon manifest');
+   S.iconEdits={};
   }
   S.dirty=false;saveLocal();
   const st=JSON.parse(localStorage.getItem(LS)||'{}');delete st.statusOverride;localStorage.setItem(LS,JSON.stringify(st));
@@ -621,6 +649,13 @@ function partDialog(pid){
   <label>Name</label><input id="fName" value="${esc(p.name)}">
   <div class="row2"><div><label>Category</label><select id="fCat">${Object.entries(cat).map(([k,v])=>`<option value="${k}"${k===p.category?' selected':''}>${v}</option>`).join('')}</select></div>
   <div><label>Expected price ₹ (each)</label><input id="fPrice" type="number" step="0.1" min="0" value="${p.expectedPrice||0}"></div></div>
+  <label>Icon</label>
+  <div style="display:flex;align-items:center;gap:10px">
+   <div id="fIconPrev" style="width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:8px;overflow:hidden">${(p.icon&&PICS[p.icon])||CICONS()[p.category]||CICONS().misc}</div>
+   <button type="button" class="btn small" id="fIconUpload" title="Upload SVG icon">${ic('upload')}</button>
+   <button type="button" class="btn small" id="fIconGen" title="Generate icon with AI">${ic('sparkles')}</button>
+   <input type="file" id="fIconFile" accept=".svg,image/svg+xml" style="display:none">
+  </div>
   <label>Spec / package</label><input id="fSpec" value="${esc(p.spec||'')}">
   <label>Notes</label><input id="fNotes" value="${esc(p.notes||'')}">
   <div class="row2"><div><label>Shop</label><input id="fShop" value="${esc(src0.shop)}"></div><div><label>Price</label><input id="fSprice" value="${esc(src0.price)}"></div></div>
@@ -635,11 +670,47 @@ function partDialog(pid){
  const d=$('#dlg');d.showModal();
  $('#fCancel').onclick=()=>d.close();
  const del=$('#fDel');if(del)del.onclick=()=>{if(confirm(`Remove this ${noun} from the local catalogue?`)){delete CATALOG()[pid];delete INV()[pid];markDirty();d.close();render()}};
+ // ---- icon: upload SVG or generate one with AI; either just stages iconState until Save ----
+ const iconPrevEl=$('#fIconPrev');
+ let iconState={svg:null,changed:false};
+ $('#fIconUpload').onclick=()=>$('#fIconFile').click();
+ $('#fIconFile').onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  const text=await file.text();
+  if(!/<svg[\s>]/i.test(text)){toast('Not a valid SVG file');return}
+  iconState={svg:text,changed:true};
+  iconPrevEl.innerHTML=text;
+ };
+ $('#fIconGen').onclick=async()=>{
+  const genBtn=$('#fIconGen');const old=genBtn.innerHTML;genBtn.innerHTML='<span class="spin"></span>';genBtn.disabled=true;
+  try{
+   const prompt=`Design an icon for this ${noun}.\nName: ${$('#fName').value.trim()||'Unnamed'}\nCategory: ${cat[$('#fCat').value]}\nSpec: ${$('#fSpec').value.trim()||'n/a'}\n`+
+    `Follow the icon style guide exactly. Respond with ONLY the raw <svg>...</svg> markup — no explanation, no markdown code fences, no surrounding text.`;
+   const r=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({system:ICON_GUIDELINES_TEXT||'Generate a clean, simple, monochrome-friendly SVG icon, viewBox "0 0 64 64".',prompt,model:AI_ICON_MODEL})});
+   if(!r.ok)throw new Error('request failed ('+r.status+')');
+   const data=await r.json();
+   const svg=extractSVG(data.text);
+   if(!svg)throw new Error("AI didn't return a valid SVG");
+   iconState={svg,changed:true};
+   iconPrevEl.innerHTML=svg;
+   toast('Icon generated — press Save to keep it');
+  }catch(e){toast('Icon generation failed: '+e.message)}
+  genBtn.innerHTML=old;genBtn.disabled=false;
+ };
  $('#fSave').onclick=()=>{
   const npid=pid||nextPid();
   const src=[];const sh=$('#fShop').value.trim();if(sh)src.push({shop:sh,price:$('#fSprice').value.trim(),url:$('#fUrl').value.trim()});
+  let iconKey=p.icon||'';
+  if(iconState.changed&&iconState.svg){
+   iconKey=npid; // the part/tool code doubles as its icon manifest key — simple and guaranteed unique
+   const path=`icons/${isTool?'tools':'parts'}/${npid}.svg`;
+   PICS[iconKey]=iconState.svg;
+   (isTool?ICON_MANIFEST.tools:ICON_MANIFEST.parts)[iconKey]=path;
+   S.iconEdits[iconKey]={kind:isTool?'tools':'parts',path,svg:iconState.svg};
+  }
   CATALOG()[npid]={name:$('#fName').value.trim()||'Unnamed',category:$('#fCat').value,categoryLabel:cat[$('#fCat').value],
-   spec:$('#fSpec').value.trim(),icon:p.icon||'',expectedPrice:parseFloat($('#fPrice').value)||0,
+   spec:$('#fSpec').value.trim(),icon:iconKey,expectedPrice:parseFloat($('#fPrice').value)||0,
    sources:src,alternatives:$('#fAlt').value.trim(),notes:$('#fNotes').value.trim()};
   if(isTool){if($('#fHave').checked)INV()[npid]=1;else delete INV()[npid]}
   else{const o=parseInt($('#fOwn').value)||0;if(o>0)INV()[npid]=o;else delete INV()[npid]}
