@@ -241,15 +241,16 @@ function partCard(pid,scope){
  const p=CATALOG()[pid];if(!p)return '';
  if(kind==='tools')return toolCard(pid);
  const need=needFor(pid,scope==='active'?'active':scope), nb=Math.max(0,need-owned(pid));
+ const isCatalogue=tab==='all';
  const boms=BOMS(),key=IKEY();
- const projChips=S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
+ const projChips=isCatalogue?'':S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
  return `<div class="card" data-pid="${pid}">
   <div class="thumb">${bigPic(p)}</div>
   <div class="body">
    <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
    <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
    <div class="chips"><span class="chip">${CATS()[p.category]}</span>${projChips}</div>
-   <div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>
+   ${isCatalogue?'':`<div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>`}
    <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
   </div>
   <div class="card-controls"><div class="acts">
@@ -315,8 +316,7 @@ function render(){
   buy.sort((a,b)=>toBuy(b,scope)*(CATALOG()[b].expectedPrice||0)-toBuy(a,scope)*(CATALOG()[a].expectedPrice||0));
   const total=buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0);
   const scopeLbl=projFilter?projName(projFilter):'all active projects';
-  v.innerHTML=(buy.length?`<div class="section-total"><span>${buy.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span></div>`:'')+
-   (buy.map(pid=>partCard(pid,scope)).join('')||`<div class="empty">Nothing to buy for this scope — all ${kind} covered.</div>`);
+  v.innerHTML=buy.map(pid=>partCard(pid,scope)).join('')||`<div class="empty">Nothing to buy for this scope — all ${kind} covered.</div>`;
  }else if(tab==='inv'){
   const inv=Object.keys(CATALOG()).filter(pid=>owned(pid)>0&&matchFilter(pid));
   v.innerHTML=inv.map(pid=>partCard(pid,'__all__')).join('')||`<div class="empty">📦 ${kind==='tools'?'Tool shelf':'Inventory'} empty. Mark items “Bought” from the Shopping tab.</div>`;
@@ -544,7 +544,7 @@ function updateSync(){
  $('#dirtyWrap').style.display=S.dirty?'':'none';
  const ready=S.cfg.owner&&S.cfg.repo&&S.cfg.token&&on;
  $('#syncBtn').disabled=!ready;
- $('#syncBtn').title=ready?'Push inventory + statuses to GitHub':(!on?'Offline':'Add repo + token in Setup first');
+ $('#syncBtn').title=ready?'Push inventory, catalogue + statuses to GitHub':(!on?'Offline':'Add repo + token in Setup first');
 }
 async function ghPut(path,obj,message){
  const base=`https://api.github.com/repos/${S.cfg.owner}/${S.cfg.repo}/contents/${path}`;
@@ -565,6 +565,8 @@ async function syncGitHub(){
  try{
   await ghPut('data/inventory.json',{schema:'inventory/v2',updated:new Date().toISOString().slice(0,10),note:'Physical stock only. App-owned file.',stock:S.inv},'Update inventory');
   await ghPut('data/tools-inventory.json',{schema:'tools-inventory/v1',updated:new Date().toISOString().slice(0,10),note:'Tool ownership only (boolean — a tool is either owned or not, no quantities). App-owned file.',stock:S.toolInv},'Update tools inventory');
+  await ghPut('data/parts.json',{schema:'parts-catalogue/v2',updated:new Date().toISOString().slice(0,10),note:'Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR.',parts:S.parts},'Update parts catalogue');
+  await ghPut('data/tools.json',{schema:'tools-catalogue/v1',updated:new Date().toISOString().slice(0,10),note:'Master tool catalogue (equipment, not consumed by a build — reused across projects). Every tool exists once. Projects reference these by toolId. Prices in INR.',tools:S.tools},'Update tools catalogue');
   // push any changed statuses
   for(const pr of S.projects){
    await ghPut('projects/'+pr.id+'/project.json',pr,'Update '+pr.id+' status → '+pr.status);
@@ -611,7 +613,7 @@ function partDialog(pid){
   ${isTool?
    `<label class="checkrow"><input id="fHave" type="checkbox" ${pid&&owned(pid)>0?'checked':''}> I have this tool</label>`
    :`<label>Owned in inventory</label><input id="fOwn" type="number" min="0" value="${pid?owned(pid):0}">`}
-  <div class="note">${isNew?`New ${noun}s get the next ${PFX()}-code. To attach it to a project's needed-${noun}s list, mention it in that project's chat so I add it to the repo.`:`Edits are saved on this device; press Sync to push name/price/alt changes… note: only inventory + status sync automatically. Catalogue edits are best done in the project chat so they live in GitHub.`}</div>
+  <div class="note">${isNew?`New ${noun}s get the next ${PFX()}-code. To attach it to a project's needed-${noun}s list, mention it in that project's chat so I add it to the repo.`:`Edits are saved on this device — press Sync to push them to GitHub. To attach this ${noun} to a project's needed list, do that in the project's chat.`}</div>
   <div class="foot">${isNew?'<span></span>':`<button class="btn" id="fDel" style="color:var(--danger)">Remove</button>`}
    <span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fSave">Save</button></span></div>`;
  const d=$('#dlg');d.showModal();
