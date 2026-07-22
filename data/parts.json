@@ -623,7 +623,7 @@
       "category": "power",
       "categoryLabel": "Power",
       "spec": "Li-ion 3.7V",
-      "icon": "cell18650",
+      "icon": "P0031",
       "expectedPrice": 0,
       "sources": [
         {
