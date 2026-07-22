@@ -39,7 +39,8 @@
     "usbpig": "icons/parts/usbpig.svg",
     "vs1838": "icons/parts/vs1838.svg",
     "wled": "icons/parts/wled.svg",
-    "P0030": "icons/parts/P0030.svg"
+    "P0030": "icons/parts/P0030.svg",
+    "P0031": "icons/parts/P0031.svg"
   },
   "tools": {
     "crimper": "icons/tools/crimper.svg",
