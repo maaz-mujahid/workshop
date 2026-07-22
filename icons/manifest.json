@@ -38,7 +38,8 @@
     "tvs": "icons/parts/tvs.svg",
     "usbpig": "icons/parts/usbpig.svg",
     "vs1838": "icons/parts/vs1838.svg",
-    "wled": "icons/parts/wled.svg"
+    "wled": "icons/parts/wled.svg",
+    "P0030": "icons/parts/P0030.svg"
   },
   "tools": {
     "crimper": "icons/tools/crimper.svg",
