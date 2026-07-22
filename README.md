@@ -21,8 +21,8 @@ calculations locally in your browser.
 - **Offline first** — works with no internet at the shop; syncs to GitHub when back online.
 
 ## Responsibilities (design rule)
-- **Claude** manages engineering data: the parts + tools catalogues, project docs, BOMs.
-  → `data/parts.json`, `data/tools.json`, `projects/*/project.html`, `projects/*/bom.json`, `projects/*/tools.json`
+- **Claude** manages engineering data: the parts + tools catalogues, project docs, BOMs, and icons.
+  → `data/parts.json`, `data/tools.json`, `projects/*/project.html`, `projects/*/bom.json`, `projects/*/tools.json`, `icons/*`
 - **The app** manages inventory + status and calculates shopping.
   → owns `data/inventory.json`, `data/tools-inventory.json`, and each project's `status`.
 - **GitHub** stores it all.
@@ -37,6 +37,11 @@ Workshop/
 │   ├── tools.json          master tools catalogue (T-codes, price, sources, alternatives)
 │   ├── tools-inventory.json physical tool stock (app-owned)
 │   └── projects.json       list of project folders
+├── icons/
+│   ├── ICON_GUIDELINES.md  style rules AI/humans must follow when adding icons
+│   ├── manifest.json       maps each part/tool icon key → its svg file
+│   ├── parts/*.svg         one icon per part icon key
+│   └── tools/*.svg         one icon per tool icon key
 └── projects/
     ├── daikin-ac-wifi/     project.json · bom.json · tools.json · project.html · circuit-diagram.svg
     ├── motion-night-light/ project.json · bom.json · tools.json · project.html
