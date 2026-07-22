@@ -10,12 +10,11 @@
  *   Name: OPENROUTER_KEY   Value: <your OpenRouter key>
  */
 
-const DEFAULT_MODEL = 'google/gemini-2.0-flash-exp:free';
+const DEFAULT_MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
 const ALLOWED_MODELS = new Set([
- 'google/gemini-2.0-flash-exp:free',
- 'meta-llama/llama-3.1-8b-instruct:free',
- 'qwen/qwen-2.5-coder-32b-instruct:free',
- 'deepseek/deepseek-chat:free'
+ 'nvidia/nemotron-3-ultra-550b-a55b:free',
+ 'poolside/laguna-m.1:free',
+ 'cohere/north-mini-code:free'
 ]);
 
 function json(data, status = 200) {
