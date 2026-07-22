@@ -488,14 +488,41 @@ zoomEl.addEventListener('pointercancel',zEnd);
 zoomEl.addEventListener('wheel',e=>{e.preventDefault();zZoomAt(e.deltaY<0?1.15:1/1.15,e.clientX,e.clientY)},{passive:false});
 zoomEl.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS Safari page-pinch under the overlay
 
-/* ================= ALTERNATIVES (offline, from catalogue) ================= */
+/* ================= ALTERNATIVES (offline catalogue text + live AI suggestions) ================= */
+const AI_ENDPOINT='/api/ai';
+const aiAltCache={}; // pid -> resolved AI text (or a pending Promise), so re-opening a box doesn't re-hit the API
+function aiAltPrompt(p){
+ const noun=kind==='tools'?'tool':'part';
+ return `Suggest 2-3 realistic substitute options for this ${noun}, used in DIY home-automation electronics projects.\n`+
+  `Name: ${p.name}\nCategory: ${CATS()[p.category]}\nSpec: ${p.spec||'n/a'}\n`+
+  `Answer in one short paragraph, plain language, no markdown formatting or headers, under 80 words.`;
+}
+function fetchAIAlt(pid,p){
+ if(aiAltCache[pid])return aiAltCache[pid];
+ const req=fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({system:'You are a concise, practical assistant for a home-electronics hobbyist inventory app. Reply in plain text only.',prompt:aiAltPrompt(p)})})
+  .then(r=>{if(!r.ok)throw new Error('request failed ('+r.status+')');return r.json()})
+  .then(data=>data.text)
+  .catch(e=>{delete aiAltCache[pid];throw e}); // don't cache failures — allow retry on next open
+ aiAltCache[pid]=req;
+ return req;
+}
 function showAlt(box,pid){
  const p=CATALOG()[pid];
  box.classList.toggle('show');
  if(!box.classList.contains('show'))return;
  let html=`<b>Alternatives for ${esc(p.name)}:</b><br>${esc(p.alternatives||'No alternatives noted yet — add some via ✎ edit, or ask in the project chat.')}`;
  if(p.sources&&p.sources.length)html+=`<br><br><b>Where to buy:</b> ${srcHtml(p)}`;
+ html+=`<div class="ai-suggest" data-aisuggest="${pid}" style="margin-top:8px">${navigator.onLine?'<span class="spin"></span> Asking AI for more options…':'<i>AI suggestions need an internet connection.</i>'}</div>`;
  box.innerHTML=html;
+ if(!navigator.onLine)return;
+ fetchAIAlt(pid,p).then(text=>{
+  const el=box.querySelector(`[data-aisuggest="${pid}"]`);if(!el)return; // box closed/replaced since the request started
+  el.innerHTML=`<b>🤖 AI suggestions:</b><br>${esc(text)}`;
+ }).catch(e=>{
+  const el=box.querySelector(`[data-aisuggest="${pid}"]`);if(!el)return;
+  el.innerHTML=`<i>AI suggestions unavailable (${esc(e.message)}).</i>`;
+ });
 }
 
 /* ================= GITHUB SYNC ================= */
