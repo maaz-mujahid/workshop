@@ -140,7 +140,7 @@ async function loadData(force){
  if(saved.toolInv)S.toolInv=saved.toolInv;
  if(saved.dirty)S.dirty=saved.dirty;
  try{
-  const [parts,tools,projList]=await Promise.all([fetchJSON('data/parts.json'),fetchJSON('data/tools.json'),fetchJSON('data/projects.json')]);
+  const [parts,tools,projList]=await Promise.all([fetchRepoJSON('data/parts.json'),fetchRepoJSON('data/tools.json'),fetchJSON('data/projects.json')]);
   S.parts=parts.parts||{};
   S.tools=tools.tools||{};
   const slugs=projList.projects||[];
