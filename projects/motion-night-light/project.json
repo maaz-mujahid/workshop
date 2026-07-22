@@ -2,7 +2,7 @@
   "schema": "project/v2",
   "id": "motion-night-light",
   "name": "Motion Night Lights (x6)",
-  "status": "In Progress",
+  "status": "Planned",
   "room": "Stairs + Kitchen",
   "difficulty": "Easy",
   "summary": "6 standalone battery PIR night lights — 3-4 at skirting height on the stairs, 1-2 in the kitchen. Deliberately NOT Home-Assistant connected; each is self-contained on a salvaged 18650.",
