@@ -490,23 +490,49 @@ zoomEl.addEventListener('gesturestart',e=>e.preventDefault()); // stop iOS Safar
 
 /* ================= ALTERNATIVES (offline catalogue text + live AI suggestions) ================= */
 const AI_ENDPOINT='/api/ai';
-const aiAltCache={}; // pid -> resolved AI text (or a pending Promise), so re-opening a box doesn't re-hit the API
-function aiAltPrompt(p){
+const AI_ALT_MODEL='cohere/north-mini-code:free'; // lightest/fastest free model — this task is a short suggestion, not deep reasoning
+const aiAltCache={}; // pid -> resolved AI text (or a pending Promise), so re-opening/prefetching a box doesn't re-hit the API
+// Pull in the project(s) this part/tool is actually used in, so the AI reasons about the real build, not the part in isolation.
+// Built entirely from state already in memory (S.projects + BOMS()) — no extra network round-trips, so it doesn't add latency.
+function projectContextFor(pid){
+ const key=IKEY(),boms=BOMS();
+ const used=S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid));
+ if(!used.length)return '';
+ return used.map(pr=>{
+  const bomEntry=(boms[pr.id]||[]).find(b=>b[key]===pid);
+  const qty=key==='partId'&&bomEntry.qty?` (qty ${bomEntry.qty})`:'';
+  const safety=pr.safety&&pr.safety.length?` Safety notes: ${pr.safety.join('; ')}.`:'';
+  return `- "${pr.name}"${qty}: ${pr.summary||''}${safety}`;
+ }).join('\n');
+}
+function aiAltPrompt(p,pid){
  const noun=kind==='tools'?'tool':'part';
- return `Suggest 2-3 realistic substitute options for this ${noun}, used in DIY home-automation electronics projects.\n`+
+ const ctx=projectContextFor(pid);
+ return `Suggest 2-3 realistic substitute options for this ${noun} used in a DIY home-automation electronics build.\n`+
   `Name: ${p.name}\nCategory: ${CATS()[p.category]}\nSpec: ${p.spec||'n/a'}\n`+
-  `Answer in one short paragraph, plain language, no markdown formatting or headers, under 80 words.`;
+  (ctx?`Used in:\n${ctx}\nConsider whether each substitute still fits that project's circuit and safety needs.\n`:'')+
+  `Answer in one short paragraph, plain language, no markdown, under 50 words.`;
 }
 function fetchAIAlt(pid,p){
  if(aiAltCache[pid])return aiAltCache[pid];
  const req=fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({system:'You are a concise, practical assistant for a home-electronics hobbyist inventory app. Reply in plain text only.',prompt:aiAltPrompt(p)})})
+   body:JSON.stringify({system:'You are a concise, practical assistant for a home-electronics hobbyist inventory app. Reply in plain text only.',prompt:aiAltPrompt(p,pid),model:AI_ALT_MODEL})})
   .then(r=>{if(!r.ok)throw new Error('request failed ('+r.status+')');return r.json()})
   .then(data=>data.text)
   .catch(e=>{delete aiAltCache[pid];throw e}); // don't cache failures — allow retry on next open
  aiAltCache[pid]=req;
  return req;
 }
+// Warm the cache as soon as the pointer/finger reaches the 🤖 button — often finishes before the click lands, so showAlt() opens on an already-resolved response.
+function prefetchAIAlt(e){
+ const b=e.target.closest('[data-act="alt"]');if(!b||!navigator.onLine)return;
+ const card=b.closest('[data-pid]');if(!card)return;
+ const pid=card.dataset.pid,p=CATALOG()[pid];
+ if(!p||aiAltCache[pid])return;
+ fetchAIAlt(pid,p).catch(()=>{});
+}
+document.addEventListener('mouseover',prefetchAIAlt);
+document.addEventListener('touchstart',prefetchAIAlt,{passive:true});
 function showAlt(box,pid){
  const p=CATALOG()[pid];
  box.classList.toggle('show');
