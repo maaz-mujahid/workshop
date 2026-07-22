@@ -6,3 +6,4 @@ CLAUDE.md
 deploy-to-github.command
 wrangler.jsonc
 .assetsignore
+src
