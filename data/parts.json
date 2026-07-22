@@ -1,7 +1,7 @@
 {
   "schema": "parts-catalogue/v2",
-  "updated": "2026-07-17",
-  "note": "Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR, approx July 2026.",
+  "updated": "2026-07-22",
+  "note": "Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR.",
   "parts": {
     "P0001": {
       "name": "ESP32 DevKit (WROOM-32, 30-pin)",
@@ -636,7 +636,7 @@
       "notes": "FREE from old laptop packs / power banks. Vet >=2.8V, bin <2.0V. Need ~6."
     },
     "P0032": {
-      "name": "ESP32 DevKit (ceiling node)",
+      "name": "ESP32 DevKit",
       "category": "board",
       "categoryLabel": "Dev board",
       "spec": "WROOM-32, 30-pin",
@@ -646,11 +646,6 @@
         {
           "shop": "quartzcomponents",
           "price": "385",
-          "url": ""
-        },
-        {
-          "shop": "robu",
-          "price": "534",
           "url": ""
         }
       ],
