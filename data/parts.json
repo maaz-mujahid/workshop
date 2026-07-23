@@ -1,6 +1,6 @@
 {
   "schema": "parts-catalogue/v2",
-  "updated": "2026-07-22",
+  "updated": "2026-07-23",
   "note": "Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR.",
   "parts": {
     "P0001": {
