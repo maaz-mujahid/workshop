@@ -1,6 +1,6 @@
 {
   "schema": "tools-catalogue/v1",
-  "updated": "2026-07-22",
+  "updated": "2026-07-23",
   "note": "Master tool catalogue (equipment, not consumed by a build — reused across projects). Every tool exists once. Projects reference these by toolId. Prices in INR.",
   "tools": {
     "T0001": {
