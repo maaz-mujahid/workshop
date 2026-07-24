@@ -1,6 +1,6 @@
 {
   "schema": "inventory/v2",
-  "updated": "2026-07-23",
+  "updated": "2026-07-24",
   "note": "Physical stock only. App-owned file.",
   "stock": {}
 }
