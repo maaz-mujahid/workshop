@@ -1,124 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050">
-<style>
-.title{font:700 30px Arial;fill:#111}.sub{font:14px Arial;fill:#555}.sec{font:700 20px Arial}.h{font:700 16px Arial;fill:#111}.t{font:14px Arial;fill:#222}.s{font:12px Arial;fill:#555}.xs{font:11px Arial;fill:#555}.pin{font:700 12px Arial;fill:#111}.box{fill:#fff;stroke:#222;stroke-width:2}.hotbox{fill:#fff8f7;stroke:#b3261e;stroke-width:2}.coldbox{fill:#f7fff8;stroke:#176b2c;stroke-width:2}.hot{stroke:#b3261e;stroke-width:3;fill:none}.cold{stroke:#176b2c;stroke-width:3;fill:none}.sig{stroke:#075bb5;stroke-width:3;fill:none}.gnd{stroke:#555;stroke-width:3;fill:none}.dash{stroke:#777;stroke-width:3;stroke-dasharray:10 8}.panel{fill:#fafafa;stroke:#aaa;stroke-width:1.5}.warn{fill:#fff1f0;stroke:#c62828;stroke-width:2}.red{fill:#b3261e}.green{fill:#176b2c}.blue{fill:#075bb5}.net{font:700 12px Arial;fill:#075bb5}
-</style>
+<style>.title{font:700 30px Arial;fill:#111}.sub{font:14px Arial;fill:#555}.sec{font:700 20px Arial}.h{font:700 16px Arial;fill:#111}.t{font:14px Arial;fill:#222}.s{font:12px Arial;fill:#555}.xs{font:11px Arial;fill:#555}.pin{font:700 12px Arial;fill:#111}.box{fill:#fff;stroke:#222;stroke-width:2}.hotbox{fill:#fff8f7;stroke:#b3261e;stroke-width:2}.coldbox{fill:#f7fff8;stroke:#176b2c;stroke-width:2}.hot{stroke:#b3261e;stroke-width:3;fill:none}.cold{stroke:#176b2c;stroke-width:3;fill:none}.sig{stroke:#075bb5;stroke-width:3;fill:none}.gnd{stroke:#555;stroke-width:3;fill:none}.dash{stroke:#777;stroke-width:3;stroke-dasharray:10 8}.panel{fill:#fafafa;stroke:#aaa;stroke-width:1.5}.warn{fill:#fff1f0;stroke:#c62828;stroke-width:2}.red{fill:#b3261e}.green{fill:#176b2c}.blue{fill:#075bb5}.net{font:700 12px Arial;fill:#075bb5}</style>
 <rect width="1600" height="1050" fill="#fff"/>
 <text x="800" y="38" text-anchor="middle" class="title">Daikin S403 → ESP32-C3 Super Mini — Galvanically Isolated S21 Interface</text>
-<text x="800" y="63" text-anchor="middle" class="sub">Rev 9 · ADuM1201ARZ pinout and channel direction corrected from the manufacturer datasheet</text>
+<text x="800" y="63" text-anchor="middle" class="sub">Rev 10 · Exact ADuM1201ARZ pinout, one channel each direction, separate hot/cold power domains</text>
 
-<!-- DOMAIN AREAS -->
-<rect x="35" y="90" width="650" height="650" rx="12" class="hotbox"/>
-<rect x="915" y="90" width="650" height="650" rx="12" class="coldbox"/>
-<text x="360" y="125" text-anchor="middle" class="sec red">HOT SIDE — MAINS-REFERENCED</text>
-<text x="1240" y="125" text-anchor="middle" class="sec green">COLD SIDE — ISOLATED / ESP32</text>
-<line x1="800" y1="90" x2="800" y2="740" class="dash"/>
-<text x="817" y="320" class="s" transform="rotate(90 817 320)">GALVANIC ISOLATION BARRIER — NO COMMON GROUND</text>
+<rect x="35" y="90" width="660" height="650" rx="12" class="hotbox"/><rect x="905" y="90" width="660" height="650" rx="12" class="coldbox"/>
+<text x="365" y="125" text-anchor="middle" class="sec red">HOT SIDE — MAINS-REFERENCED</text><text x="1235" y="125" text-anchor="middle" class="sec green">COLD SIDE — ISOLATED / ESP32</text>
+<line x1="800" y1="90" x2="800" y2="740" class="dash"/><text x="817" y="310" class="s" transform="rotate(90 817 310)">ISOLATION BARRIER</text>
 
-<!-- S403 CONNECTOR -->
-<rect x="60" y="175" width="190" height="470" class="box"/>
-<text x="155" y="205" text-anchor="middle" class="sec">S403</text>
-<text x="155" y="227" text-anchor="middle" class="s">Daikin indoor-unit service connector</text>
-<g class="pin">
-<text x="82" y="270">10</text><text x="82" y="310">9</text><text x="82" y="350">8</text><text x="82" y="390">7</text><text x="82" y="430">6</text><text x="82" y="470">5</text><text x="82" y="510">4</text><text x="82" y="550">3</text><text x="82" y="590">2</text><text x="82" y="625">1</text>
-</g>
-<g class="t">
-<text x="115" y="270">~320 VDC</text><text x="115" y="310">NC</text><text x="115" y="350">NC</text><text x="115" y="390">GND_HOT</text><text x="115" y="430">GND_HOT</text><text x="115" y="470">RX (IDU)</text><text x="115" y="510">TX (IDU)</text><text x="115" y="550">NC</text><text x="115" y="590">NC</text><text x="115" y="625">+14 VDC</text>
-</g>
-<text x="275" y="270" class="h red">⚠ PIN 10: LEAVE EMPTY</text><text x="275" y="290" class="s red">Rectified mains bus. Never connect or touch.</text>
-<text x="275" y="390" class="s">Pins 6 + 7 → GND_HOT</text>
-<text x="275" y="470" class="s blue">Pin 5 = RX at indoor unit</text><text x="275" y="488" class="xs blue">ESP32 GPIO21 TX is sent here.</text>
-<text x="275" y="510" class="s blue">Pin 4 = TX from indoor unit</text><text x="275" y="528" class="xs blue">ESP32 GPIO20 RX receives this.</text>
-<text x="275" y="625" class="s">Pin 1 = +14 VDC</text>
+<!-- S403 -->
+<rect x="60" y="175" width="190" height="470" class="box"/><text x="155" y="205" text-anchor="middle" class="sec">S403</text><text x="155" y="227" text-anchor="middle" class="s">Daikin indoor-unit service connector</text>
+<g class="pin"><text x="82" y="270">10</text><text x="82" y="310">9</text><text x="82" y="350">8</text><text x="82" y="390">7</text><text x="82" y="430">6</text><text x="82" y="470">5</text><text x="82" y="510">4</text><text x="82" y="550">3</text><text x="82" y="590">2</text><text x="82" y="625">1</text></g>
+<g class="t"><text x="115" y="270">~320 VDC</text><text x="115" y="310">NC</text><text x="115" y="350">NC</text><text x="115" y="390">GND_HOT</text><text x="115" y="430">GND_HOT</text><text x="115" y="470">RX (IDU)</text><text x="115" y="510">TX (IDU)</text><text x="115" y="550">NC</text><text x="115" y="590">NC</text><text x="115" y="625">+14 VDC</text></g>
+<text x="275" y="270" class="h red">⚠ PIN 10 — DO NOT CONNECT</text><text x="275" y="290" class="s red">Rectified mains bus. Dangerous even when power is removed until discharged.</text><text x="275" y="390" class="s">Pins 6 + 7 → GND_HOT</text><text x="275" y="470" class="s blue">Pin 5 = RX at indoor unit</text><text x="275" y="488" class="xs blue">ESP32 GPIO21 TX → ADuM channel A → pin 5</text><text x="275" y="510" class="s blue">Pin 4 = TX from indoor unit</text><text x="275" y="528" class="xs blue">pin 4 → ADuM channel B → ESP32 GPIO20 RX</text>
 
-<!-- HOT GROUND BUS -->
-<line x1="250" y1="390" x2="320" y2="390" class="gnd"/><line x1="250" y1="430" x2="320" y2="430" class="gnd"/><line x1="320" y1="390" x2="320" y2="705" class="gnd"/>
-<line x1="305" y1="705" x2="335" y2="705" class="gnd"/><line x1="310" y1="712" x2="330" y2="712" class="gnd"/><line x1="315" y1="719" x2="325" y2="719" class="gnd"/>
-<text x="345" y="710" class="s red">GND_HOT</text>
+<!-- hot ground -->
+<line x1="250" y1="390" x2="300" y2="390" class="gnd"/><line x1="250" y1="430" x2="300" y2="430" class="gnd"/><line x1="300" y1="390" x2="300" y2="700" class="gnd"/><line x1="285" y1="700" x2="315" y2="700" class="gnd"/><line x1="290" y1="707" x2="310" y2="707" class="gnd"/><line x1="295" y1="714" x2="305" y2="714" class="gnd"/><text x="325" y="705" class="s red">GND_HOT</text>
 
-<!-- 14V PROTECTION + BUCK -->
-<line x1="250" y1="625" x2="290" y2="625" class="hot"/>
-<rect x="290" y="610" width="85" height="30" class="box"/><text x="332" y="605" text-anchor="middle" class="xs">F1 · 200mA PTC</text>
-<line x1="375" y1="625" x2="420" y2="625" class="hot"/>
-<polygon points="420,610 420,640 450,625" fill="#b3261e"/><line x1="450" y1="610" x2="450" y2="640" class="hot"/><text x="435" y="658" text-anchor="middle" class="xs">D1 · 1N5819</text>
-<line x1="450" y1="625" x2="485" y2="625" class="hot"/>
-<rect x="485" y="570" width="175" height="105" class="box"/>
-<text x="572" y="602" text-anchor="middle" class="h">U2 · Mini560</text><text x="572" y="625" text-anchor="middle" class="s">14 VDC → fixed 5 V</text><text x="500" y="595" class="xs">VIN+</text><text x="500" y="655" class="xs">GND</text>
-<line x1="485" y1="655" x2="320" y2="655" class="gnd"/>
-<line x1="660" y1="600" x2="710" y2="600" class="hot"/><text x="670" y="588" class="net red">5V_HOT</text>
-<line x1="710" y1="600" x2="710" y2="680" class="hot"/><rect x="675" y="680" width="70" height="42" class="box"/><text x="710" y="697" text-anchor="middle" class="xs">C1 470µF</text><text x="710" y="712" text-anchor="middle" class="xs">bulk</text><line x1="710" y1="722" x2="710" y2="735" class="gnd"/><line x1="710" y1="735" x2="320" y2="735" class="gnd"/>
+<!-- hot power -->
+<line x1="250" y1="625" x2="285" y2="625" class="hot"/><rect x="285" y="610" width="85" height="30" class="box"/><text x="327" y="605" text-anchor="middle" class="xs">F1 · 200mA PTC</text><line x1="370" y1="625" x2="410" y2="625" class="hot"/><polygon points="410,610 410,640 440,625" fill="#b3261e"/><line x1="440" y1="610" x2="440" y2="640" class="hot"/><text x="425" y="658" text-anchor="middle" class="xs">D1 · 1N5819</text><line x1="440" y1="625" x2="475" y2="625" class="hot"/>
+<rect x="475" y="570" width="180" height="105" class="box"/><text x="565" y="602" text-anchor="middle" class="h">U2 · Mini560</text><text x="565" y="625" text-anchor="middle" class="s">14 VDC → fixed 5 V</text><text x="490" y="595" class="xs">VIN+</text><text x="490" y="655" class="xs">GND</text><line x1="475" y1="655" x2="300" y2="655" class="gnd"/><line x1="655" y1="600" x2="700" y2="600" class="hot"/><text x="665" y="588" class="net red">5V_HOT</text>
+<line x1="455" y1="625" x2="455" y2="545" class="hot"/><rect x="437" y="500" width="36" height="55" class="box"/><text x="455" y="520" text-anchor="middle" class="xs">D2</text><text x="455" y="538" text-anchor="middle" class="xs">SMBJ18A</text><line x1="455" y1="555" x2="455" y2="470" class="gnd"/><line x1="455" y1="470" x2="300" y2="470" class="gnd"/><text x="485" y="520" class="xs">TVS across protected 14V rail</text>
 
-<!-- TVS ACROSS PROTECTED 14V RAIL -->
-<line x1="465" y1="625" x2="465" y2="540" class="hot"/><rect x="447" y="500" width="36" height="55" class="box"/><text x="465" y="520" text-anchor="middle" class="xs">D2</text><text x="465" y="538" text-anchor="middle" class="xs">SMBJ18A</text><line x1="465" y1="555" x2="465" y2="470" class="gnd"/><line x1="465" y1="470" x2="320" y2="470" class="gnd"/><text x="495" y="518" class="xs">TVS clamps +14V to GND_HOT</text>
+<!-- ADUM1201 straddles isolation barrier -->
+<rect x="680" y="180" width="240" height="300" class="box"/><text x="800" y="208" text-anchor="middle" class="sec">U1 · ADuM1201ARZ</text><text x="800" y="229" text-anchor="middle" class="s">SOIC-8 top view · 1/1 channel directionality</text>
+<rect x="745" y="255" width="110" height="175" rx="5" fill="#f4f4f4" stroke="#222" stroke-width="2"/><path d="M780 255 Q800 275 820 255" fill="none" stroke="#222" stroke-width="2"/><text x="800" y="335" text-anchor="middle" class="h">ADuM</text><text x="800" y="357" text-anchor="middle" class="s">1201ARZ</text>
+<!-- exact physical pin arrangement: 1,2,3,4 = side 1; 5,6,7,8 = side 2 -->
+<line x1="745" y1="275" x2="695" y2="275" class="hot"/><text x="735" y="270" text-anchor="end" class="pin">1 VDD1</text><line x1="745" y1="325" x2="695" y2="325" class="sig"/><text x="735" y="320" text-anchor="end" class="pin">2 VOA</text><line x1="745" y1="375" x2="695" y2="375" class="sig"/><text x="735" y="370" text-anchor="end" class="pin">3 VIB</text><line x1="745" y1="425" x2="695" y2="425" class="gnd"/><text x="735" y="420" text-anchor="end" class="pin">4 GND1</text>
+<line x1="855" y1="425" x2="905" y2="425" class="gnd"/><text x="865" y="420" class="pin">5 GND2</text><line x1="855" y1="375" x2="905" y2="375" class="sig"/><text x="865" y="370" class="pin">6 VOB</text><line x1="855" y1="325" x2="905" y2="325" class="sig"/><text x="865" y="320" class="pin">7 VIA</text><line x1="855" y1="275" x2="905" y2="275" class="cold"/><text x="865" y="270" class="pin">8 VDD2</text>
+<text x="705" y="255" text-anchor="middle" class="xs red">SIDE 1 / HOT</text><text x="895" y="255" text-anchor="middle" class="xs green">SIDE 2 / COLD</text><text x="800" y="462" text-anchor="middle" class="xs">A: VIA(7) → VOA(2) · B: VIB(3) → VOB(6)</text>
+<rect x="620" y="190" width="65" height="45" class="box"/><text x="652" y="210" text-anchor="middle" class="xs">C3 100nF</text><text x="652" y="225" text-anchor="middle" class="xs">pins 1↔4</text><rect x="915" y="190" width="65" height="45" class="box"/><text x="947" y="210" text-anchor="middle" class="xs">C4 100nF</text><text x="947" y="225" text-anchor="middle" class="xs">pins 8↔5</text>
 
-<!-- ADUM1201 PACKAGE, PHYSICAL PIN SIDES -->
-<rect x="500" y="175" width="300" height="315" class="box"/>
-<text x="650" y="205" text-anchor="middle" class="sec">U1 · ADuM1201ARZ</text>
-<text x="650" y="226" text-anchor="middle" class="s">SOIC-8 top view · 1/1 channel directionality</text>
-<!-- chip body -->
-<rect x="585" y="255" width="130" height="175" rx="5" fill="#f4f4f4" stroke="#222" stroke-width="2"/>
-<path d="M630 255 Q650 275 670 255" fill="none" stroke="#222" stroke-width="2"/>
-<text x="650" y="335" text-anchor="middle" class="h">ADuM</text><text x="650" y="357" text-anchor="middle" class="s">1201ARZ</text>
-<!-- left/hot pins exact -->
-<line x1="585" y1="275" x2="535" y2="275" class="hot"/><text x="575" y="270" text-anchor="end" class="pin">1 VDD1</text>
-<line x1="585" y1="325" x2="535" y2="325" class="sig"/><text x="575" y="320" text-anchor="end" class="pin">2 VOA</text>
-<line x1="585" y1="375" x2="535" y2="375" class="sig"/><text x="575" y="370" text-anchor="end" class="pin">3 VIB</text>
-<line x1="585" y1="425" x2="535" y2="425" class="gnd"/><text x="575" y="420" text-anchor="end" class="pin">4 GND1</text>
-<text x="535" y="255" text-anchor="middle" class="xs red">SIDE 1 / HOT</text>
-<!-- right/cold pins exact -->
-<line x1="715" y1="425" x2="765" y2="425" class="gnd"/><text x="725" y="420" class="pin">5 GND2</text>
-<line x1="715" y1="375" x2="765" y2="375" class="sig"/><text x="725" y="370" class="pin">6 VOB</text>
-<line x1="715" y1="325" x2="765" y2="325" class="sig"/><text x="725" y="320" class="pin">7 VIA</text>
-<line x1="715" y1="275" x2="765" y2="275" class="cold"/><text x="725" y="270" class="pin">8 VDD2</text>
-<text x="765" y="255" text-anchor="middle" class="xs green">SIDE 2 / COLD</text>
-<text x="650" y="465" text-anchor="middle" class="xs">Channel A: VIA(7) → VOA(2) · Channel B: VIB(3) → VOB(6)</text>
+<!-- hot signal A? actual direction: S403 pin4 -> VIB3 -> VOB6 -> GPIO20 -->
+<line x1="250" y1="510" x2="315" y2="510" class="sig"/><rect x="315" y="495" width="70" height="30" class="box"/><text x="350" y="515" text-anchor="middle" class="xs">R1 1kΩ</text><line x1="385" y1="510" x2="455" y2="510" class="sig"/><line x1="455" y1="510" x2="455" y2="375" class="sig"/><line x1="455" y1="375" x2="695" y2="375" class="sig"/><text x="270" y="495" class="xs blue">S403 pin 4 TX → VIB pin 3</text>
+<line x1="905" y1="375" x2="1010" y2="375" class="sig"/><line x1="1010" y1="375" x2="1010" y2="575" class="sig"/><text x="915" y="360" class="xs blue">VOB pin 6 → GPIO20 RX</text>
+<!-- cold-to-hot channel A: GPIO21 -> VIA7 -> VOA2 -> pin5 -->
+<line x1="1080" y1="610" x2="1010" y2="610" class="sig"/><line x1="1010" y1="610" x2="1010" y2="325" class="sig"/><line x1="1010" y1="325" x2="905" y2="325" class="sig"/><text x="1085" y="600" class="xs blue">GPIO21 TX → VIA pin 7</text>
+<line x1="695" y1="325" x2="600" y2="325" class="sig"/><line x1="600" y1="325" x2="600" y2="545" class="sig"/><rect x="525" y="530" width="70" height="30" class="box"/><text x="560" y="550" text-anchor="middle" class="xs">R2 1kΩ</text><line x1="525" y1="545" x2="250" y2="545" class="sig"/><text x="275" y="565" class="xs blue">VOA pin 2 → R2 → S403 pin 5 RX</text>
 
-<!-- ADUM DECOUPLING -->
-<rect x="400" y="195" width="85" height="50" class="box"/><text x="442" y="216" text-anchor="middle" class="xs">C3 100nF</text><text x="442" y="232" text-anchor="middle" class="xs">1↔4</text>
-<rect x="815" y="195" width="85" height="50" class="box"/><text x="857" y="216" text-anchor="middle" class="xs">C4 100nF</text><text x="857" y="232" text-anchor="middle" class="xs">8↔5</text>
-
-<!-- HOT SIGNALS -->
-<!-- S403 pin4 TX -> R1 -> VIB pin3 -->
-<line x1="250" y1="510" x2="315" y2="510" class="sig"/><rect x="315" y="495" width="70" height="30" class="box"/><text x="350" y="515" text-anchor="middle" class="xs">R1 1kΩ</text><line x1="385" y1="510" x2="445" y2="510" class="sig"/><line x1="445" y1="510" x2="445" y2="375" class="sig"/><line x1="445" y1="375" x2="535" y2="375" class="sig"/><text x="270" y="495" class="xs blue">S403 pin 4 TX → VIB(3)</text>
-<!-- VOA pin2 -> R2 -> S403 pin5 RX -->
-<line x1="535" y1="325" x2="400" y2="325" class="sig"/><line x1="400" y1="325" x2="400" y2="545" class="sig"/><rect x="315" y="530" width="70" height="30" class="box"/><text x="350" y="550" text-anchor="middle" class="xs">R2 1kΩ</text><line x1="315" y1="545" x2="250" y2="545" class="sig"/><text x="270" y="565" class="xs blue">VOA(2) → R2 → S403 pin 5 RX</text>
-
-<!-- COLD SIGNALS -->
-<!-- VOB6 -> GPIO20 -->
-<line x1="765" y1="375" x2="875" y2="375" class="sig"/><line x1="875" y1="375" x2="875" y2="525" class="sig"/><line x1="875" y1="525" x2="940" y2="525" class="sig"/><text x="780" y="360" class="xs blue">VOB(6) → GPIO20 RX</text>
-<!-- GPIO21 -> VIA7 -->
-<line x1="940" y1="575" x2="855" y2="575" class="sig"/><line x1="855" y1="575" x2="855" y2="325" class="sig"/><line x1="855" y1="325" x2="765" y2="325" class="sig"/><text x="945" y="565" class="xs blue">GPIO21 TX → VIA(7)</text>
-
-<!-- ISOLATED POWER CONVERTER -->
-<rect x="820" y="120" width="90" height="560" fill="#fff" stroke="none"/>
-<rect x="820" y="165" width="270" height="120" class="box"/>
-<text x="955" y="195" text-anchor="middle" class="h">U3 · HLK-B0505S-2WR3</text><text x="955" y="217" text-anchor="middle" class="s">5V → isolated 5V · 1500VDC isolation</text><text x="835" y="245" class="xs red">IN+ ← 5V_HOT</text><text x="835" y="265" class="xs red">IN− ← GND_HOT</text><text x="970" y="245" class="xs green">OUT+ → 5V_ISO</text><text x="970" y="265" class="xs green">OUT− → GND_ISO</text>
-<!-- power enters converter from hot and exits cold; no galvanic crossing -->
-<line x1="710" y1="600" x2="710" y2="245" class="hot"/><line x1="710" y1="245" x2="820" y2="245" class="hot"/><line x1="320" y1="655" x2="320" y2="275" class="gnd"/><line x1="320" y1="275" x2="820" y2="265" class="gnd"/>
-<line x1="1090" y1="245" x2="1150" y2="245" class="cold"/><line x1="1090" y1="265" x2="1150" y2="265" class="gnd"/><text x="1098" y="235" class="net green">5V_ISO</text><text x="1098" y="282" class="xs green">GND_ISO</text>
-<rect x="1155" y="195" width="80" height="60" class="box"/><text x="1195" y="218" text-anchor="middle" class="xs">C2 10µF</text><text x="1195" y="235" text-anchor="middle" class="xs">5V_ISO</text><text x="1195" y="248" text-anchor="middle" class="xs">per converter datasheet</text>
+<!-- isolated DC-DC straddling barrier -->
+<rect x="675" y="555" width="250" height="120" class="box"/><text x="800" y="585" text-anchor="middle" class="h">U3 · HLK-B0505S-2WR3</text><text x="800" y="607" text-anchor="middle" class="s">5V → isolated 5V · 1500VDC isolation</text><text x="690" y="635" class="xs red">IN+ 5V_HOT</text><text x="690" y="655" class="xs red">IN− GND_HOT</text><text x="835" y="635" class="xs green">OUT+ 5V_ISO</text><text x="835" y="655" class="xs green">OUT− GND_ISO</text>
+<line x1="700" y1="600" x2="700" y2="635" class="hot"/><line x1="700" y1="635" x2="675" y2="635" class="hot"/><line x1="700" y1="655" x2="675" y2="655" class="gnd"/><line x1="925" y1="635" x2="970" y2="635" class="cold"/><line x1="925" y1="655" x2="970" y2="655" class="gnd"/><text x="975" y="630" class="net green">5V_ISO</text><text x="975" y="672" class="s green">GND_ISO</text>
+<rect x="1030" y="605" width="80" height="55" class="box"/><text x="1070" y="625" text-anchor="middle" class="xs">C2 10µF</text><text x="1070" y="642" text-anchor="middle" class="xs">5V_ISO</text><text x="1070" y="655" text-anchor="middle" class="xs">per converter datasheet</text>
+<!-- 5V hot to converter -->
+<line x1="700" y1="600" x2="655" y2="600" class="hot"/>
+<!-- cold power to ESP -->
+<line x1="970" y1="635" x2="1120" y2="635" class="cold"/><line x1="1120" y1="635" x2="1120" y2="445" class="cold"/><text x="1130" y="460" class="net green">5V_ISO → 5V/VIN</text><line x1="970" y1="655" x2="1080" y2="655" class="gnd"/><line x1="1080" y1="655" x2="1080" y2="485" class="gnd"/>
 
 <!-- ESP32 -->
-<rect x="940" y="410" width="550" height="255" rx="8" class="box"/>
-<text x="1215" y="445" text-anchor="middle" class="sec">U4 · ESP32-C3 Super Mini</text>
-<text x="1215" y="468" text-anchor="middle" class="s">5V/VIN input · onboard 3.3V regulator · USB-C on cold side</text>
-<text x="970" y="510" class="t">5V/VIN  ← 5V_ISO</text><text x="970" y="545" class="t">3V3     → ADuM1201 VDD2 pin 8</text><text x="970" y="580" class="t">GND     → ADuM1201 GND2 pin 5</text><text x="970" y="615" class="t">GPIO20  ← ADuM VOB pin 6 (S403 pin 4 TX)</text><text x="970" y="650" class="t">GPIO21  → ADuM VIA pin 7 (S403 pin 5 RX)</text>
-<line x1="1150" y1="245" x2="1150" y2="410" class="cold"/><text x="1160" y="395" class="net green">5V_ISO → 5V/VIN</text>
-<line x1="1250" y1="265" x2="1250" y2="410" class="gnd"/><text x="1260" y="395" class="net green">GND_ISO</text>
+<rect x="1080" y="410" width="430" height="250" rx="8" class="box"/><text x="1295" y="445" text-anchor="middle" class="sec">U4 · ESP32-C3 Super Mini</text><text x="1295" y="468" text-anchor="middle" class="s">USB-C · onboard 3.3V regulator</text><text x="1105" y="505" class="t">5V/VIN ← 5V_ISO</text><text x="1105" y="540" class="t">3V3 → ADuM pin 8 VDD2</text><text x="1105" y="575" class="t">GND → ADuM pin 5 GND2</text><text x="1105" y="610" class="t">GPIO20 RX ← ADuM VOB pin 6</text><text x="1105" y="645" class="t">GPIO21 TX → ADuM VIA pin 7</text>
+<line x1="1080" y1="540" x2="905" y2="275" class="cold"/><text x="915" y="300" class="xs green">3V3_ISO = ESP32 3V3</text><line x1="1080" y1="575" x2="905" y2="425" class="gnd"/>
 
-<!-- ADUM POWER NETS -->
-<line x1="535" y1="275" x2="485" y2="275" class="hot"/><line x1="485" y1="275" x2="485" y2="600" class="hot"/><line x1="485" y1="600" x2="710" y2="600" class="hot"/>
-<line x1="535" y1="425" x2="470" y2="425" class="gnd"/><line x1="470" y1="425" x2="470" y2="655" class="gnd"/>
-<line x1="765" y1="275" x2="850" y2="275" class="cold"/><line x1="850" y1="275" x2="850" y2="545" class="cold"/><line x1="850" y1="545" x2="970" y2="545" class="cold"/>
-<line x1="765" y1="425" x2="885" y2="425" class="gnd"/><line x1="885" y1="425" x2="885" y2="580" class="gnd"/><line x1="885" y1="580" x2="970" y2="580" class="gnd"/>
-
-<!-- SUMMARY -->
-<rect x="35" y="770" width="1530" height="245" rx="10" class="panel"/>
-<text x="60" y="805" class="sec">FINAL NETLIST / BUILD CHECK</text>
-<text x="60" y="835" class="t">S403 pin 4 TX → R1 1k → ADuM1201 VIB pin 3 → VOB pin 6 → ESP32 GPIO20 RX</text>
-<text x="60" y="862" class="t">ESP32 GPIO21 TX → ADuM1201 VIA pin 7 → VOA pin 2 → R2 1k → S403 pin 5 RX</text>
-<text x="60" y="889" class="t">S403 pin 1 +14V → F1 200mA PTC → D1 1N5819 → Mini560 → 5V_HOT; pins 6/7 = GND_HOT</text>
-<text x="60" y="916" class="t">ADuM1201: pin 1 VDD1=5V_HOT, pin 4 GND1=GND_HOT; pin 8 VDD2=ESP 3V3, pin 5 GND2=GND_ISO</text>
-<text x="60" y="943" class="t">HLK-B0505S: 5V_HOT/GND_HOT → isolated 5V_ISO/GND_ISO → ESP32 5V/VIN + GND. No 3.3V LDO is added.</text>
-<text x="60" y="970" class="t">ADuM bypass: 100nF directly between pins 1–4 and 8–5. Keep leads very short. Converter input/output filtering must follow its datasheet.</text>
-<text x="60" y="997" class="s red">SAFETY: Pin 10 ≈320VDC and is completely unused. Verify the exact S403 connector and voltages on the real AC before connection. This is not a mains-certified safety circuit.</text>
+<!-- footer -->
+<rect x="35" y="770" width="1530" height="245" rx="10" class="panel"/><text x="60" y="805" class="sec">FINAL NETLIST — CHECK THESE CONNECTIONS BEFORE BUILDING</text>
+<text x="60" y="835" class="t">1. S403 pin 4 TX → R1 → ADuM1201 VIB pin 3 → VOB pin 6 → ESP32 GPIO20 RX.</text>
+<text x="60" y="862" class="t">2. ESP32 GPIO21 TX → ADuM1201 VIA pin 7 → VOA pin 2 → R2 → S403 pin 5 RX.</text>
+<text x="60" y="889" class="t">3. ADuM1201 exact pinout: 1=VDD1, 2=VOA, 3=VIB, 4=GND1, 5=GND2, 6=VOB, 7=VIA, 8=VDD2.</text>
+<text x="60" y="916" class="t">4. Hot power: S403 pin 1 +14V → 200mA PTC → 1N5819 → Mini560 → 5V_HOT; pins 6/7 → GND_HOT.</text>
+<text x="60" y="943" class="t">5. ADuM side 1 (pins 1–4) is HOT. ADuM side 2 (pins 5–8) is COLD. Never connect GND_HOT to GND_ISO.</text>
+<text x="60" y="970" class="t">6. HLK-B0505S provides the isolated 5V supply. ESP32 uses 5V/VIN and its own 3.3V rail powers ADuM VDD2. No external 3.3V LDO.</text>
+<text x="60" y="997" class="s red">7. S403 pin 10 is ~320VDC and is completely unused. Verify your exact indoor-unit S403 pinout/voltages before connection. Work de-energized.</text>
 </svg>
