@@ -13,7 +13,7 @@
   </style>
 
   <rect x="0" y="0" width="1100" height="980" fill="#fafafa"/>
-  <text x="550" y="28" text-anchor="middle" class="lbl bold" font-size="17">Daikin S403 → ESP32 isolated interface (v2 — ADuM1201)</text>
+  <text x="550" y="28" text-anchor="middle" class="lbl bold" font-size="17">Daikin S403 → ESP32-C3 Super Mini isolated interface (v3)</text>
 
   <!-- side headers -->
   <text x="280" y="52" text-anchor="middle" class="lbl bold red">HOT SIDE — mains-referenced (LIVE)</text>
@@ -235,18 +235,16 @@
 
   <!-- ======== ESP32 ======== -->
   <rect x="880" y="180" width="180" height="390" class="box"/>
-  <text x="970" y="208" text-anchor="middle" class="lbl bold">ESP32 DevKit V1</text>
-  <text x="970" y="224" text-anchor="middle" class="tiny">(WROOM, not WROVER)</text>
+  <text x="970" y="208" text-anchor="middle" class="lbl bold">ESP32-C3 Super Mini</text>
+  <text x="970" y="224" text-anchor="middle" class="tiny">USB-C · 3.3V MCU</text>
   <g class="small">
     <circle cx="880" cy="220" r="3" class="dot"/><text x="890" y="242">3V3</text>
-    <circle cx="880" cy="340" r="3" class="dot"/><text x="890" y="344">GPIO16 (RX2)</text>
-    <circle cx="880" cy="380" r="3" class="dot"/><text x="890" y="384">GPIO17 (TX2)</text>
+    <circle cx="880" cy="340" r="3" class="dot"/><text x="890" y="344">GPIO20 (RX)</text>
+    <circle cx="880" cy="380" r="3" class="dot"/><text x="890" y="384">GPIO21 (TX)</text>
     <circle cx="880" cy="500" r="3" class="dot"/><text x="890" y="504">GND</text>
     <circle cx="880" cy="540" r="3" class="dot"/><text x="890" y="544">VIN (5 V)</text>
   </g>
-  <text x="970" y="430" text-anchor="middle" class="tiny">onboard LED (GPIO2) = status_led</text>
-  <text x="970" y="446" text-anchor="middle" class="tiny">I2C header for future room sensor:</text>
-  <text x="970" y="460" text-anchor="middle" class="tiny">3V3 · GND · GPIO21 (SDA) · GPIO22 (SCL)</text>
+  <text x="970" y="430" text-anchor="middle" class="tiny">onboard status LED (GPIO8, active-low)</text>
   <text x="970" y="478" text-anchor="middle" class="tiny">USB only on the bench —</text>
   <text x="970" y="492" text-anchor="middle" class="tiny">never while connected to the AC</text>
   <!-- ESP GND -> iso gnd -->
@@ -260,61 +258,4 @@
   <text x="40" y="718" class="small">• Wire crossings WITHOUT a dot are not connected. Ground symbols: <tspan class="red">red = GND_hot (live)</tspan>, black = GND_iso (safe).</text>
   <text x="40" y="736" class="small">• Everything left of the dashed barrier is at mains potential. Insulate it fully; work only with the breaker off and caps discharged.</text>
 
-  <!-- ======== Optional IR add-on panel ======== -->
-  <rect x="40" y="755" width="1020" height="210" rx="10" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 5"/>
-  <text x="60" y="782" class="lbl bold">Optional IR add-on — Orient Zeno fan blaster (cold side only, no isolation changes)</text>
-
-  <!-- TX chain -->
-  <circle cx="140" cy="806" r="4" fill="none" stroke="#222" stroke-width="2"/>
-  <text x="152" y="810" class="small">5V_iso</text>
-  <line x1="140" y1="810" x2="140" y2="818" class="wire"/>
-  <rect x="133" y="818" width="14" height="32" class="box"/>
-  <text x="155" y="838" class="small">33 Ω</text>
-  <line x1="140" y1="850" x2="140" y2="858" class="wire"/>
-  <polygon points="132,858 148,858 140,872" fill="#222"/>
-  <line x1="132" y1="874" x2="148" y2="874" class="wire"/>
-  <line x1="152" y1="860" x2="166" y2="850" stroke="#888" stroke-width="1.5"/>
-  <polygon points="163,848 170,847 166,854" fill="#888"/>
-  <line x1="156" y1="868" x2="170" y2="858" stroke="#888" stroke-width="1.5"/>
-  <polygon points="167,856 174,855 170,862" fill="#888"/>
-  <text x="180" y="864" class="small">IR LED 850/940 nm</text>
-  <text x="180" y="879" class="tiny">on a 20–30 cm pigtail, poking out of the AC front panel, aimed at the fan</text>
-  <line x1="140" y1="874" x2="140" y2="888" class="wire"/>
-  <line x1="140" y1="888" x2="150" y2="900" class="wire"/>
-  <line x1="150" y1="896" x2="150" y2="924" stroke="#222" stroke-width="3"/>
-  <line x1="150" y1="920" x2="140" y2="932" class="wire"/>
-  <polygon points="141,924 138,934 148,930" fill="#222"/>
-  <line x1="140" y1="932" x2="140" y2="944" class="wire"/>
-  <g class="wire">
-    <line x1="128" y1="946" x2="152" y2="946"/><line x1="132" y1="952" x2="148" y2="952"/><line x1="136" y1="958" x2="144" y2="958"/>
-  </g>
-  <text x="162" y="940" class="small">S8050 (NPN)</text>
-  <line x1="150" y1="910" x2="240" y2="910" class="wire"/>
-  <rect x="240" y="903" width="60" height="14" class="box"/>
-  <text x="270" y="898" text-anchor="middle" class="small">1 kΩ</text>
-  <line x1="300" y1="910" x2="360" y2="910" class="wire"/>
-  <circle cx="365" cy="910" r="4" fill="none" stroke="#222" stroke-width="2"/>
-  <text x="375" y="914" class="small">GPIO26 (ESP32) — IR TX</text>
-
-  <!-- RX: VS1838B -->
-  <rect x="620" y="810" width="110" height="80" class="box"/>
-  <text x="675" y="842" text-anchor="middle" class="lbl bold">VS1838B</text>
-  <text x="675" y="860" text-anchor="middle" class="small">IR receiver</text>
-  <g class="tiny">
-    <text x="726" y="829" text-anchor="end">OUT</text>
-    <text x="726" y="861" text-anchor="end">VCC</text>
-    <text x="726" y="884" text-anchor="end">GND</text>
-  </g>
-  <line x1="730" y1="825" x2="790" y2="825" class="wire"/>
-  <circle cx="795" cy="825" r="4" fill="none" stroke="#222" stroke-width="2"/>
-  <text x="805" y="829" class="small">GPIO27 (ESP32) — IR RX</text>
-  <line x1="730" y1="857" x2="768" y2="857" class="wire"/>
-  <circle cx="773" cy="857" r="4" fill="none" stroke="#222" stroke-width="2"/>
-  <text x="783" y="861" class="small">3V3</text>
-  <polyline points="730,880 760,880 760,896" class="wire"/>
-  <g class="wire">
-    <line x1="748" y1="898" x2="772" y2="898"/><line x1="752" y1="904" x2="768" y2="904"/><line x1="756" y1="910" x2="764" y2="910"/>
-  </g>
-  <text x="620" y="932" class="tiny">Leave the receiver installed — presses on the physical Zeno remote become Home Assistant events.</text>
-  <text x="620" y="946" class="tiny">Open circles are net labels: connect to the matching ESP32 pin / rail in the main circuit above.</text>
 </svg>
