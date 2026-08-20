@@ -1,59 +1,320 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050">
-<style>.title{font:700 30px Arial;fill:#111}.sub{font:14px Arial;fill:#555}.sec{font:700 20px Arial}.h{font:700 16px Arial;fill:#111}.t{font:14px Arial;fill:#222}.s{font:12px Arial;fill:#555}.xs{font:11px Arial;fill:#555}.pin{font:700 12px Arial;fill:#111}.box{fill:#fff;stroke:#222;stroke-width:2}.hotbox{fill:#fff8f7;stroke:#b3261e;stroke-width:2}.coldbox{fill:#f7fff8;stroke:#176b2c;stroke-width:2}.hot{stroke:#b3261e;stroke-width:3;fill:none}.cold{stroke:#176b2c;stroke-width:3;fill:none}.sig{stroke:#075bb5;stroke-width:3;fill:none}.gnd{stroke:#555;stroke-width:3;fill:none}.dash{stroke:#777;stroke-width:3;stroke-dasharray:10 8}.panel{fill:#fafafa;stroke:#aaa;stroke-width:1.5}.red{fill:#b3261e}.green{fill:#176b2c}.blue{fill:#075bb5}.net{font:700 12px Arial;fill:#075bb5}</style>
-<rect width="1600" height="1050" fill="#fff"/>
-<text x="800" y="38" text-anchor="middle" class="title">Daikin S403 → ESP32-C3 Super Mini — Galvanically Isolated S21 Interface</text>
-<text x="800" y="63" text-anchor="middle" class="sub">Rev 11 · Verified S403 mapping + exact ADuM1201ARZ bidirectional channel mapping</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 980" font-family="Helvetica, Arial, sans-serif">
+  <style>
+    .wire{stroke:#222;stroke-width:2;fill:none}
+    .hotwire{stroke:#c62828;stroke-width:2;fill:none}
+    .box{fill:#ffffff;stroke:#222;stroke-width:2}
+    .lbl{font-size:13px;fill:#222}
+    .small{font-size:11px;fill:#444}
+    .tiny{font-size:10px;fill:#666}
+    .red{fill:#c62828}
+    .green{fill:#2e7d32}
+    .bold{font-weight:bold}
+    .dot{fill:#222}
+  </style>
 
-<rect x="35" y="90" width="660" height="650" rx="12" class="hotbox"/><rect x="905" y="90" width="660" height="650" rx="12" class="coldbox"/>
-<text x="365" y="125" text-anchor="middle" class="sec red">HOT SIDE — MAINS-REFERENCED</text><text x="1235" y="125" text-anchor="middle" class="sec green">COLD SIDE — ISOLATED / ESP32</text>
-<line x1="800" y1="90" x2="800" y2="740" class="dash"/><text x="817" y="310" class="s" transform="rotate(90 817 310)">ISOLATION BARRIER</text>
+  <rect x="0" y="0" width="1100" height="980" fill="#fafafa"/>
+  <text x="550" y="28" text-anchor="middle" class="lbl bold" font-size="17">Daikin S403 → ESP32 isolated interface (v2 — ADuM1201)</text>
 
-<!-- S403 -->
-<rect x="60" y="175" width="190" height="470" class="box"/><text x="155" y="205" text-anchor="middle" class="sec">S403</text><text x="155" y="227" text-anchor="middle" class="s">Daikin indoor-unit service connector</text>
-<g class="pin"><text x="82" y="270">10</text><text x="82" y="310">9</text><text x="82" y="350">8</text><text x="82" y="390">7</text><text x="82" y="430">6</text><text x="82" y="470">5</text><text x="82" y="510">4</text><text x="82" y="550">3</text><text x="82" y="590">2</text><text x="82" y="625">1</text></g>
-<g class="t"><text x="115" y="270">~320 VDC</text><text x="115" y="310">NC</text><text x="115" y="350">NC</text><text x="115" y="390">GND_HOT</text><text x="115" y="430">GND_HOT</text><text x="115" y="470">RX (IDU)</text><text x="115" y="510">TX (IDU)</text><text x="115" y="550">JEM-A IN*</text><text x="115" y="590">JEM-A OUT*</text><text x="115" y="625">+14 VDC</text></g>
-<text x="275" y="270" class="h red">⚠ PIN 10 — DO NOT CONNECT</text><text x="275" y="290" class="s red">Rectified mains bus. Never connect or touch.</text><text x="275" y="390" class="s">Pins 6 + 7 → GND_HOT</text><text x="275" y="470" class="s blue">Pin 5 = RX at indoor unit</text><text x="275" y="488" class="xs blue">ESP32 GPIO21 TX → ADuM channel A → pin 5</text><text x="275" y="510" class="s blue">Pin 4 = TX from indoor unit</text><text x="275" y="528" class="xs blue">pin 4 → ADuM channel B → ESP32 GPIO20 RX</text><text x="275" y="585" class="xs">* Pins 2/3 are JEM-A-related on many S403 variants; unused in this project.</text>
+  <!-- side headers -->
+  <text x="280" y="52" text-anchor="middle" class="lbl bold red">HOT SIDE — mains-referenced (LIVE)</text>
+  <text x="840" y="52" text-anchor="middle" class="lbl bold green">COLD SIDE — isolated (safe)</text>
 
-<!-- hot ground -->
-<line x1="250" y1="390" x2="300" y2="390" class="gnd"/><line x1="250" y1="430" x2="300" y2="430" class="gnd"/><line x1="300" y1="390" x2="300" y2="700" class="gnd"/><line x1="285" y1="700" x2="315" y2="700" class="gnd"/><line x1="290" y1="707" x2="310" y2="707" class="gnd"/><line x1="295" y1="714" x2="305" y2="714" class="gnd"/><text x="325" y="705" class="s red">GND_HOT</text>
+  <!-- isolation barrier -->
+  <line x1="560" y1="60" x2="560" y2="680" stroke="#888" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="573" y="120" class="small" transform="rotate(90 573 120)">ISOLATION BARRIER</text>
 
-<!-- hot power -->
-<line x1="250" y1="625" x2="285" y2="625" class="hot"/><rect x="285" y="610" width="85" height="30" class="box"/><text x="327" y="605" text-anchor="middle" class="xs">F1 · 200mA PTC</text><line x1="370" y1="625" x2="410" y2="625" class="hot"/><polygon points="410,610 410,640 440,625" fill="#b3261e"/><line x1="440" y1="610" x2="440" y2="640" class="hot"/><text x="425" y="658" text-anchor="middle" class="xs">D1 · 1N5819</text><line x1="440" y1="625" x2="475" y2="625" class="hot"/>
-<rect x="475" y="570" width="180" height="105" class="box"/><text x="565" y="602" text-anchor="middle" class="h">U2 · Mini560</text><text x="565" y="625" text-anchor="middle" class="s">14 VDC → fixed 5 V</text><text x="490" y="595" class="xs">VIN+</text><text x="490" y="655" class="xs">GND</text><line x1="475" y1="655" x2="300" y2="655" class="gnd"/><line x1="655" y1="600" x2="700" y2="600" class="hot"/><text x="665" y="588" class="net red">5V_HOT</text>
-<line x1="455" y1="625" x2="455" y2="545" class="hot"/><rect x="437" y="500" width="36" height="55" class="box"/><text x="455" y="520" text-anchor="middle" class="xs">D2</text><text x="455" y="538" text-anchor="middle" class="xs">SMBJ18A</text><line x1="455" y1="555" x2="455" y2="470" class="gnd"/><line x1="455" y1="470" x2="300" y2="470" class="gnd"/><text x="485" y="520" class="xs">TVS across protected 14V rail</text>
+  <!-- ======== S403 connector ======== -->
+  <rect x="40" y="70" width="70" height="420" class="box"/>
+  <text x="75" y="88" text-anchor="middle" class="lbl bold">S403</text>
+  <g class="small">
+    <circle cx="110" cy="460" r="3" class="dot"/><text x="60" y="464">1  +14V</text>
+    <text x="60" y="424">2  nc</text>
+    <text x="60" y="384">3  nc</text>
+    <circle cx="110" cy="340" r="3" class="dot"/><text x="60" y="344">4  TX</text>
+    <circle cx="110" cy="300" r="3" class="dot"/><text x="60" y="304">5  RX</text>
+    <circle cx="110" cy="260" r="3" class="dot"/><text x="60" y="264">6  GND</text>
+    <text x="60" y="224">7  GND</text>
+    <text x="60" y="184">8  nc</text>
+    <text x="60" y="144">9  nc</text>
+    <text x="60" y="104" class="red bold">10</text>
+  </g>
+  <text x="75" y="510" text-anchor="middle" class="tiny">pin 1 = bottom,</text>
+  <text x="75" y="524" text-anchor="middle" class="tiny">next to “+14V” / ▲ silkscreen</text>
 
-<!-- ADuM1201 straddles barrier -->
-<rect x="680" y="180" width="240" height="300" class="box"/><text x="800" y="208" text-anchor="middle" class="sec">U1 · ADuM1201ARZ</text><text x="800" y="229" text-anchor="middle" class="s">SOIC-8 top view · one channel each direction</text>
-<rect x="745" y="255" width="110" height="175" rx="5" fill="#f4f4f4" stroke="#222" stroke-width="2"/><path d="M780 255 Q800 275 820 255" fill="none" stroke="#222" stroke-width="2"/><text x="800" y="335" text-anchor="middle" class="h">ADuM</text><text x="800" y="357" text-anchor="middle" class="s">1201ARZ</text>
-<!-- exact physical pin arrangement -->
-<line x1="745" y1="275" x2="695" y2="275" class="hot"/><text x="735" y="270" text-anchor="end" class="pin">1 VDD1</text><line x1="745" y1="325" x2="695" y2="325" class="sig"/><text x="735" y="320" text-anchor="end" class="pin">2 VOA</text><line x1="745" y1="375" x2="695" y2="375" class="sig"/><text x="735" y="370" text-anchor="end" class="pin">3 VIB</text><line x1="745" y1="425" x2="695" y2="425" class="gnd"/><text x="735" y="420" text-anchor="end" class="pin">4 GND1</text>
-<line x1="855" y1="425" x2="905" y2="425" class="gnd"/><text x="865" y="420" class="pin">5 GND2</text><line x1="855" y1="375" x2="905" y2="375" class="sig"/><text x="865" y="370" class="pin">6 VOB</text><line x1="855" y1="325" x2="905" y2="325" class="sig"/><text x="865" y="320" class="pin">7 VIA</text><line x1="855" y1="275" x2="905" y2="275" class="cold"/><text x="865" y="270" class="pin">8 VDD2</text>
-<text x="705" y="255" text-anchor="middle" class="xs red">SIDE 1 / HOT</text><text x="895" y="255" text-anchor="middle" class="xs green">SIDE 2 / COLD</text><text x="800" y="462" text-anchor="middle" class="xs">A: VIA(7) → VOA(2) · B: VIB(3) → VOB(6)</text>
-<rect x="620" y="190" width="65" height="45" class="box"/><text x="652" y="210" text-anchor="middle" class="xs">C3 100nF</text><text x="652" y="225" text-anchor="middle" class="xs">pins 1↔4</text><rect x="915" y="190" width="65" height="45" class="box"/><text x="947" y="210" text-anchor="middle" class="xs">C4 100nF</text><text x="947" y="225" text-anchor="middle" class="xs">pins 8↔5</text>
+  <!-- ======== Legend ======== -->
+  <g>
+    <rect x="205" y="122" width="278" height="148" rx="6" fill="#ffffff" stroke="#aaa" stroke-width="1.5"/>
+    <text x="215" y="140" class="small bold">LEGEND</text>
+    <!-- wire -->
+    <line x1="215" y1="154" x2="245" y2="154" class="wire"/>
+    <text x="252" y="158" class="tiny">wire (crossing w/o dot = NOT connected)</text>
+    <!-- junction dot -->
+    <circle cx="230" cy="172" r="4" class="dot"/>
+    <text x="252" y="176" class="tiny">junction — wires connected</text>
+    <!-- net label -->
+    <circle cx="230" cy="190" r="4" fill="none" stroke="#222" stroke-width="2"/>
+    <text x="252" y="194" class="tiny">net label — joins same name elsewhere</text>
+    <!-- GND_iso -->
+    <g class="wire">
+      <line x1="220" y1="205" x2="240" y2="205"/><line x1="223" y1="210" x2="237" y2="210"/><line x1="226" y1="215" x2="234" y2="215"/>
+    </g>
+    <text x="252" y="212" class="tiny">GND_iso — isolated ground (safe)</text>
+    <!-- GND_hot -->
+    <g class="hotwire">
+      <line x1="220" y1="223" x2="240" y2="223"/><line x1="223" y1="228" x2="237" y2="228"/><line x1="226" y1="233" x2="234" y2="233"/>
+    </g>
+    <text x="252" y="230" class="tiny red">GND_hot — mains-referenced, LIVE</text>
+    <!-- barrier -->
+    <line x1="215" y1="245" x2="245" y2="245" stroke="#888" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="252" y="249" class="tiny">isolation barrier — only ADuM + B0505S cross</text>
+    <!-- direction arrow -->
+    <line x1="215" y1="261" x2="240" y2="261" stroke="#888" stroke-width="1.5"/>
+    <polygon points="240,257 248,261 240,265" fill="#888"/>
+    <text x="252" y="265" class="tiny">signal direction</text>
+  </g>
 
-<!-- hot-to-cold channel B -->
-<line x1="250" y1="510" x2="315" y2="510" class="sig"/><rect x="315" y="495" width="70" height="30" class="box"/><text x="350" y="515" text-anchor="middle" class="xs">R1 1kΩ</text><line x1="385" y1="510" x2="455" y2="510" class="sig"/><line x1="455" y1="510" x2="455" y2="375" class="sig"/><line x1="455" y1="375" x2="695" y2="375" class="sig"/><text x="270" y="495" class="xs blue">S403 pin 4 TX → VIB(3)</text>
-<line x1="905" y1="375" x2="1010" y2="375" class="sig"/><line x1="1010" y1="375" x2="1010" y2="610" class="sig"/><line x1="1010" y1="610" x2="1080" y2="610" class="sig"/><text x="915" y="360" class="xs blue">VOB(6) → GPIO20 RX</text>
+  <!-- pin 10 danger -->
+  <line x1="110" y1="100" x2="140" y2="100" class="hotwire"/>
+  <line x1="132" y1="92" x2="148" y2="108" class="hotwire"/>
+  <line x1="148" y1="92" x2="132" y2="108" class="hotwire"/>
+  <text x="158" y="97" class="small red bold">≈320 V DC — DO NOT CONNECT.</text>
+  <text x="158" y="112" class="small red bold">DO NOT TOUCH.</text>
 
-<!-- cold-to-hot channel A -->
-<line x1="1080" y1="645" x2="1010" y2="645" class="sig"/><line x1="1010" y1="645" x2="1010" y2="325" class="sig"/><line x1="1010" y1="325" x2="905" y2="325" class="sig"/><text x="1085" y="635" class="xs blue">GPIO21 TX → VIA(7)</text>
-<line x1="695" y1="325" x2="600" y2="325" class="sig"/><line x1="600" y1="325" x2="600" y2="545" class="sig"/><rect x="525" y="530" width="70" height="30" class="box"/><text x="560" y="550" text-anchor="middle" class="xs">R2 1kΩ</text><line x1="525" y1="545" x2="250" y2="545" class="sig"/><text x="275" y="565" class="xs blue">VOA(2) → R2 → S403 pin 5 RX</text>
+  <!-- ======== pin 6 GND_hot ======== -->
+  <polyline points="110,260 140,260 140,282" class="wire"/>
+  <g class="hotwire">
+    <line x1="128" y1="284" x2="152" y2="284"/><line x1="132" y1="290" x2="148" y2="290"/><line x1="136" y1="296" x2="144" y2="296"/>
+  </g>
+  <text x="156" y="296" class="tiny red bold">LIVE</text>
 
-<!-- isolated power converter -->
-<rect x="675" y="555" width="250" height="120" class="box"/><text x="800" y="585" text-anchor="middle" class="h">U3 · HLK-B0505S-2WR3</text><text x="800" y="607" text-anchor="middle" class="s">5V → isolated 5V · 1500VDC isolation</text><text x="690" y="635" class="xs red">IN+ 5V_HOT</text><text x="690" y="655" class="xs red">IN− GND_HOT</text><text x="835" y="635" class="xs green">OUT+ 5V_ISO</text><text x="835" y="655" class="xs green">OUT− GND_ISO</text>
-<line x1="700" y1="600" x2="655" y2="600" class="hot"/><line x1="700" y1="655" x2="300" y2="655" class="gnd"/><line x1="925" y1="635" x2="970" y2="635" class="cold"/><line x1="925" y1="655" x2="970" y2="655" class="gnd"/><text x="975" y="630" class="net green">5V_ISO</text><text x="975" y="672" class="s green">GND_ISO</text><rect x="1030" y="605" width="80" height="55" class="box"/><text x="1070" y="625" text-anchor="middle" class="xs">C2 10µF</text><text x="1070" y="642" text-anchor="middle" class="xs">5V_ISO</text><text x="1070" y="655" text-anchor="middle" class="xs">datasheet filter</text>
+  <!-- ======== pin 4 (AC TX) -> 1k -> VIA ======== -->
+  <line x1="110" y1="340" x2="200" y2="340" class="wire"/>
+  <rect x="200" y="333" width="60" height="14" class="box"/>
+  <text x="230" y="328" text-anchor="middle" class="small">1 kΩ</text>
+  <line x1="260" y1="340" x2="480" y2="340" class="wire"/>
 
-<!-- ESP32 -->
-<rect x="1080" y="410" width="430" height="255" rx="8" class="box"/><text x="1295" y="445" text-anchor="middle" class="sec">U4 · ESP32-C3 Super Mini</text><text x="1295" y="468" text-anchor="middle" class="s">USB-C · onboard 3.3V regulator · cold side only</text><text x="1105" y="505" class="t">5V/VIN ← 5V_ISO</text><text x="1105" y="540" class="t">3V3 → ADuM pin 8 VDD2</text><text x="1105" y="575" class="t">GND → ADuM pin 5 GND2</text><text x="1105" y="610" class="t">GPIO20 RX ← ADuM VOB pin 6</text><text x="1105" y="645" class="t">GPIO21 TX → ADuM VIA pin 7</text>
-<line x1="970" y1="635" x2="1120" y2="635" class="cold"/><line x1="1120" y1="635" x2="1120" y2="505" class="cold"/><line x1="970" y1="655" x2="1080" y2="655" class="gnd"/><line x1="1080" y1="655" x2="1080" y2="575" class="gnd"/><line x1="1080" y1="540" x2="930" y2="275" class="cold"/><line x1="1080" y1="575" x2="930" y2="425" class="gnd"/>
+  <!-- ======== pin 5 (AC RX) <- 1k <- VOB (crossing at 180,340 = no dot) ======== -->
+  <polyline points="110,300 180,300 180,380 300,380" class="wire"/>
+  <rect x="300" y="373" width="60" height="14" class="box"/>
+  <text x="330" y="368" text-anchor="middle" class="small">1 kΩ</text>
+  <text x="330" y="400" text-anchor="middle" class="tiny">protects AC RX</text>
+  <line x1="360" y1="380" x2="480" y2="380" class="wire"/>
 
-<!-- footer -->
-<rect x="35" y="770" width="1530" height="245" rx="10" class="panel"/><text x="60" y="805" class="sec">FINAL NETLIST — VERIFIED AGAINST THE COMPONENT PINOUTS</text>
-<text x="60" y="835" class="t">1. S403 pin 4 TX → R1 → ADuM1201 VIB pin 3 → VOB pin 6 → ESP32 GPIO20 RX.</text>
-<text x="60" y="862" class="t">2. ESP32 GPIO21 TX → ADuM1201 VIA pin 7 → VOA pin 2 → R2 → S403 pin 5 RX.</text>
-<text x="60" y="889" class="t">3. ADuM1201: 1=VDD1, 2=VOA, 3=VIB, 4=GND1, 5=GND2, 6=VOB, 7=VIA, 8=VDD2.</text>
-<text x="60" y="916" class="t">4. Hot power: S403 pin 1 +14V → PTC → Schottky → Mini560 → 5V_HOT; pins 6/7 → GND_HOT.</text>
-<text x="60" y="943" class="t">5. ADuM side 1 (pins 1–4) is hot; side 2 (pins 5–8) is cold. GND_HOT and GND_ISO never join.</text>
-<text x="60" y="970" class="t">6. HLK-B0505S-2WR3 creates 5V_ISO. ESP32 is powered from 5V_ISO and its 3V3 powers ADuM VDD2.</text>
-<text x="60" y="997" class="s red">7. Pin 10 is ~320VDC and unused. Pins 2/3 are JEM-A-related on many variants and are unused here. Verify the exact S403 on your AC.</text>
+  <!-- ======== ADuM1201 (straddles barrier) ======== -->
+  <rect x="480" y="280" width="160" height="150" class="box"/>
+  <text x="560" y="272" text-anchor="middle" class="small bold">ADuM1201 digital isolator</text>
+  <g class="tiny">
+    <text x="486" y="304">VDD1</text>
+    <text x="486" y="344">VIA</text>
+    <text x="486" y="384">VOB</text>
+    <text x="486" y="414">GND1</text>
+    <text x="634" y="304" text-anchor="end">VDD2</text>
+    <text x="634" y="344" text-anchor="end">VOA</text>
+    <text x="634" y="384" text-anchor="end">VIB</text>
+    <text x="634" y="414" text-anchor="end">GND2</text>
+  </g>
+  <!-- channel arrows -->
+  <line x1="522" y1="340" x2="596" y2="340" stroke="#888" stroke-width="1.5"/>
+  <polygon points="596,336 604,340 596,344" fill="#888"/>
+  <line x1="598" y1="380" x2="524" y2="380" stroke="#888" stroke-width="1.5"/>
+  <polygon points="524,376 516,380 524,384" fill="#888"/>
+  <!-- VDD1 net flag (5V_hot) -->
+  <line x1="480" y1="300" x2="462" y2="300" class="wire"/>
+  <circle cx="457" cy="300" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="448" y="296" text-anchor="end" class="small">5V_hot</text>
+  <!-- GND1 -> hot gnd -->
+  <polyline points="480,410 454,410 454,436" class="wire"/>
+  <g class="hotwire">
+    <line x1="442" y1="438" x2="466" y2="438"/><line x1="446" y1="444" x2="462" y2="444"/><line x1="450" y1="450" x2="458" y2="450"/>
+  </g>
+  <!-- VDD2 -> ESP 3V3 -->
+  <polyline points="640,300 720,300 720,220 880,220" class="wire"/>
+  <text x="730" y="214" class="small">3.3 V</text>
+  <!-- GND2 -> iso gnd -->
+  <polyline points="640,410 680,410 680,436" class="wire"/>
+  <g class="wire">
+    <line x1="668" y1="438" x2="692" y2="438"/><line x1="672" y1="444" x2="688" y2="444"/><line x1="676" y1="450" x2="684" y2="450"/>
+  </g>
+  <!-- data to ESP -->
+  <line x1="640" y1="340" x2="880" y2="340" class="wire"/>
+  <line x1="640" y1="380" x2="880" y2="380" class="wire"/>
+  <text x="560" y="470" text-anchor="middle" class="tiny">100 nF ceramic from VDD1→GND1 and VDD2→GND2, right at the pins</text>
+
+  <!-- ======== power input chain: pin1 -> F1 -> D1 -> TVS node -> buck ======== -->
+  <polyline points="110,460 140,460 140,580 148,580" class="wire"/>
+  <text x="146" y="475" class="small">+14 V</text>
+  <rect x="148" y="573" width="36" height="14" class="box"/>
+  <text x="166" y="566" text-anchor="middle" class="tiny">F1 200 mA</text>
+  <line x1="184" y1="580" x2="196" y2="580" class="wire"/>
+  <!-- D1 schottky -->
+  <polygon points="196,572 196,588 212,580" fill="#222"/>
+  <line x1="212" y1="572" x2="212" y2="588" class="wire"/>
+  <line x1="212" y1="580" x2="244" y2="580" class="wire"/>
+  <text x="206" y="604" text-anchor="middle" class="tiny">D1 1N5819</text>
+  <!-- TVS -->
+  <circle cx="244" cy="580" r="4" class="dot"/>
+  <line x1="244" y1="580" x2="244" y2="592" class="wire"/>
+  <rect x="237" y="592" width="14" height="30" class="box"/>
+  <text x="232" y="636" text-anchor="end" class="tiny">SMBJ18A TVS</text>
+  <line x1="244" y1="622" x2="244" y2="632" class="wire"/>
+  <line x1="244" y1="632" x2="264" y2="632" class="wire"/>
+  <circle cx="264" cy="632" r="4" class="dot"/>
+  <line x1="264" y1="632" x2="264" y2="642" class="wire"/>
+  <g class="hotwire">
+    <line x1="252" y1="644" x2="276" y2="644"/><line x1="256" y1="650" x2="272" y2="650"/><line x1="260" y1="656" x2="268" y2="656"/>
+  </g>
+  <line x1="244" y1="580" x2="280" y2="580" class="wire"/>
+
+  <!-- ======== Mini560 buck ======== -->
+  <rect x="280" y="560" width="140" height="80" class="box"/>
+  <text x="350" y="586" text-anchor="middle" class="lbl bold">Mini560</text>
+  <text x="350" y="603" text-anchor="middle" class="small">5 V fixed buck</text>
+  <text x="286" y="577" class="tiny">IN+</text>
+  <text x="286" y="625" class="tiny">IN−</text>
+  <text x="414" y="577" text-anchor="end" class="tiny">OUT+</text>
+  <text x="414" y="625" text-anchor="end" class="tiny">OUT−</text>
+  <!-- buck IN- to shared hot gnd -->
+  <polyline points="280,620 264,620 264,632" class="wire"/>
+  <!-- 5V_hot rail -->
+  <line x1="420" y1="580" x2="500" y2="580" class="wire"/>
+  <text x="430" y="572" class="small">5V_hot</text>
+  <!-- buck OUT- -> B0505S GND, hot gnd tap -->
+  <line x1="420" y1="620" x2="500" y2="620" class="wire"/>
+  <circle cx="460" cy="620" r="4" class="dot"/>
+  <line x1="460" y1="620" x2="460" y2="644" class="wire"/>
+  <g class="hotwire">
+    <line x1="448" y1="646" x2="472" y2="646"/><line x1="452" y1="652" x2="468" y2="652"/><line x1="456" y1="658" x2="464" y2="658"/>
+  </g>
+
+  <!-- ======== B0505S-2W (straddles barrier) ======== -->
+  <rect x="500" y="560" width="140" height="80" class="box"/>
+  <text x="570" y="586" text-anchor="middle" class="lbl bold">B0505S-2W</text>
+  <text x="570" y="603" text-anchor="middle" class="small">isolated DC-DC</text>
+  <text x="570" y="619" text-anchor="middle" class="tiny">5 V → 5 V, 400 mA</text>
+  <text x="506" y="577" class="tiny">Vin</text>
+  <text x="506" y="625" class="tiny">GND</text>
+  <text x="634" y="577" text-anchor="end" class="tiny">Vout</text>
+  <text x="634" y="625" text-anchor="end" class="tiny">GND0</text>
+
+  <!-- 5V_iso: Vout -> ESP VIN -->
+  <polyline points="640,580 860,580 860,540 880,540" class="wire"/>
+  <text x="690" y="572" class="small">5V_iso</text>
+  <circle cx="740" cy="580" r="4" class="dot"/>
+  <circle cx="800" cy="580" r="4" class="dot"/>
+
+  <!-- bulk cap -->
+  <line x1="740" y1="580" x2="740" y2="596" class="wire"/>
+  <line x1="726" y1="596" x2="754" y2="596" class="wire"/>
+  <line x1="726" y1="604" x2="754" y2="604" class="wire"/>
+  <text x="726" y="596" text-anchor="end" class="tiny">470 µF</text>
+  <text x="726" y="610" text-anchor="end" class="tiny">105 °C, + top</text>
+  <line x1="740" y1="604" x2="740" y2="622" class="wire"/>
+  <g class="wire">
+    <line x1="728" y1="624" x2="752" y2="624"/><line x1="732" y1="630" x2="748" y2="630"/><line x1="736" y1="636" x2="744" y2="636"/>
+  </g>
+
+  <!-- power LED -->
+  <line x1="800" y1="580" x2="800" y2="592" class="wire"/>
+  <rect x="793" y="592" width="14" height="34" class="box"/>
+  <text x="812" y="612" class="tiny">1 kΩ</text>
+  <line x1="800" y1="626" x2="800" y2="634" class="wire"/>
+  <polygon points="792,634 808,634 800,648" fill="#222"/>
+  <line x1="792" y1="650" x2="808" y2="650" class="wire"/>
+  <text x="814" y="646" class="tiny">PWR LED (green)</text>
+  <line x1="800" y1="650" x2="800" y2="658" class="wire"/>
+  <g class="wire">
+    <line x1="788" y1="660" x2="812" y2="660"/><line x1="792" y1="666" x2="808" y2="666"/><line x1="796" y1="672" x2="804" y2="672"/>
+  </g>
+
+  <!-- GND0 -> iso gnd -->
+  <polyline points="640,620 668,620 668,644" class="wire"/>
+  <g class="wire">
+    <line x1="656" y1="646" x2="680" y2="646"/><line x1="660" y1="652" x2="676" y2="652"/><line x1="664" y1="658" x2="672" y2="658"/>
+  </g>
+  <text x="684" y="656" class="small">GND_iso</text>
+
+  <!-- ======== ESP32 ======== -->
+  <rect x="880" y="180" width="180" height="390" class="box"/>
+  <text x="970" y="208" text-anchor="middle" class="lbl bold">ESP32 DevKit V1</text>
+  <text x="970" y="224" text-anchor="middle" class="tiny">(WROOM, not WROVER)</text>
+  <g class="small">
+    <circle cx="880" cy="220" r="3" class="dot"/><text x="890" y="242">3V3</text>
+    <circle cx="880" cy="340" r="3" class="dot"/><text x="890" y="344">GPIO16 (RX2)</text>
+    <circle cx="880" cy="380" r="3" class="dot"/><text x="890" y="384">GPIO17 (TX2)</text>
+    <circle cx="880" cy="500" r="3" class="dot"/><text x="890" y="504">GND</text>
+    <circle cx="880" cy="540" r="3" class="dot"/><text x="890" y="544">VIN (5 V)</text>
+  </g>
+  <text x="970" y="430" text-anchor="middle" class="tiny">onboard LED (GPIO2) = status_led</text>
+  <text x="970" y="446" text-anchor="middle" class="tiny">I2C header for future room sensor:</text>
+  <text x="970" y="460" text-anchor="middle" class="tiny">3V3 · GND · GPIO21 (SDA) · GPIO22 (SCL)</text>
+  <text x="970" y="478" text-anchor="middle" class="tiny">USB only on the bench —</text>
+  <text x="970" y="492" text-anchor="middle" class="tiny">never while connected to the AC</text>
+  <!-- ESP GND -> iso gnd -->
+  <polyline points="880,500 840,500 840,526" class="wire"/>
+  <g class="wire">
+    <line x1="828" y1="528" x2="852" y2="528"/><line x1="832" y1="534" x2="848" y2="534"/><line x1="836" y1="540" x2="844" y2="540"/>
+  </g>
+
+  <!-- notes -->
+  <text x="40" y="700" class="small">• ADuM1201 is non-inverting — no <tspan font-family="monospace">inverted:</tspan> flags needed in ESPHome. It also level-shifts: VDD1 = 5 V (hot), VDD2 = 3.3 V (from ESP32).</text>
+  <text x="40" y="718" class="small">• Wire crossings WITHOUT a dot are not connected. Ground symbols: <tspan class="red">red = GND_hot (live)</tspan>, black = GND_iso (safe).</text>
+  <text x="40" y="736" class="small">• Everything left of the dashed barrier is at mains potential. Insulate it fully; work only with the breaker off and caps discharged.</text>
+
+  <!-- ======== Optional IR add-on panel ======== -->
+  <rect x="40" y="755" width="1020" height="210" rx="10" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="60" y="782" class="lbl bold">Optional IR add-on — Orient Zeno fan blaster (cold side only, no isolation changes)</text>
+
+  <!-- TX chain -->
+  <circle cx="140" cy="806" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="152" y="810" class="small">5V_iso</text>
+  <line x1="140" y1="810" x2="140" y2="818" class="wire"/>
+  <rect x="133" y="818" width="14" height="32" class="box"/>
+  <text x="155" y="838" class="small">33 Ω</text>
+  <line x1="140" y1="850" x2="140" y2="858" class="wire"/>
+  <polygon points="132,858 148,858 140,872" fill="#222"/>
+  <line x1="132" y1="874" x2="148" y2="874" class="wire"/>
+  <line x1="152" y1="860" x2="166" y2="850" stroke="#888" stroke-width="1.5"/>
+  <polygon points="163,848 170,847 166,854" fill="#888"/>
+  <line x1="156" y1="868" x2="170" y2="858" stroke="#888" stroke-width="1.5"/>
+  <polygon points="167,856 174,855 170,862" fill="#888"/>
+  <text x="180" y="864" class="small">IR LED 850/940 nm</text>
+  <text x="180" y="879" class="tiny">on a 20–30 cm pigtail, poking out of the AC front panel, aimed at the fan</text>
+  <line x1="140" y1="874" x2="140" y2="888" class="wire"/>
+  <line x1="140" y1="888" x2="150" y2="900" class="wire"/>
+  <line x1="150" y1="896" x2="150" y2="924" stroke="#222" stroke-width="3"/>
+  <line x1="150" y1="920" x2="140" y2="932" class="wire"/>
+  <polygon points="141,924 138,934 148,930" fill="#222"/>
+  <line x1="140" y1="932" x2="140" y2="944" class="wire"/>
+  <g class="wire">
+    <line x1="128" y1="946" x2="152" y2="946"/><line x1="132" y1="952" x2="148" y2="952"/><line x1="136" y1="958" x2="144" y2="958"/>
+  </g>
+  <text x="162" y="940" class="small">S8050 (NPN)</text>
+  <line x1="150" y1="910" x2="240" y2="910" class="wire"/>
+  <rect x="240" y="903" width="60" height="14" class="box"/>
+  <text x="270" y="898" text-anchor="middle" class="small">1 kΩ</text>
+  <line x1="300" y1="910" x2="360" y2="910" class="wire"/>
+  <circle cx="365" cy="910" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="375" y="914" class="small">GPIO26 (ESP32) — IR TX</text>
+
+  <!-- RX: VS1838B -->
+  <rect x="620" y="810" width="110" height="80" class="box"/>
+  <text x="675" y="842" text-anchor="middle" class="lbl bold">VS1838B</text>
+  <text x="675" y="860" text-anchor="middle" class="small">IR receiver</text>
+  <g class="tiny">
+    <text x="726" y="829" text-anchor="end">OUT</text>
+    <text x="726" y="861" text-anchor="end">VCC</text>
+    <text x="726" y="884" text-anchor="end">GND</text>
+  </g>
+  <line x1="730" y1="825" x2="790" y2="825" class="wire"/>
+  <circle cx="795" cy="825" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="805" y="829" class="small">GPIO27 (ESP32) — IR RX</text>
+  <line x1="730" y1="857" x2="768" y2="857" class="wire"/>
+  <circle cx="773" cy="857" r="4" fill="none" stroke="#222" stroke-width="2"/>
+  <text x="783" y="861" class="small">3V3</text>
+  <polyline points="730,880 760,880 760,896" class="wire"/>
+  <g class="wire">
+    <line x1="748" y1="898" x2="772" y2="898"/><line x1="752" y1="904" x2="768" y2="904"/><line x1="756" y1="910" x2="764" y2="910"/>
+  </g>
+  <text x="620" y="932" class="tiny">Leave the receiver installed — presses on the physical Zeno remote become Home Assistant events.</text>
+  <text x="620" y="946" class="tiny">Open circles are net labels: connect to the matching ESP32 pin / rail in the main circuit above.</text>
 </svg>
