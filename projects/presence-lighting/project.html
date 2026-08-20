@@ -1,102 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Presence Lighting — Build Guide</title>
-<style>
-:root{color-scheme:light}
-body{font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1a1a1a;background:#faf9f6;max-width:820px;margin:0 auto;padding:24px}
-h1{font-size:26px} h2{font-size:19px;margin-top:32px;border-bottom:2px solid #0d6e5f;padding-bottom:4px;color:#0d6e5f}
-h3{font-size:16px;margin-top:20px}
-code{background:#eee;padding:1px 5px;border-radius:4px;font-size:13px}
-table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
-th,td{border:1px solid #ddd;padding:7px 9px;text-align:left}
-th{background:#e3f1ee}
-.pill{display:inline-block;background:#e3f1ee;color:#0d6e5f;border-radius:12px;padding:2px 12px;font-size:13px;font-weight:600;margin-right:6px}
-.warn{background:#fdf0e0;border-left:4px solid #b45309;padding:10px 14px;border-radius:6px;margin:14px 0}
-.legend{background:#f0ede6;border-radius:8px;padding:12px 16px;font-size:13px}
-img,svg{max-width:100%;height:auto;background:#fff;border:1px solid #e6e2da;border-radius:8px}
-</style>
-</head>
-<body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Presence Lighting — Build Guide</title><style>
+body{font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1a1a1a;background:#faf9f6;max-width:820px;margin:0 auto;padding:24px}h1{font-size:26px}h2{font-size:19px;margin-top:32px;border-bottom:2px solid #0d6e5f;padding-bottom:4px;color:#0d6e5f}h3{font-size:16px;margin-top:20px}code,pre{background:#eee;border-radius:6px}code{padding:1px 5px}pre{padding:14px;overflow:auto;border:1px solid #ddd}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}th,td{border:1px solid #ddd;padding:7px 9px;text-align:left}th{background:#e3f1ee}.pill{display:inline-block;background:#e3f1ee;color:#0d6e5f;border-radius:12px;padding:2px 12px;font-size:13px;font-weight:600;margin-right:6px}.warn{background:#fdf0e0;border-left:4px solid #b45309;padding:10px 14px;border-radius:6px;margin:14px 0}img{max-width:100%;height:auto;border:1px solid #e6e2da;border-radius:8px}
+</style></head><body>
 <h1>Presence Lighting — Bedroom</h1>
-<p><span class="pill">Medium</span><span class="pill">Bedroom</span><span class="pill">Home Assistant</span><span class="pill">~₹900–1,300</span></p>
-<p>mmWave presence + time-of-day lighting. A ceiling node (ESP32 + LD2410C radar + 2-channel relay) drives the 6 concealed AC bulbs; a desk node (ESP32-C3 + MOSFET) power-cycles the Bluetooth LED strip. No new wall wiring — the relays sit in series after the existing switches, which are parked permanently ON as master cut-offs.</p>
+<p><span class="pill">Medium</span><span class="pill">Bedroom</span><span class="pill">Home Assistant</span><span class="pill">ESP32-C3 Super Mini</span><span class="pill">~₹800–1,200</span></p>
+<p>mmWave presence + time-of-day lighting. The ceiling node and desk node both use the <strong>ESP32-C3 Super Mini</strong> for a consistent workshop platform. The ceiling node drives the 6 concealed AC bulbs through a 2-channel relay; the desk node power-cycles the Bluetooth LED strip with an AO3400 MOSFET.</p>
 
-<h2>How it works</h2>
-<ol>
-<li><b>LD2410C</b> (24 GHz radar, ceiling-mounted facing down) continuously reports moving target / still target / nobody + distance over UART. Unlike a PIR it sees a <i>still</i> person (breathing counts), so lights never time out while you read or sleep — which is why Sleep mode exists below.</li>
-<li><b>ESP32 (Node 1)</b> runs ESPHome, talks locally to Home Assistant, and drives two relays wired in series after your wall switches.</li>
-<li><b>Wall switches stay parked ON.</b> Flip one OFF and that circuit (and the module) is physically dead — your maintenance cut-off. Day to day, the relays do all switching.</li>
-<li><b>Node 2</b> is a pass-through in the strip's USB cable. 5 V flows straight through; the ground return goes through a MOSFET the ESP32-C3 controls. The strip auto-resumes on power, so cutting/restoring power = off/on. The BT remote still works for colours whenever the strip is powered.</li>
+<h2>How it works</h2><ol>
+<li><b>LD2410C</b> continuously reports moving/still presence and distance over UART.</li>
+<li><b>Ceiling node:</b> ESP32-C3 Super Mini runs ESPHome, talks to Home Assistant and drives two relays.</li>
+<li><b>Wall switches stay parked ON</b> and remain the physical maintenance cut-offs. The relays perform normal switching.</li>
+<li><b>Desk node:</b> the ESP32-C3 Super Mini controls an AO3400 low-side MOSFET in the LED strip USB ground path. The strip auto-resumes on power.</li>
 </ol>
 
-<h3>Modes (Home Assistant, synced to iPhone Sleep Focus)</h3>
-<ul>
-<li><b>Day</b> (sunrise→sunset): presence → cool group ON, strip OFF. Empty 3–5 min → all off.</li>
-<li><b>Evening</b> (sunset→Sleep Focus): presence → warm group (4 corner bulbs) ON, strip OFF. Empty 3–5 min → warm OFF, strip ON. Cool group manual-only.</li>
-<li><b>Sleep</b> (Sleep Focus ON): one-shot all-bulbs-OFF + strip ON, then presence automations DISABLED — walking in/out changes nothing. HA app + wall switches stay live for manual light.</li>
-<li><b>Morning</b> (Sleep Focus OFF): back to Day/Evening. Fallback if phone unavailable: HA schedule helper at usual bedtime.</li>
-</ul>
+<h2>Modes</h2><ul><li><b>Day:</b> presence → cool group; strip off. Empty 3–5 min → all off.</li><li><b>Evening:</b> presence → warm group; strip off. Empty → warm off, strip on. Cool group manual-only.</li><li><b>Sleep:</b> Sleep Focus ON → all bulbs off + strip on; presence automations disabled.</li><li><b>Morning:</b> Sleep Focus OFF → normal Day/Evening behavior.</li></ul>
 
-<h2>Circuit diagram</h2>
-<img src="circuit-diagram.svg" alt="Presence lighting circuit diagram">
+<h2>Circuit diagram</h2><img src="circuit-diagram.svg" alt="Presence lighting circuit diagram">
 
 <h2>Node 1 — Ceiling connections</h2>
-<h3>Power tap (at the Group-1 light point)</h3>
-<table><tr><th>From</th><th>To</th><th>Wire</th></tr>
-<tr><td>Switched-live (switch 1)</td><td>1A fuse → HLK-PM05 "L"</td><td>230 V Live</td></tr>
-<tr><td>Neutral at light point</td><td>HLK-PM05 "N"</td><td>230 V Neutral</td></tr>
-<tr><td>HLK-PM05 +5V</td><td>ESP32 VIN, LD2410 VCC, Relay VCC</td><td>5 V</td></tr>
-<tr><td>HLK-PM05 GND</td><td>ESP32 GND, LD2410 GND, Relay GND</td><td>GND</td></tr></table>
-<h3>Signals</h3>
-<table><tr><th>ESP32 pin</th><th>Goes to</th><th>Note</th></tr>
-<tr><td>GPIO16 (RX2)</td><td>LD2410 TX</td><td>crossed</td></tr>
-<tr><td>GPIO17 (TX2)</td><td>LD2410 RX</td><td>crossed, 256000 baud</td></tr>
-<tr><td>GPIO26</td><td>Relay IN1 (4-bulb warm group)</td><td>active-low on most boards</td></tr>
-<tr><td>GPIO27</td><td>Relay IN2 (2-bulb cool group)</td><td>active-low</td></tr></table>
-<h3>Mains switching</h3>
-<table><tr><th>From</th><th>To</th></tr>
-<tr><td>Switched-live (switch 1)</td><td>RLY1 COM</td></tr>
-<tr><td>RLY1 NO</td><td>Live onward to the 4 warm bulbs</td></tr>
-<tr><td>Switched-live (switch 2)</td><td>RLY2 COM</td></tr>
-<tr><td>RLY2 NO</td><td>Live onward to the 2 cool bulbs</td></tr>
-<tr><td>Bulb neutrals</td><td>untouched</td></tr></table>
-<p>Relays use <b>NO (normally-open)</b>: if the ESP32 dies or loses power the relays open → lights behave as "off", and the wall-switch flip still gives manual light. Nothing fails dangerous.</p>
+<table><tr><th>Function</th><th>ESP32-C3 Super Mini</th><th>Connection</th></tr><tr><td>LD2410 UART RX</td><td>GPIO20</td><td>LD2410 TX</td></tr><tr><td>LD2410 UART TX</td><td>GPIO21</td><td>LD2410 RX</td></tr><tr><td>Relay IN1</td><td>GPIO4</td><td>4-bulb warm group</td></tr><tr><td>Relay IN2</td><td>GPIO5</td><td>2-bulb cool group</td></tr><tr><td>Power</td><td>5V/VBUS + GND</td><td>HLK-PM05 5V output</td></tr></table>
+<p>The LD2410C UART uses 256000 baud. Because GPIO20/21 are dedicated to the UART, disable the ESPHome hardware logger: <code>logger: baud_rate: 0</code>.</p>
 
-<h2>Node 2 — Desk connections</h2>
-<table><tr><th>From</th><th>To</th></tr>
-<tr><td>USB adapter 5V</td><td>ESP32-C3 5V pin AND strip 5V (straight through)</td></tr>
-<tr><td>USB adapter GND</td><td>ESP32-C3 GND AND MOSFET Source</td></tr>
-<tr><td>Strip GND</td><td>MOSFET Drain</td></tr>
-<tr><td>ESP32-C3 GPIO4</td><td>100 Ω → MOSFET Gate; 100 kΩ Gate→GND</td></tr></table>
-<p>Gate high = strip powered. GPIO4 boots low → strip off at power-up until HA says otherwise (fine for a night light).</p>
+<h3>Power and mains</h3><table><tr><th>From</th><th>To</th></tr><tr><td>Switched-live, switch 1</td><td>1A fuse → HLK-PM05 L → Relay 1 COM</td></tr><tr><td>Switched-live, switch 2</td><td>Relay 2 COM</td></tr><tr><td>Relay 1 NO</td><td>4 warm bulbs</td></tr><tr><td>Relay 2 NO</td><td>2 cool bulbs</td></tr><tr><td>Neutral</td><td>HLK-PM05 N + bulb neutrals</td></tr></table>
 
-<h2>Install & safety</h2>
-<div class="warn">
-<b>Safety ritual:</b> both wall switches OFF + main MCB OFF before any ceiling wiring. Verify dead with a tester. Bench-flash and bench-test Node 1 on a table with a USB cable <i>before</i> it ever touches mains.
-</div>
-<ul>
-<li>Node 1 (ESP32 + relays + PSU) goes in a plastic junction box above the false ceiling near the Group-1 light point.</li>
-<li><b>Sensor mount:</b> top corner of the entrance wall above the gate, tilted ~30° down across the room. Its 4 wires (5V, GND, TX, RX) drop from the false ceiling to the junction box — keep the run ≤1.5 m, sensor ≥30 cm from the ESP32 antenna and out of the AC airflow. Fallback: ceiling, ~75 cm off the fan toward the desk wall, facing down.</li>
-<li>All mains joints: ferrules or proper twist + heat-shrink. No loose chocolate-block in air.</li>
-</ul>
-<h3>Tuning knobs in HA</h3>
-<ul>
-<li>Per-distance-gate sensitivity (kill false triggers from curtains / AC airflow)</li>
-<li>Presence hold time (built into LD2410) + HA <code>for:</code> timer</li>
-<li>Moving vs still target split (used by night mode)</li>
-</ul>
+<h2>Node 2 — Desk connections</h2><table><tr><th>From</th><th>To</th></tr><tr><td>USB adapter 5V</td><td>ESP32-C3 5V + LED strip 5V</td></tr><tr><td>USB adapter GND</td><td>ESP32-C3 GND + AO3400 Source</td></tr><tr><td>LED strip GND</td><td>AO3400 Drain</td></tr><tr><td>ESP32-C3 GPIO4</td><td>100 Ω → AO3400 Gate; 100 kΩ Gate→GND</td></tr></table>
 
-<h2>Legend</h2>
-<div class="legend">
-<b>L / Live (red):</b> 230 VAC — lethal, MCB off only. &nbsp;
-<b>N / Neutral (blue):</b> 230 VAC return. &nbsp;
-<b>+5V (orange) / GND (grey):</b> low-voltage DC from HLK-PM05 — safe side. &nbsp;
-<b>Signal (green):</b> 3.3 V logic (UART, relay control, MOSFET gate). &nbsp;
-<b>COM/NO:</b> relay common / normally-open. &nbsp;
-<b>RX2/TX2:</b> ESP32 hardware UART #2.
-</div>
-</body>
-</html>
+<h2>Install & safety</h2><div class="warn"><b>Safety ritual:</b> both wall switches OFF + main MCB OFF before ceiling wiring. Verify dead. Bench-flash and bench-test the ESP32-C3 ceiling node before it touches mains.</div><ul><li>Put the ceiling node in a suitable junction box above the false ceiling.</li><li>Keep the LD2410C sensor at the selected entrance-wall position, away from the ESP32 antenna and AC airflow.</li><li>Use proper mains-rated connections and enclosure practices.</li></ul>
+
+<h2>Platform standard</h2><p><strong>All ESP32 boards used by workshop projects are now standardized on the ESP32-C3 Super Mini.</strong> The presence-lighting BOM uses P0036 twice: one board for the ceiling node and one for the desk node.</p>
+</body></html>
