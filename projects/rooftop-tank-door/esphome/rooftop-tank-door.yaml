@@ -1,0 +1,121 @@
+substitutions:
+  device_name: rooftop-tank-door
+  friendly_name: Rooftop Tank + Door
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+logger:
+api:
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: !secret fallback_password
+
+captive_portal:
+
+globals:
+  - id: stable_level
+    type: int
+    restore_value: yes
+    initial_value: '0'
+  - id: last_transition_ms
+    type: unsigned long
+    restore_value: no
+    initial_value: '0'
+  - id: last_interval_s
+    type: float
+    restore_value: yes
+    initial_value: '0'
+
+binary_sensor:
+  - platform: gpio
+    id: tank_0
+    name: "Tank 0% Reed"
+    pin: {number: GPIO0, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 100ms, delayed_off: 100ms]
+  - platform: gpio
+    id: tank_25
+    name: "Tank 25% Reed"
+    pin: {number: GPIO1, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 100ms, delayed_off: 100ms]
+  - platform: gpio
+    id: tank_50
+    name: "Tank 50% Reed"
+    pin: {number: GPIO3, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 100ms, delayed_off: 100ms]
+  - platform: gpio
+    id: tank_75
+    name: "Tank 75% Reed"
+    pin: {number: GPIO10, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 100ms, delayed_off: 100ms]
+  - platform: gpio
+    id: tank_100
+    name: "Tank 100% Reed"
+    pin: {number: GPIO20, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 100ms, delayed_off: 100ms]
+  - platform: gpio
+    id: rooftop_door
+    name: "Rooftop Door"
+    pin: {number: GPIO21, mode: {input: true, pullup: true}, inverted: true}
+    filters: [delayed_on: 150ms, delayed_off: 150ms]
+
+sensor:
+  - platform: template
+    name: "Tank Level"
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    update_interval: 2s
+    lambda: |-
+      if (id(tank_100).state) return 100;
+      if (id(tank_75).state) return 75;
+      if (id(tank_50).state) return 50;
+      if (id(tank_25).state) return 25;
+      if (id(tank_0).state) return 0;
+      return id(stable_level);
+  - platform: template
+    name: "Last Level Transition Time"
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    update_interval: 2s
+    lambda: return id(last_interval_s);
+
+text_sensor:
+  - platform: template
+    name: "Tank Level State"
+    lambda: |-
+      if (id(tank_100).state) return {"100%"};
+      if (id(tank_75).state) return {"75%"};
+      if (id(tank_50).state) return {"50%"};
+      if (id(tank_25).state) return {"25%"};
+      if (id(tank_0).state) return {"0%"};
+      return {"Between sensors"};
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          int level = id(stable_level);
+          if (id(tank_100).state) level = 100;
+          else if (id(tank_75).state) level = 75;
+          else if (id(tank_50).state) level = 50;
+          else if (id(tank_25).state) level = 25;
+          else if (id(tank_0).state) level = 0;
+          if (level != id(stable_level)) {
+            unsigned long now = millis();
+            if (id(last_transition_ms) != 0)
+              id(last_interval_s) = (now-id(last_transition_ms))/1000.0f;
+            id(last_transition_ms) = now;
+            id(stable_level) = level;
+          }

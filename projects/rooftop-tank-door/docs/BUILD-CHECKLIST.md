@@ -1,0 +1,14 @@
+# Build Checklist
+- [ ] Confirm exact ESP32-C3 Super Mini.
+- [ ] Confirm six normally-open reed switches.
+- [ ] Label all CAT6 conductors at both ends.
+- [ ] Mount five tank reeds at 0/25/50/75/100%.
+- [ ] Mount float magnet so it moves freely.
+- [ ] Mount door reed and magnet.
+- [ ] Flash and test ESPHome before motor automation.
+- [ ] Test each reed.
+- [ ] Test rising/falling level sequence.
+- [ ] Measure normal motor fill times.
+- [ ] Replace motor entity placeholder.
+- [ ] Calibrate dry-run timeout.
+- [ ] Test automations manually.

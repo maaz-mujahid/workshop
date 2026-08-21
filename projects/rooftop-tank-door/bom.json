@@ -1,0 +1,39 @@
+{
+  "items": [
+    [
+      "ESP32-C3 Super Mini",
+      "USB-C, 3.3V MCU",
+      1
+    ],
+    [
+      "Normally-open sealed magnetic reed switch",
+      "Tank/door sensing",
+      6
+    ],
+    [
+      "Small neodymium magnet",
+      "Float mechanism",
+      1
+    ],
+    [
+      "CAT6 cable",
+      "10\u201312 ft; user supplied",
+      1
+    ],
+    [
+      "5V USB power supply",
+      "ESP32-C3 supply",
+      1
+    ],
+    [
+      "Large double-sided FR-4 perfboard",
+      "2.54mm pitch, shared workshop stock",
+      1
+    ],
+    [
+      "Heat-shrink tubing",
+      "Assorted sizes",
+      1
+    ]
+  ]
+}

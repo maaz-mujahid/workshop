@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850">
+<style>text{font-family:Arial,sans-serif;fill:#222}.t{font-size:25px;font-weight:bold}.h{font-size:18px;font-weight:bold}.l{font-size:14px}.s{font-size:12px}.b{fill:#fff;stroke:#222;stroke-width:2}.w{stroke:#1769aa;stroke-width:3}.g{stroke:#555;stroke-width:3}</style>
+<rect width="1400" height="850" fill="#fff"/>
+<text x="700" y="38" text-anchor="middle" class="t">Rooftop Tank Level Detector + Door Security — ESP32-C3 Super Mini</text>
+<rect x="70" y="100" width="560" height="500" rx="8" class="b"/><text x="350" y="135" text-anchor="middle" class="h">ESP32-C3 CONTROLLER</text>
+<text x="100" y="180" class="l">GPIO0</text><text x="220" y="180" class="l">Tank 0%</text>
+<text x="100" y="225" class="l">GPIO1</text><text x="220" y="225" class="l">Tank 25%</text>
+<text x="100" y="270" class="l">GPIO3</text><text x="220" y="270" class="l">Tank 50%</text>
+<text x="100" y="315" class="l">GPIO10</text><text x="220" y="315" class="l">Tank 75%</text>
+<text x="100" y="360" class="l">GPIO20</text><text x="220" y="360" class="l">Tank 100%</text>
+<text x="100" y="405" class="l">GPIO21</text><text x="220" y="405" class="l">Rooftop door</text>
+<text x="100" y="465" class="l">GND</text><text x="220" y="465" class="l">Common return for all reeds</text>
+<text x="100" y="525" class="s">Internal pull-ups enabled</text><text x="100" y="550" class="s">No external resistors/capacitors</text>
+<rect x="770" y="100" width="560" height="500" rx="8" class="b"/><text x="1050" y="135" text-anchor="middle" class="h">ROOFTOP / TANK SIDE</text><text x="1050" y="165" text-anchor="middle" class="s">CAT6: 6 signals + common GND + 1 spare</text>
+<g class="w"><line x1="630" y1="180" x2="770" y2="180"/><line x1="630" y1="225" x2="770" y2="225"/><line x1="630" y1="270" x2="770" y2="270"/><line x1="630" y1="315" x2="770" y2="315"/><line x1="630" y1="360" x2="770" y2="360"/><line x1="630" y1="405" x2="770" y2="405"/></g>
+<text x="820" y="185" class="l">Reed — 0%</text><text x="820" y="230" class="l">Reed — 25%</text><text x="820" y="275" class="l">Reed — 50%</text><text x="820" y="320" class="l">Reed — 75%</text><text x="820" y="365" class="l">Reed — 100%</text><text x="820" y="410" class="l">Door reed</text>
+<line x1="630" y1="465" x2="1000" y2="465" class="g"/><text x="1020" y="470" class="l">COMMON GND</text>
+<rect x="820" y="500" width="420" height="70" rx="6" class="b"/><text x="1030" y="530" text-anchor="middle" class="l">Float + magnet moves vertically</text><text x="1030" y="550" text-anchor="middle" class="s">and triggers each tank reed</text>
+<rect x="70" y="650" width="1260" height="120" rx="8" class="b"/><text x="700" y="685" text-anchor="middle" class="h">HOME ASSISTANT</text><text x="120" y="720" class="l">Display level / door</text><text x="500" y="720" class="l">Control existing motor smart MCB</text><text x="920" y="720" class="l">Measure transition time / dry-run alert</text></svg>

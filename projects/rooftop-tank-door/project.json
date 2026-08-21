@@ -1,0 +1,29 @@
+{
+  "id": "rooftop-tank-door",
+  "name": "Rooftop Tank Level Detector + Door Security",
+  "version": "1.0.0",
+  "controller": "ESP32-C3 Super Mini",
+  "gpio": {
+    "GPIO0": "Tank 0%",
+    "GPIO1": "Tank 25%",
+    "GPIO3": "Tank 50%",
+    "GPIO10": "Tank 75%",
+    "GPIO20": "Tank 100%",
+    "GPIO21": "Rooftop door",
+    "GPIO8": "Status LED"
+  },
+  "design": {
+    "tank_levels": [
+      0,
+      25,
+      50,
+      75,
+      100
+    ],
+    "common_ground": true,
+    "internal_pullups": true,
+    "external_pullups": false,
+    "external_capacitors": false,
+    "cat6_length": "10\u201312 ft"
+  }
+}

@@ -1,0 +1,40 @@
+# Replace switch.water_motor_mcb with the real motor smart-switch entity.
+- alias: Tank - Stop motor at full
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.rooftop_tank_level
+      above: 99
+  action:
+    - service: switch.turn_off
+      target: {entity_id: switch.water_motor_mcb}
+
+- alias: Tank - Start motor when low
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.rooftop_tank_level
+      below: 26
+  action:
+    - service: switch.turn_on
+      target: {entity_id: switch.water_motor_mcb}
+
+- alias: Tank - Possible dry run
+  description: Calibrate this timeout from measured normal filling times before enabling.
+  trigger:
+    - platform: state
+      entity_id: switch.water_motor_mcb
+      to: "on"
+      for: "00:10:00"
+  action:
+    - service: switch.turn_off
+      target: {entity_id: switch.water_motor_mcb}
+    - service: notify.notify
+      data: {message: "Possible water-motor dry run: no expected tank progress."}
+
+- alias: Rooftop door - notify when opened
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rooftop_door
+      to: "on"
+  action:
+    - service: notify.notify
+      data: {message: "Rooftop door opened."}
