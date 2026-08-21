@@ -1,39 +1,13 @@
 {
+  "schema": "bom/v2",
+  "project": "rooftop-tank-door",
   "items": [
-    [
-      "ESP32-C3 Super Mini",
-      "USB-C, 3.3V MCU",
-      1
-    ],
-    [
-      "Normally-open sealed magnetic reed switch",
-      "Tank/door sensing",
-      6
-    ],
-    [
-      "Small neodymium magnet",
-      "Float mechanism",
-      1
-    ],
-    [
-      "CAT6 cable",
-      "10\u201312 ft; user supplied",
-      1
-    ],
-    [
-      "5V USB power supply",
-      "ESP32-C3 supply",
-      1
-    ],
-    [
-      "Large double-sided FR-4 perfboard",
-      "2.54mm pitch, shared workshop stock",
-      1
-    ],
-    [
-      "Heat-shrink tubing",
-      "Assorted sizes",
-      1
-    ]
+    { "partId": "P0036", "qty": 1 },
+    { "partId": "P0040", "qty": 6 },
+    { "partId": "P0041", "qty": 1 },
+    { "partId": "P0042", "qty": 1 },
+    { "partId": "P0043", "qty": 1 },
+    { "partId": "P0044", "qty": 1 },
+    { "partId": "P0045", "qty": 1 }
   ]
 }
