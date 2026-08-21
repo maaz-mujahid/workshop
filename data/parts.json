@@ -775,6 +775,82 @@
       ],
       "alternatives": "Any short USB extension you can cut — the MOSFET goes inline on the +5V (or GND) wire.",
       "notes": "The MOSFET switches the strips USB power here."
-    }
+    },
+    "P0040": {
+  "name": "Sealed magnetic reed switch (NO)",
+  "category": "sensor",
+  "categoryLabel": "Sensor",
+  "spec": "2x14mm, sealed glass, NO",
+  "expectedPrice": 15,
+  "icon": "reed",
+  "notes": "Tank float + door sensing. 6 needed for this project.",
+  "alternatives": "Larger 3x20mm sealed reed switches also work if easier to source; avoid unsealed/open-frame types outdoors.",
+  "sources": [
+    {"shop": "robu", "price": "15", "url": "https://robu.in/product/white-reed-switch-y213-2x14mm-normal-open/"}
+  ]
+},
+"P0041": {
+  "name": "Small neodymium disc magnet",
+  "category": "mech",
+  "categoryLabel": "Mechanical",
+  "spec": "~8-10mm dia disc",
+  "expectedPrice": 25,
+  "icon": "magnet",
+  "notes": "Actuates the reed switch from the float arm.",
+  "alternatives": "Any small strong disc magnet works — size isn't critical as long as it reliably triggers the reed switch at your mounting gap.",
+  "sources": [
+    {"shop": "robu / probots", "price": "~25", "url": ""}
+  ]
+},
+"P0042": {
+  "name": "CAT6 cable (per run)",
+  "category": "connector",
+  "categoryLabel": "Connector / wire",
+  "spec": "10–12 ft run, 8-core",
+  "expectedPrice": 0,
+  "icon": "cat6",
+  "notes": "User-supplied — already have a length on hand for this run.",
+  "alternatives": "Any 4+ core cable works for carrying the reed-switch pairs if CAT6 isn't on hand (may need 2 runs of thinner cable).",
+  "sources": []
+},
+"P0043": {
+  "name": "5V USB power supply",
+  "category": "power",
+  "categoryLabel": "Power",
+  "spec": "5V/1A, USB-A or USB-C",
+  "expectedPrice": 150,
+  "icon": "usbpsu",
+  "notes": "Powers the ESP32-C3 at the rooftop enclosure.",
+  "alternatives": "Any 5V/1A+ phone charger works.",
+  "sources": [
+    {"shop": "amazon", "price": "~150", "url": ""}
+  ]
+},
+"P0044": {
+  "name": "Large double-sided FR-4 perfboard",
+  "category": "mech",
+  "categoryLabel": "Mechanical",
+  "spec": "double-sided, cut to size",
+  "expectedPrice": 120,
+  "icon": "perflg",
+  "notes": "Shared workshop stock — cut a section for this project's mounting.",
+  "alternatives": "P0028 (Perfboard 2x8cm) works if a smaller board is enough for this project's component count.",
+  "sources": [
+    {"shop": "robu", "price": "~120", "url": ""}
+  ]
+},
+"P0045": {
+  "name": "Heat-shrink tubing (assorted)",
+  "category": "misc",
+  "categoryLabel": "Misc",
+  "spec": "assorted sizes",
+  "expectedPrice": 60,
+  "icon": "heatshrink",
+  "notes": "For sealing reed switch + cable splices against weather.",
+  "alternatives": "Electrical tape works in a pinch but won't seal as well outdoors.",
+  "sources": [
+    {"shop": "robu / amazon", "price": "~60", "url": ""}
+  ]
+}
   }
 }
