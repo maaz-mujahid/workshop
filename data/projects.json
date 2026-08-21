@@ -4,7 +4,7 @@
   "projects": [
     "daikin-ac-wifi",
     "motion-night-light",
-    "presence-lighting"
+    "presence-lighting",
     "rooftop-tank-door"
   ]
 }
