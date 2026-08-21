@@ -1,8 +1,19 @@
 {
+  "schema": "project/v2",
   "id": "rooftop-tank-door",
   "name": "Rooftop Tank Level Detector + Door Security",
-  "version": "1.0.0",
-  "controller": "ESP32-C3 Super Mini",
+  "status": "Planned",
+  "room": "Rooftop",
+  "difficulty": "Medium",
+  "summary": "ESP32-C3 based tank level detection (0/25/50/75/100%) and rooftop door security using reed switches.",
+  "estimatedCost": "~₹500",
+  "safety": [
+    "Use weatherproof enclosures for rooftop exposure.",
+    "Ensure common ground across all sensor wiring."
+  ],
+  "docs": "README.md",
+  "bom": "bom.json",
+  "tools": "tools.json",
   "gpio": {
     "GPIO0": "Tank 0%",
     "GPIO1": "Tank 25%",
@@ -13,17 +24,11 @@
     "GPIO8": "Status LED"
   },
   "design": {
-    "tank_levels": [
-      0,
-      25,
-      50,
-      75,
-      100
-    ],
+    "tank_levels": [0, 25, 50, 75, 100],
     "common_ground": true,
     "internal_pullups": true,
     "external_pullups": false,
     "external_capacitors": false,
-    "cat6_length": "10\u201312 ft"
+    "cat6_length": "10–12 ft"
   }
 }
