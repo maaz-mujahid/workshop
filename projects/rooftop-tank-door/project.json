@@ -24,7 +24,13 @@
     "GPIO8": "Status LED"
   },
   "design": {
-    "tank_levels": [0, 25, 50, 75, 100],
+    "tank_levels": [
+      0,
+      25,
+      50,
+      75,
+      100
+    ],
     "common_ground": true,
     "internal_pullups": true,
     "external_pullups": false,
