@@ -59,7 +59,8 @@ h1{font-size:34px;font-weight:700;letter-spacing:-.022em;line-height:1.04}
 #filter{width:100%;border:none;background:var(--fill);border-radius:11px;padding:10px 12px 10px 35px;font-size:17px;color:var(--label)}
 #filter::placeholder{color:var(--label2)}#filter:focus{outline:none}
 .filterrow{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-select#projFilter{flex:1;min-width:130px;border:none;background:var(--fill);border-radius:11px;padding:10px 12px;font-size:15px;color:var(--label);-webkit-appearance:none;appearance:none}
+#projFilterBtn{flex:1;min-width:130px;justify-content:space-between;text-align:left;font-weight:400;color:var(--label);padding:10px 12px}
+#projFilterBtn .ic{width:14px;height:14px;flex:none;color:var(--label2)}
 input,select,textarea,button{font:inherit}
 input,select,textarea{border:none;background:var(--fill);border-radius:10px;padding:11px 12px;color:var(--label);font-size:17px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
