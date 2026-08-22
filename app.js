@@ -224,16 +224,17 @@ function partCard(pid,scope){
  if(kind==='tools')return toolCard(pid);
  const need=needFor(pid,scope==='active'?'active':scope), nb=Math.max(0,need-owned(pid));
  const isCatalogue=tab==='all';
+ const hideExtras=tab==='shop';
  const boms=BOMS(),key=IKEY();
- const projChips=isCatalogue?'':S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
+ const projChips=(isCatalogue||hideExtras)?'':S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
  return `<div class="card" data-pid="${pid}">
   <div class="thumb">${bigPic(p)}</div>
   <div class="body">
    <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
    <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
    <div class="chips"><span class="chip">${CATS()[p.category]}</span>${projChips}</div>
-   ${isCatalogue?'':`<div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>`}
-   <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
+   ${(isCatalogue||hideExtras)?'':`<div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>`}
+   <div class="src">${hideExtras?'':srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
   </div>
   <div class="card-controls"><div class="acts">
     ${owned(pid)>0?
