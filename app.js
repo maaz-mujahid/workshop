@@ -33,7 +33,8 @@ shop:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 
 copy:'<rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
 chevright:'<path d="m9 18 6-6-6-6"/>',chevleft:'<path d="m15 18-6-6 6-6"/>',
 upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
-sparkles:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>'};
+sparkles:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
+chevdown:'<path d="m6 9 6 6 6-6"/>'};
 const ic=n=>'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>';
 /* Part/tool portrait icons now live in icons/parts/*.svg and icons/tools/*.svg,
    guided by icons/ICON_GUIDELINES.md. PICS is populated at load time from
@@ -74,7 +75,7 @@ let S={parts:{},tools:{},projects:[],boms:{},toolBoms:{},inv:{},toolInv:{},cfg:{
 // Read iconEdits synchronously up front — loadData() and loadIconLibrary() run in parallel via Promise.all,
 // so iconEdits needs to be in place before loadIconLibrary's reapply step runs, not after loadData resolves.
 try{const saved0=JSON.parse(localStorage.getItem(LS)||'{}');if(saved0.iconEdits)S.iconEdits=saved0.iconEdits}catch(e){}
-let tab='shop',filter='',projFilter='',projSel=null,kind='parts';
+let tab='shop',filter='',projFilter=[],projSel=null,kind='parts';
 /* ---- generic accessors so shop/inv/all views work for both parts (P-codes) and tools (T-codes) ---- */
 const CATALOG=()=>kind==='tools'?S.tools:S.parts;
 const INV=()=>kind==='tools'?S.toolInv:S.inv;
@@ -159,20 +160,24 @@ async function loadData(force){
 }
 
 /* ================= CALC ================= */
-function needFor(pid,scope){ // scope: 'active' | slug
+function inScope(p,scope){ // scope: 'active' | '__all__' | slug | array of slugs
+ if(scope==='active')return ACTIVE.includes(p.status);
+ if(scope==='__all__')return true;
+ if(Array.isArray(scope))return scope.includes(p.id);
+ return p.id===scope;
+}
+function needFor(pid,scope){ // scope: 'active' | '__all__' | slug | array of slugs
  const boms=BOMS(),key=IKEY();
  if(kind==='tools'){ // tools are shared equipment — needed is boolean, not summed
   for(const p of S.projects){
-   if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
-   else{if(p.id!==scope)continue}
+   if(!inScope(p,scope))continue;
    if((boms[p.id]||[]).some(b=>b[key]===pid))return 1;
   }
   return 0;
  }
  let n=0;
  for(const p of S.projects){
-  if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
-  else{if(p.id!==scope)continue}
+  if(!inScope(p,scope))continue;
   const item=(boms[p.id]||[]).find(b=>b[key]===pid);
   if(item)n+=item.qty;
  }
@@ -183,17 +188,17 @@ function toBuy(pid,scope){return Math.max(0,needFor(pid,scope)-owned(pid))}
 function partsInScope(scope){
  const set=new Set();const boms=BOMS(),key=IKEY();
  for(const p of S.projects){
-  if(scope==='active'){if(!ACTIVE.includes(p.status))continue}
-  else if(scope!=='__all__'){if(p.id!==scope)continue}
+  if(!inScope(p,scope))continue;
   (boms[p.id]||[]).forEach(b=>set.add(b[key]));
  }
  return [...set];
 }
 function projName(id){const p=S.projects.find(x=>x.id===id);return p?p.name:id}
+function scopeLabel(){return projFilter.length?(projFilter.length===1?projName(projFilter[0]):projFilter.length+' projects'):'all active projects'}
 
 /* ================= RENDER ================= */
 function stats(){
- const scope=projFilter||'active';
+ const scope=projFilter.length?projFilter:'active';
  const buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0);
  $('#stBuy').textContent=buy.length;
  $('#stCost').textContent=rup(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid]?.expectedPrice||0),0));
@@ -224,17 +229,16 @@ function partCard(pid,scope){
  if(kind==='tools')return toolCard(pid);
  const need=needFor(pid,scope==='active'?'active':scope), nb=Math.max(0,need-owned(pid));
  const isCatalogue=tab==='all';
- const hideExtras=tab==='shop';
  const boms=BOMS(),key=IKEY();
- const projChips=(isCatalogue||hideExtras)?'':S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
+ const projChips=isCatalogue?'':S.projects.filter(pr=>(boms[pr.id]||[]).some(b=>b[key]===pid)).map(pr=>{const q=(boms[pr.id]||[]).find(b=>b[key]===pid).qty;return `<span class="chip proj">${esc(pr.name)} ×${q}</span>`}).join('');
  return `<div class="card" data-pid="${pid}">
   <div class="thumb">${bigPic(p)}</div>
   <div class="body">
    <div class="name">${esc(p.name)}<span class="pid">${pid}</span><button class="edit-ic" data-act="edit" title="Edit">${ic('pencil')}</button></div>
    <div class="desc">${esc(p.spec||'')}${p.notes?' — '+esc(p.notes):''}</div>
    <div class="chips"><span class="chip">${CATS()[p.category]}</span>${projChips}</div>
-   ${(isCatalogue||hideExtras)?'':`<div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>`}
-   <div class="src">${hideExtras?'':srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
+   ${isCatalogue?'':`<div class="qtyrow"><span>Need <b>${need}</b></span><span>In stock <b>${owned(pid)}</b></span></div>`}
+   <div class="src">${srcHtml(p)}</div><div class="ai-inline" data-aibox></div>
   </div>
   <div class="card-controls"><div class="acts">
     ${owned(pid)>0?
@@ -268,13 +272,13 @@ function updateSectionTotal(scope){
  const el=document.querySelector('.section-total');if(!el)return;
  const pids=[...document.querySelectorAll('.card[data-pid]')].map(c=>c.dataset.pid);
  const total=pids.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0);
- const scopeLbl=projFilter?projName(projFilter):'all active projects';
+ const scopeLbl=scopeLabel();
  el.innerHTML=`<span>${pids.length} items · ${esc(scopeLbl)}</span><span>expected ${rup(total)}</span>`;
 }
 function refreshCard(pid){
  const card=document.querySelector(`.card[data-pid="${pid}"]`);
  if(!card)return;
- const scope=projFilter||'active';
+ const scope=projFilter.length?projFilter:'active';
  if(tab==='shop'&&toBuy(pid,scope)<=0){card.remove();updateSectionTotal(scope);if(!document.querySelector('.card[data-pid]'))render();return}
  if(tab==='inv'&&owned(pid)<=0){card.remove();if(!document.querySelector('.card[data-pid]'))render();return}
  const cardScope=tab==='inv'?'__all__':scope;
@@ -294,11 +298,11 @@ function render(){
  $('#filter').placeholder=kind==='tools'?'Search tools':'Search parts';
  stats();
  if(tab==='shop'){
-  const scope=projFilter||'active';
+  const scope=projFilter.length?projFilter:'active';
   let buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0&&matchFilter(pid));
   buy.sort((a,b)=>toBuy(b,scope)*(CATALOG()[b].expectedPrice||0)-toBuy(a,scope)*(CATALOG()[a].expectedPrice||0));
   const total=buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0);
-  const scopeLbl=projFilter?projName(projFilter):'all active projects';
+  const scopeLbl=scopeLabel();
   v.innerHTML=buy.map(pid=>partCard(pid,scope)).join('')||`<div class="empty">Nothing to buy for this scope — all ${kind} covered.</div>`;
  }else if(tab==='inv'){
   const inv=Object.keys(CATALOG()).filter(pid=>owned(pid)>0&&matchFilter(pid));
@@ -404,15 +408,15 @@ document.addEventListener('click',e=>{
  if(act==='back'){projSel=null;render();window.scrollTo(0,0);return}
  if(act==='cfgsave'){S.cfg={owner:$('#cOwner').value.trim(),repo:$('#cRepo').value.trim(),branch:$('#cBranch').value.trim()||'main',token:$('#cToken').value.trim()};saveLocal();updateSync();toast('Setup saved');return}
  if(act==='shopproj'){kind='parts';document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x.dataset.kind==='parts'));
-   projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
+   projFilter=[b.dataset.proj];updateProjFilterBtn();tab='shop';projSel=null;
    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
  if(act==='shoptoolsproj'){kind='tools';document.querySelectorAll('.kbtn').forEach(x=>x.classList.toggle('active',x.dataset.kind==='tools'));
-   projFilter=b.dataset.proj;$('#projFilter').value=projFilter;tab='shop';projSel=null;
+   projFilter=[b.dataset.proj];updateProjFilterBtn();tab='shop';projSel=null;
    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));render();return}
  if(act==='opendoc'){window.open('projects/'+b.dataset.proj+'/project.html','_blank');return}
  const card=e.target.closest('[data-pid]');if(!card)return;
  const pid=card.dataset.pid;
- const scope=projFilter||'active';
+ const scope=projFilter.length?projFilter:'active';
  const inv=INV();
  if(act==='add'){inv[pid]=1;markDirty();refreshCard(pid);return}
  else if(act==='toolhave'){if(owned(pid)>0)delete inv[pid];else inv[pid]=1;markDirty();refreshCard(pid);return}
@@ -435,7 +439,26 @@ document.addEventListener('change',e=>{
  }
 });
 $('#filter').addEventListener('input',e=>{filter=e.target.value;render()});
-$('#projFilter').addEventListener('change',e=>{projFilter=e.target.value;render()});
+$('#projFilterBtn').addEventListener('click',projFilterDialog);
+function projFilterDialog(){
+ const checks=S.projects.map(p=>`<label class="checkrow" style="margin:8px 0"><input type="checkbox" class="fProj" value="${p.id}" ${projFilter.includes(p.id)?'checked':''}> ${esc(p.name)}</label>`).join('');
+ $('#dlgBody').innerHTML=`<h3>Filter by project</h3>
+  <label class="checkrow"><input type="checkbox" id="fProjAll" ${projFilter.length?'':'checked'}> All active projects</label>
+  <div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--sep)">${checks}</div>
+  <div class="foot"><span></span><span><button class="btn" id="fCancel">Cancel</button> <button class="btn primary" id="fApply">Apply</button></span></div>`;
+ const d=$('#dlg');d.showModal();
+ $('#fCancel').onclick=()=>d.close();
+ const allBox=$('#fProjAll');
+ const boxes=[...document.querySelectorAll('.fProj')];
+ allBox.onchange=()=>{if(allBox.checked)boxes.forEach(b=>b.checked=false)};
+ boxes.forEach(b=>b.onchange=()=>{if(b.checked)allBox.checked=false;else if(!boxes.some(x=>x.checked))allBox.checked=true});
+ $('#fApply').onclick=()=>{
+  projFilter=boxes.filter(b=>b.checked).map(b=>b.value);
+  updateProjFilterBtn();tab='shop';projSel=null;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='shop'));
+  d.close();render();
+ };
+}
 document.addEventListener('change',e=>{
  const s=e.target.closest('[data-statusfor]');if(!s)return;
  const pr=S.projects.find(x=>x.id===s.dataset.statusfor);if(!pr)return;
@@ -723,10 +746,10 @@ $('#addPart').addEventListener('click',()=>partDialog(null));
 
 /* ================= EXPORT ================= */
 $('#copyList').addEventListener('click',()=>{
- const scope=projFilter||'active';
+ const scope=projFilter.length?projFilter:'active';
  const buy=partsInScope(scope).filter(pid=>toBuy(pid,scope)>0);
  const noun=kind==='tools'?'TOOLS':'PARTS';
- let txt='🛒 '+noun+' SHOPPING LIST — '+new Date().toLocaleDateString('en-IN')+(projFilter?' ('+projName(projFilter)+')':'')+'\n';
+ let txt='🛒 '+noun+' SHOPPING LIST — '+new Date().toLocaleDateString('en-IN')+(projFilter.length?' ('+scopeLabel()+')':'')+'\n';
  buy.forEach(pid=>{const p=CATALOG()[pid];const q=toBuy(pid,scope);
   txt+=kind==='tools'
    ?`• ${p.name}${p.expectedPrice?' — ~₹'+p.expectedPrice:''}${p.sources&&p.sources[0]?'  ['+p.sources[0].shop+']':''}\n`
@@ -734,12 +757,12 @@ $('#copyList').addEventListener('click',()=>{
  txt+='\nTOTAL ≈ ₹'+Math.round(buy.reduce((a,pid)=>a+toBuy(pid,scope)*(CATALOG()[pid].expectedPrice||0),0)).toLocaleString('en-IN');
  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Copied shopping list')).catch(()=>{prompt('Copy your list:',txt)});
 });
-$('#reloadBtn').addEventListener('click',async()=>{const rb=$('#reloadBtn');const ro=rb.innerHTML;rb.innerHTML='<span class="spin"></span>';try{await loadData(true);toast('Data reloaded'+(S.loadedFrom==='cache'?' (cache)':''))}catch(e){toast('Reload failed: '+e.message)}rb.innerHTML=ro;fillProjFilter();render();updateSync()});
+$('#reloadBtn').addEventListener('click',async()=>{const rb=$('#reloadBtn');const ro=rb.innerHTML;rb.innerHTML='<span class="spin"></span>';try{await loadData(true);toast('Data reloaded'+(S.loadedFrom==='cache'?' (cache)':''))}catch(e){toast('Reload failed: '+e.message)}rb.innerHTML=ro;updateProjFilterBtn();render();updateSync()});
 
 /* ================= INIT ================= */
-function fillProjFilter(){$('#projFilter').innerHTML='<option value="">All projects</option>'+S.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+function updateProjFilterBtn(){$('#projFilterBtn').innerHTML=(projFilter.length?(projFilter.length===1?esc(projName(projFilter[0])):projFilter.length+' projects'):'All projects')+ic('chevdown')}
 (async()=>{
  try{await Promise.all([loadData(),loadIconLibrary()])}catch(e){$('#view').innerHTML='<div class="empty">Couldn’t load data files.<br><small>'+esc(e.message)+'</small><br><br>If you opened index.html directly (file://), some browsers block loading the JSON. Use it via GitHub Pages, or a local server.</div>';updateSync();return}
- fillProjFilter();render();updateSync();
+ updateProjFilterBtn();render();updateSync();
  if(S.loadedFrom==='cache')toast('Offline — showing saved data');
 })();
