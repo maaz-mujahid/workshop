@@ -306,28 +306,6 @@
       "alternatives": "NO good substitute — Quartz only stocks XH up to 5-pin, and two housings side-by-side break the 2.54 pitch. Shaved-down female Dupont is a last-resort hack (less secure). Buy the real robu part.",
       "notes": "The S403 connector. This is the one part that MUST come from robu — order it even as a separate small shipment."
     },
-    "P0015": {
-      "name": "Prototype PCB, FR-4",
-      "category": "mech",
-      "categoryLabel": "Mechanical",
-      "spec": "shield/perf size w/ holes",
-      "icon": "protopcb",
-      "expectedPrice": 79,
-      "sources": [
-        {
-          "shop": "robu",
-          "price": "79",
-          "url": ""
-        },
-        {
-          "shop": "quartzcomponents (bakelite)",
-          "price": "24",
-          "url": "https://quartzcomponents.com/products/7-9cm-single-side-prototype-pcb-experimental-bakelite-copper-plate-circuit-board"
-        }
-      ],
-      "alternatives": "Quartz bakelite board (₹24) is cheaper but BRITTLE — it can crack when you cut the isolation slot. Any FR-4 perfboard >= 7x9cm is better.",
-      "notes": "Board that hosts the whole interface. FR-4 preferred for the isolation slot."
-    },
     "P0016": {
       "name": "IP65 ABS junction box",
       "category": "mech",
@@ -566,23 +544,6 @@
       ],
       "alternatives": "Any small SPDT/SPST slide or toggle switch.",
       "notes": "Per-unit master off. Need ~6, sold in packs of 5."
-    },
-    "P0028": {
-      "name": "Perfboard 2x8cm",
-      "category": "mech",
-      "categoryLabel": "Mechanical",
-      "spec": "double-sided",
-      "icon": "perf28",
-      "expectedPrice": 23,
-      "sources": [
-        {
-          "shop": "robu",
-          "price": "23 ea",
-          "url": ""
-        }
-      ],
-      "alternatives": "Any small perfboard, cut to size. A 10x15cm board cut into 6 is cheaper.",
-      "notes": "One per unit. Need ~6."
     },
     "P0029": {
       "name": "JST XH 2-pin plug+socket",
