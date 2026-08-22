@@ -134,10 +134,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--tint)}
 .toolchip.need .toolchip-status{color:var(--orange)}
 .checkrow{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--label);cursor:pointer}
 .checkrow input{width:18px;height:18px;padding:0}
+.dlg label.checkrow{display:flex;margin:0}
 .safety{background:var(--orange-soft);border-radius:12px;padding:11px 14px;font-size:13px;margin-top:12px;color:var(--label)}
 .safety li{margin-left:18px;margin-top:3px}
 /* dialog = iOS sheet */
-dialog{border:none;border-radius:20px;padding:0;max-width:440px;width:92vw;background:var(--group);color:var(--label);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog{border:none;border-radius:20px;padding:0;max-width:440px;width:92vw;background:var(--group);color:var(--label);box-shadow:0 20px 60px rgba(0,0,0,.3);margin:auto}
 dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .dlg{padding:20px}.dlg h3{margin-bottom:12px;font-size:20px;font-weight:700}
 .dlg label{display:block;font-size:13px;font-weight:600;color:var(--label2);margin:12px 0 4px}
