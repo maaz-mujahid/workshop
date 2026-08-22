@@ -2,5 +2,14 @@
   "schema": "inventory/v2",
   "updated": "2026-08-22",
   "note": "Physical stock only. App-owned file.",
-  "stock": {}
+  "stock": {
+    "P0036": 4,
+    "P0034": 1,
+    "P0044": 3,
+    "P0041": 5,
+    "P0030": 36,
+    "P0013": 2,
+    "P0029": 10,
+    "P0042": 1
+  }
 }
