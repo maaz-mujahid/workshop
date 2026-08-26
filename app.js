@@ -1,4 +1,4 @@
-const CAT={board:'Dev board',sensor:'Sensor',power:'Power',ic:'IC / semi',passive:'Passive',led:'LED / opto',connector:'Connector / wire',mech:'Mechanical',misc:'Misc'};
+const CAT={board:'Dev board',sensor:'Sensor',power:'Power',ic:'IC / semi',passive:'Passive',resistor:'Resistors',led:'LED / opto',connector:'Connector / wire',mech:'Mechanical',misc:'Misc'};
 const TCAT={hand:'Hand tool',power:'Power tool',measure:'Measuring',safety:'Safety',consumable:'Shop consumable',misc:'Misc'};
 const STATUSES=['Idea','Planned','In Progress','Completed','Cancelled'];
 const ACTIVE=['Planned','In Progress'];
@@ -10,6 +10,7 @@ sensor:_lu('<path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M
 power:_lu('<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'),
 ic:_lu('<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>'),
 passive:_lu('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),
+resistor:_lu('<path d="M2 12h3l2-4 3 8 3-8 3 8 2-4h3"/>'),
 led:_lu('<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>'),
 connector:_lu('<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M6 8h12v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>'),
 mech:_lu('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
