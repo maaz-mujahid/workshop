@@ -2,20 +2,65 @@
   "schema": "bom/v2",
   "project": "daikin-ac-wifi",
   "items": [
-    { "partId": "P0036", "qty": 1 },
-    { "partId": "P0002", "qty": 1 },
-    { "partId": "P0003", "qty": 1 },
-    { "partId": "P0004", "qty": 1 },
-    { "partId": "P0005", "qty": 1 },
-    { "partId": "P0006", "qty": 1 },
-    { "partId": "P0007", "qty": 2 },
-    { "partId": "P0008", "qty": 1 },
-    { "partId": "P0009", "qty": 2 },
-    { "partId": "P0010", "qty": 4 },
-    { "partId": "P0011", "qty": 2 },
-    { "partId": "P0013", "qty": 1 },
-    { "partId": "P0014", "qty": 1 },
-    { "partId": "P0015", "qty": 1 },
-    { "partId": "P0016", "qty": 1 }
+    {
+      "partId": "P0036",
+      "qty": 1
+    },
+    {
+      "partId": "P0002",
+      "qty": 1
+    },
+    {
+      "partId": "P0003",
+      "qty": 1
+    },
+    {
+      "partId": "P0004",
+      "qty": 1
+    },
+    {
+      "partId": "P0005",
+      "qty": 1
+    },
+    {
+      "partId": "P0006",
+      "qty": 1
+    },
+    {
+      "partId": "P0007",
+      "qty": 2
+    },
+    {
+      "partId": "P0008",
+      "qty": 1
+    },
+    {
+      "partId": "P0009",
+      "qty": 2
+    },
+    {
+      "partId": "P0010",
+      "qty": 4
+    },
+    {
+      "partId": "P0011",
+      "qty": 2
+    },
+    {
+      "partId": "P0013",
+      "qty": 1
+    },
+    {
+      "partId": "P0014",
+      "qty": 1
+    },
+    {
+      "partId": "P0044",
+      "qty": 1
+    },
+    {
+      "partId": "P0016",
+      "qty": 1
+    }
   ]
 }
