@@ -1,6 +1,6 @@
 {
   "schema": "parts-catalogue/v2",
-  "updated": "2026-08-23",
+  "updated": "2026-08-26",
   "note": "Master parts catalogue. Every component exists once. Projects reference these by partId. Prices in INR.",
   "parts": {
     "P0001": {
@@ -31,7 +31,7 @@
       "categoryLabel": "Power",
       "spec": "14V AC rail -> 5V",
       "icon": "mini560",
-      "expectedPrice": 81,
+      "expectedPrice": 101,
       "sources": [
         {
           "shop": "robu",
@@ -53,7 +53,7 @@
       "categoryLabel": "Power",
       "spec": "2W 400mA, 1500VDC iso",
       "icon": "b0505s",
-      "expectedPrice": 93,
+      "expectedPrice": 167,
       "sources": [
         {
           "shop": "quartzcomponents",
@@ -75,7 +75,7 @@
       "categoryLabel": "IC / semi",
       "spec": "2-ch digital isolator, SOIC-8",
       "icon": "adum",
-      "expectedPrice": 214,
+      "expectedPrice": 306,
       "sources": [
         {
           "shop": "robu",
@@ -119,7 +119,7 @@
       "categoryLabel": "Passive",
       "spec": "18V standoff, DO-214",
       "icon": "tvs",
-      "expectedPrice": 18,
+      "expectedPrice": 20,
       "sources": [
         {
           "shop": "robu",
@@ -163,7 +163,7 @@
       "categoryLabel": "Passive",
       "spec": "resettable, through-hole",
       "icon": "polyfuse",
-      "expectedPrice": 18,
+      "expectedPrice": 29,
       "sources": [
         {
           "shop": "robu",
@@ -229,7 +229,7 @@
       "categoryLabel": "Passive",
       "spec": "through-hole",
       "icon": "r1k",
-      "expectedPrice": 1,
+      "expectedPrice": 0.6,
       "sources": [
         {
           "shop": "robu",
@@ -295,7 +295,7 @@
       "categoryLabel": "Connector / wire",
       "spec": "pre-crimped 300mm",
       "icon": "jst10",
-      "expectedPrice": 33,
+      "expectedPrice": 30,
       "sources": [
         {
           "shop": "robu",
@@ -444,7 +444,7 @@
       "categoryLabel": "IC / semi",
       "spec": "SOT-23",
       "icon": "ao3400",
-      "expectedPrice": 2.3,
+      "expectedPrice": 3.41,
       "sources": [
         {
           "shop": "robu",
@@ -619,7 +619,7 @@
       "categoryLabel": "Sensor",
       "spec": "24GHz, UART",
       "icon": "ld2410",
-      "expectedPrice": 300,
+      "expectedPrice": 529,
       "sources": [
         {
           "shop": "robu / amazon",
@@ -742,7 +742,7 @@
       "category": "sensor",
       "categoryLabel": "Sensor",
       "spec": "2x14mm, sealed glass, NO",
-      "expectedPrice": 15,
+      "expectedPrice": 9.1,
       "icon": "reed",
       "notes": "Tank float + door sensing. 6 needed for this project.",
       "alternatives": "Larger 3x20mm sealed reed switches also work if easier to source; avoid unsealed/open-frame types outdoors.",
@@ -832,6 +832,27 @@
           "url": ""
         }
       ]
+    },
+    "P0046": {
+      "name": "7-pin JST XH 2.54mm plug and socket with cable",
+      "category": "connector",
+      "categoryLabel": "Connector / wire",
+      "spec": "7-pin, 2.54mm pitch",
+      "expectedPrice": 22
+    },
+    "P0047": {
+      "name": "Hi-Link HLK-5M05 5V/5W switch power supply module",
+      "category": "power",
+      "categoryLabel": "Power",
+      "spec": "5V, 5W AC-DC module",
+      "expectedPrice": 269
+    },
+    "P0048": {
+      "name": "Fuse holder BF-020",
+      "category": "passive",
+      "categoryLabel": "Passive",
+      "spec": "fuse holder",
+      "expectedPrice": 5
     }
   }
 }
