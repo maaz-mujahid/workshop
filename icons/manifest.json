@@ -40,7 +40,17 @@
     "vs1838": "icons/parts/vs1838.svg",
     "wled": "icons/parts/wled.svg",
     "P0030": "icons/parts/P0030.svg",
-    "P0031": "icons/parts/P0031.svg"
+    "P0031": "icons/parts/P0031.svg",
+    "breadboard": "icons/parts/breadboard.svg",
+    "jumpers": "icons/parts/jumpers.svg",
+    "bmp180": "icons/parts/bmp180.svg",
+    "irobs": "icons/parts/irobs.svg",
+    "magnet": "icons/parts/magnet.svg",
+    "ledgreen": "icons/parts/ledgreen.svg",
+    "ledred": "icons/parts/ledred.svg",
+    "ledwhite": "icons/parts/ledwhite.svg",
+    "terminal2": "icons/parts/terminal2.svg",
+    "fheader": "icons/parts/fheader.svg"
   },
   "tools": {
     "crimper": "icons/tools/crimper.svg",
