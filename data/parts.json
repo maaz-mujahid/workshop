@@ -821,448 +821,512 @@
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "7-pin, 2.54mm pitch",
-      "expectedPrice": 22
+      "expectedPrice": 22,
+      "icon": "jst10"
     },
     "P0047": {
       "name": "Hi-Link HLK-5M05 5V/5W switch power supply module",
       "category": "power",
       "categoryLabel": "Power",
       "spec": "5V, 5W AC-DC module",
-      "expectedPrice": 269
+      "expectedPrice": 269,
+      "icon": "pm05"
     },
     "P0048": {
       "name": "Fuse holder BF-020",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "fuse holder",
-      "expectedPrice": 5
+      "expectedPrice": 5,
+      "icon": "fuse1a"
     },
     "P0049": {
       "name": "1Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "1Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0050": {
       "name": "2.2Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "2.2Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0051": {
       "name": "4.7Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "4.7Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0052": {
       "name": "10Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "10Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0053": {
       "name": "22Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "22Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0054": {
       "name": "33Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "33Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0055": {
       "name": "47Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "47Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0056": {
       "name": "68Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "68Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0057": {
       "name": "100Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "100Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0058": {
       "name": "150Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "150Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0059": {
       "name": "10kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "10kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0060": {
       "name": "22kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "22kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0061": {
       "name": "33kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "33kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0062": {
       "name": "47kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "47kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0063": {
       "name": "68kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "68kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0064": {
       "name": "100kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "100kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0065": {
       "name": "220kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "220kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0066": {
       "name": "330kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "330kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0067": {
       "name": "470kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "470kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0068": {
       "name": "1MΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "1MΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0069": {
       "name": "220Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "220Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0070": {
       "name": "330Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "330Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0071": {
       "name": "470Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "470Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0072": {
       "name": "560Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "560Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0073": {
       "name": "680Ω 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "680Ω",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0074": {
       "name": "2.2kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "2.2kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0075": {
       "name": "3.3kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "3.3kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0076": {
       "name": "4.7kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "4.7kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0077": {
       "name": "6.8kΩ 1/4W resistor",
       "category": "resistor",
       "categoryLabel": "Resistors",
       "spec": "6.8kΩ",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "r1k"
     },
     "P0078": {
       "name": "2pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "2pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0079": {
       "name": "10pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "10pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0080": {
       "name": "15pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "15pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0081": {
       "name": "22pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "22pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0082": {
       "name": "33pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "33pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0083": {
       "name": "47pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "47pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0084": {
       "name": "68pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "68pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0085": {
       "name": "82pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "82pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0086": {
       "name": "100pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "100pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0087": {
       "name": "220pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "220pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0088": {
       "name": "330pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "330pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0089": {
       "name": "470pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "470pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0090": {
       "name": "520pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "520pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0091": {
       "name": "1,000pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "1,000pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0092": {
       "name": "1,500pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "1,500pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0093": {
       "name": "2,200pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "2,200pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0094": {
       "name": "3,300pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "3,300pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0095": {
       "name": "4,700pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "4,700pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0096": {
       "name": "10,000pF ceramic capacitor",
       "category": "passive",
       "categoryLabel": "Passive",
       "spec": "10,000pF",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "mlcc"
     },
     "P0097": {
       "name": "Solderless breadboard",
       "category": "mech",
       "categoryLabel": "Mechanical",
       "spec": "standard breadboard",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "breadboard"
     },
     "P0098": {
       "name": "Jumper wires",
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "assorted jumper-wire set",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "jumpers"
     },
     "P0099": {
       "name": "BMP180 barometric pressure sensor",
       "category": "sensor",
       "categoryLabel": "Sensor",
       "spec": "BMP180",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "bmp180"
     },
     "P0100": {
       "name": "6×4 cm perfboard",
       "category": "mech",
       "categoryLabel": "Mechanical",
       "spec": "6×4 cm",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "perf28"
     },
     "P0101": {
       "name": "IR obstacle avoidance sensor module",
       "category": "sensor",
       "categoryLabel": "Sensor",
       "spec": "infrared obstacle sensor",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "irobs"
     },
     "P0102": {
       "name": "Ferrite magnet",
       "category": "mech",
       "categoryLabel": "Mechanical",
       "spec": "ferrite",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "magnet"
     },
     "P0103": {
       "name": "5mm green LED",
       "category": "led",
       "categoryLabel": "LED / opto",
       "spec": "5mm",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "ledgreen"
     },
     "P0104": {
       "name": "5mm red LED",
       "category": "led",
       "categoryLabel": "LED / opto",
       "spec": "5mm",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "ledred"
     },
     "P0105": {
       "name": "5mm white LED",
       "category": "led",
       "categoryLabel": "LED / opto",
       "spec": "5mm",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "ledwhite"
     },
     "P0106": {
       "name": "3-pin JST XH 2.54mm plug and socket with cable",
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "3-pin, 2.54mm pitch",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "jst2"
     },
     "P0107": {
       "name": "2-pin screw terminal block",
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "XY300VA-5.0, 2-pin",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "terminal2"
     },
     "P0108": {
       "name": "1×10 2.54mm male pin header",
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "male",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "header"
     },
     "P0109": {
       "name": "1×10 2.54mm female pin header",
       "category": "connector",
       "categoryLabel": "Connector / wire",
       "spec": "female",
-      "expectedPrice": 0
+      "expectedPrice": 0,
+      "icon": "fheader"
     }
   }
 }
