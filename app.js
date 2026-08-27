@@ -237,15 +237,15 @@ function assortmentCard(group,pids){
   ?{name:'1/4W resistor assortment',label:'Resistors',icon:'r1k'}
   :{name:'Ceramic capacitor assortment',label:'Ceramic capacitors',icon:'mlcc'};
  const total=pids.reduce((n,pid)=>n+owned(pid),0);
- const values=pids.map(pid=>\`<span class="chip">\${esc(CATALOG()[pid].spec||CATALOG()[pid].name)} ×\${owned(pid)}</span>\`).join('');
- return \`<div class="card assortment-card" data-assortment="\${group}">
-  <div class="thumb">\${PICS[cfg.icon]||CICONS().passive}</div>
+ const values=pids.map(pid=>`<span class="chip">${esc(CATALOG()[pid].spec||CATALOG()[pid].name)} ×${owned(pid)}</span>`).join('');
+ return `<div class="card assortment-card" data-assortment="${group}">
+  <div class="thumb">${PICS[cfg.icon]||CICONS().passive}</div>
   <div class="body">
-   <div class="name">\${cfg.name}</div>
-   <div class="desc">\${pids.length} values · \${total} components in stock</div>
-   <div class="chips"><span class="chip">\${cfg.label}</span>\${values}</div>
+   <div class="name">${cfg.name}</div>
+   <div class="desc">${pids.length} values · ${total} components in stock</div>
+   <div class="chips"><span class="chip">${cfg.label}</span>${values}</div>
   </div>
- </div>\`;
+ </div>`;
 }
 function assortmentCards(stockOnly){
  if(kind==='tools')return '';
