@@ -225,6 +225,36 @@ function matchFilter(pid){
  const f=filter.toLowerCase();
  return (pid+' '+p.name+' '+(p.spec||'')+' '+CATS()[p.category]+' '+(p.alternatives||'')).toLowerCase().includes(f);
 }
+/* Compact catalogue cards for value assortments. Each value remains a distinct part and stock record. */
+function assortmentGroup(pid){
+ const p=CATALOG()[pid];if(!p||kind==='tools')return '';
+ if(p.category==='resistor')return 'resistors';
+ if(p.name&&p.name.toLowerCase().includes('ceramic capacitor'))return 'capacitors';
+ return '';
+}
+function assortmentCard(group,pids){
+ const cfg=group==='resistors'
+  ?{name:'1/4W resistor assortment',label:'Resistors',icon:'r1k'}
+  :{name:'Ceramic capacitor assortment',label:'Ceramic capacitors',icon:'mlcc'};
+ const total=pids.reduce((n,pid)=>n+owned(pid),0);
+ const values=pids.map(pid=>\`<span class="chip">\${esc(CATALOG()[pid].spec||CATALOG()[pid].name)} ×\${owned(pid)}</span>\`).join('');
+ return \`<div class="card assortment-card" data-assortment="\${group}">
+  <div class="thumb">\${PICS[cfg.icon]||CICONS().passive}</div>
+  <div class="body">
+   <div class="name">\${cfg.name}</div>
+   <div class="desc">\${pids.length} values · \${total} components in stock</div>
+   <div class="chips"><span class="chip">\${cfg.label}</span>\${values}</div>
+  </div>
+ </div>\`;
+}
+function assortmentCards(stockOnly){
+ if(kind==='tools')return '';
+ return ['resistors','capacitors'].map(group=>{
+  const pids=Object.keys(CATALOG()).filter(pid=>assortmentGroup(pid)===group&&(!stockOnly||owned(pid)>0)&&matchFilter(pid));
+  return pids.length?assortmentCard(group,pids):'';
+ }).join('');
+}
+
 function partCard(pid,scope){
  const p=CATALOG()[pid];if(!p)return '';
  if(kind==='tools')return toolCard(pid);
@@ -306,11 +336,15 @@ function render(){
   const scopeLbl=scopeLabel();
   v.innerHTML=buy.map(pid=>partCard(pid,scope)).join('')||`<div class="empty">Nothing to buy for this scope — all ${kind} covered.</div>`;
  }else if(tab==='inv'){
-  const inv=Object.keys(CATALOG()).filter(pid=>owned(pid)>0&&matchFilter(pid));
-  v.innerHTML=inv.map(pid=>partCard(pid,'__all__')).join('')||`<div class="empty">📦 ${kind==='tools'?'Tool shelf':'Inventory'} empty. Mark items “Bought” from the Shopping tab.</div>`;
+  const groups=assortmentCards(true);
+  const inv=Object.keys(CATALOG()).filter(pid=>owned(pid)>0&&!assortmentGroup(pid)&&matchFilter(pid));
+  const cards=groups+inv.map(pid=>partCard(pid,'__all__')).join('');
+  v.innerHTML=cards||`<div class="empty">📦 ${kind==='tools'?'Tool shelf':'Inventory'} empty. Mark items “Bought” from the Shopping tab.</div>`;
  }else if(tab==='all'){
-  const all=Object.keys(CATALOG()).filter(matchFilter);
-  v.innerHTML=all.map(pid=>partCard(pid,'__all__')).join('')||`<div class="empty">No ${kind} match.</div>`;
+  const groups=assortmentCards(false);
+  const all=Object.keys(CATALOG()).filter(pid=>!assortmentGroup(pid)&&matchFilter(pid));
+  const cards=groups+all.map(pid=>partCard(pid,'__all__')).join('');
+  v.innerHTML=cards||`<div class="empty">No ${kind} match.</div>`;
  }else{
   if(projSel){const pr=S.projects.find(p=>p.id===projSel);v.innerHTML=pr?projectDetail(pr):'';}
   else v.innerHTML=S.projects.map(projSummary).join('')||'<div class="empty">No projects.</div>';
