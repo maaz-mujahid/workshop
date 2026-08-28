@@ -87,13 +87,13 @@
   </g>
   <text x="156" y="296" class="tiny red bold">LIVE</text>
 
-  <!-- ======== pin 4 (AC TX) -> 1k -> VIA ======== -->
+  <!-- ======== pin 4 (AC TX) -> R1 -> VIB pin 3 ======== -->
   <line x1="110" y1="340" x2="200" y2="340" class="wire"/>
   <rect x="200" y="333" width="60" height="14" class="box"/>
   <text x="230" y="328" text-anchor="middle" class="small">1 kΩ</text>
   <line x1="260" y1="340" x2="480" y2="340" class="wire"/>
 
-  <!-- ======== pin 5 (AC RX) <- 1k <- VOB (crossing at 180,340 = no dot) ======== -->
+  <!-- ======== pin 5 (AC RX) <- R2 <- VOA pin 2 (crossing at 180,340 = no dot) ======== -->
   <polyline points="110,300 180,300 180,380 300,380" class="wire"/>
   <rect x="300" y="373" width="60" height="14" class="box"/>
   <text x="330" y="368" text-anchor="middle" class="small">1 kΩ</text>
@@ -105,12 +105,12 @@
   <text x="560" y="272" text-anchor="middle" class="small bold">ADuM1201 digital isolator</text>
   <g class="tiny">
     <text x="486" y="304">VDD1</text>
-    <text x="486" y="344">VIA</text>
-    <text x="486" y="384">VOB</text>
+    <text x="486" y="344">VIB (3)</text>
+    <text x="486" y="384">VOA (2)</text>
     <text x="486" y="414">GND1</text>
     <text x="634" y="304" text-anchor="end">VDD2</text>
-    <text x="634" y="344" text-anchor="end">VOA</text>
-    <text x="634" y="384" text-anchor="end">VIB</text>
+    <text x="634" y="344" text-anchor="end">VOB (6)</text>
+    <text x="634" y="384" text-anchor="end">VIA (7)</text>
     <text x="634" y="414" text-anchor="end">GND2</text>
   </g>
   <!-- channel arrows -->
